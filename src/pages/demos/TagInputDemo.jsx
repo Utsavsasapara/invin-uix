@@ -7,10 +7,23 @@ import { Separator } from 'invin-uix/ui/separator';
 // Helper to create tag objects
 const createTags = (labels) => labels.map((label, i) => ({ id: `tag-${i}-${label}`, label }));
 
+// Sample suggestions
+const techSuggestions = [
+  'React', 'Vue', 'Angular', 'Svelte', 'Next.js', 'Nuxt', 'Remix',
+  'TypeScript', 'JavaScript', 'Python', 'Go', 'Rust', 'Java',
+  'Node.js', 'Deno', 'Bun', 'GraphQL', 'REST', 'tRPC',
+  'PostgreSQL', 'MongoDB', 'Redis', 'Docker', 'Kubernetes'
+];
+
 export default function TagInputDemo() {
   const [tags, setTags] = useState(createTags(['React', 'TypeScript', 'Tailwind']));
+  const [manyTags, setManyTags] = useState(createTags([
+    'React', 'Vue', 'Angular', 'Svelte', 'Next.js', 'Nuxt', 'Remix',
+    'TypeScript', 'JavaScript', 'Node.js', 'Python', 'Go', 'Rust'
+  ]));
   const [emailTags, setEmailTags] = useState(createTags(['john@example.com']));
-  const [skillTags, setSkillTags] = useState(createTags(['JavaScript', 'Python']));
+  const [reorderTags, setReorderTags] = useState(createTags(['Priority 1', 'Priority 2', 'Priority 3', 'Priority 4']));
+  const [suggestionTags, setSuggestionTags] = useState([]);
 
   const validateEmail = (value) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -20,20 +33,21 @@ export default function TagInputDemo() {
   return (
     <ComponentPage
       name="TagInput"
-      description="Input component for managing lists of tags/chips. Supports keyboard navigation, validation, max limits, custom delimiters, and paste support. Includes TagList for display-only scenarios."
+      description="Multi-value input for tags with autocomplete, drag-to-reorder, overflow handling, and keyboard navigation. Includes TagList for display-only scenarios."
       importCode={`import { TagInput, TagList } from 'invin-uix/ui/tag-input';`}
-      badges={[{ label: 'New', variant: 'accent' }]}
     >
 
       {/* ─── Interactive Playground ────────────────────────────── */}
       <InteractiveDemo
         title="Interactive Playground"
-        description="Add tags by typing and pressing Enter or comma. Remove tags with backspace or the X button."
+        description="Experiment with TagInput features. Try keyboard navigation (arrow keys), drag-to-reorder, and autocomplete."
         controls={[
           { name: 'placeholder', label: 'Placeholder', type: 'text', default: 'Add tag...' },
-          { name: 'max', label: 'Max Tags', type: 'number', default: 10, min: 1, max: 20 },
+          { name: 'maxVisibleTags', label: 'Max Visible Tags', type: 'number', default: 0, min: 0, max: 20 },
           { name: 'disabled', label: 'Disabled', type: 'boolean', default: false },
-          { name: 'allowDuplicates', label: 'Allow Duplicates', type: 'boolean', default: false },
+          { name: 'reorderable', label: 'Reorderable', type: 'boolean', default: false },
+          { name: 'copyable', label: 'Copyable', type: 'boolean', default: false },
+          { name: 'clearable', label: 'Clearable', type: 'boolean', default: false },
         ]}
       >
         {(props) => (
@@ -42,12 +56,14 @@ export default function TagInputDemo() {
               value={tags}
               onChange={setTags}
               placeholder={props.placeholder}
-              max={props.max}
+              maxVisibleTags={props.maxVisibleTags || undefined}
               disabled={props.disabled}
-              allowDuplicates={props.allowDuplicates}
+              reorderable={props.reorderable}
+              copyable={props.copyable}
+              clearable={props.clearable}
             />
             <p className="text-[11px] text-[var(--muted-foreground)] mt-2">
-              {tags.length} / {props.max} tags
+              {tags.length} tags • Arrow keys to navigate • Drag to reorder
             </p>
           </div>
         )}
@@ -60,58 +76,196 @@ export default function TagInputDemo() {
         props={[
           { name: 'value', type: 'Tag[]', default: '[]', description: 'Array of tag objects {id, label, color?}' },
           { name: 'onChange', type: '(tags: Tag[]) => void', default: '—', description: 'Callback when tags change' },
-          { name: 'placeholder', type: 'string', default: "'Add tag...'", description: 'Input placeholder text' },
+          { name: 'maxVisibleTags', type: 'number', default: '—', description: 'Show N tags + "+X more" badge' },
+          { name: 'maxHeight', type: 'number | string', default: '—', description: 'Scrollable container after this height' },
+          { name: 'suggestions', type: 'string[]', default: '[]', description: 'Autocomplete suggestions dropdown' },
+          { name: 'reorderable', type: 'boolean', default: 'false', description: 'Enable drag-to-reorder tags' },
+          { name: 'copyable', type: 'boolean', default: 'false', description: 'Show copy-all tags button' },
+          { name: 'clearable', type: 'boolean', default: 'false', description: 'Show clear-all tags button' },
           { name: 'max', type: 'number', default: '—', description: 'Maximum number of tags allowed' },
-          { name: 'validate', type: '(input: string, tags: Tag[]) => string | undefined', default: '—', description: 'Validation function. Return error message or undefined.' },
-          { name: 'delimiters', type: 'string[]', default: "['Enter', ',']", description: 'Keys that trigger tag creation' },
-          { name: 'allowDuplicates', type: 'boolean', default: 'false', description: 'Allow duplicate tags' },
+          { name: 'validate', type: '(input, tags) => string | undefined', default: '—', description: 'Validation function' },
           { name: 'disabled', type: 'boolean', default: 'false', description: 'Disable the input' },
-          { name: 'readOnly', type: 'boolean', default: 'false', description: 'Read-only mode (display only)' },
-          { name: 'tagVariant', type: "'default' | 'secondary' | 'outline' | ...", default: "'secondary'", description: 'Badge variant for tags' },
+          { name: 'error', type: 'string', default: '—', description: 'Error message (red border + message)' },
+          { name: 'success', type: 'string', default: '—', description: 'Success message (green border + message)' },
         ]}
       />
 
       <Separator variant="bold" />
 
-      {/* ─── Basic TagInput ─────────────────────────────────────── */}
+      {/* ─── Max Visible Tags ───────────────────────────────────── */}
       <PlaygroundSection
-        title="Basic TagInput"
-        description="Standard tag input with Enter and comma as delimiters. Backspace removes the last tag when input is empty."
-        code={`const [tags, setTags] = useState([
-  { id: '1', label: 'React' },
-  { id: '2', label: 'TypeScript' }
-]);
-
-<TagInput
-  value={tags}
-  onChange={setTags}
-  placeholder="Add a skill..."
+        title="Max Visible Tags (+X more)"
+        description="Limit visible tags to prevent layout overflow. Click '+X more' to expand."
+        code={`<TagInput
+  value={manyTags}
+  onChange={setManyTags}
+  maxVisibleTags={5}
 />`}
       >
         <div className="w-full max-w-md">
           <TagInput
-            value={tags}
-            onChange={setTags}
-            placeholder="Add a skill..."
+            value={manyTags}
+            onChange={setManyTags}
+            maxVisibleTags={5}
           />
+          <p className="text-[11px] text-[var(--muted-foreground)] mt-2">
+            Showing 5 of {manyTags.length} tags
+          </p>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Max Height (Scrollable) ────────────────────────────── */}
+      <PlaygroundSection
+        title="Max Height (Scrollable)"
+        description="Container becomes scrollable after reaching max height. Great for many tags in limited space."
+        code={`<TagInput
+  value={manyTags}
+  onChange={setManyTags}
+  maxHeight={80}
+/>`}
+      >
+        <div className="w-full max-w-md">
+          <TagInput
+            value={manyTags}
+            onChange={setManyTags}
+            maxHeight={80}
+          />
+          <p className="text-[11px] text-[var(--muted-foreground)] mt-2">
+            Scrollable container with max-height: 80px
+          </p>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Autocomplete Suggestions ───────────────────────────── */}
+      <PlaygroundSection
+        title="Autocomplete Suggestions"
+        description="Show dropdown suggestions while typing. Use arrow keys to navigate, Enter to select."
+        code={`<TagInput
+  value={tags}
+  onChange={setTags}
+  suggestions={['React', 'Vue', 'Angular', ...]}
+  placeholder="Type to search..."
+/>`}
+      >
+        <div className="w-full max-w-md">
+          <TagInput
+            value={suggestionTags}
+            onChange={setSuggestionTags}
+            suggestions={techSuggestions}
+            placeholder="Type to search technologies..."
+          />
+          <p className="text-[11px] text-[var(--muted-foreground)] mt-2">
+            Try typing "re" or "java" to see filtered suggestions
+          </p>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Drag to Reorder ────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Drag to Reorder"
+        description="Drag tags to change their order. Useful when tag order represents priority."
+        code={`<TagInput
+  value={tags}
+  onChange={setTags}
+  reorderable
+/>`}
+      >
+        <div className="w-full max-w-md">
+          <TagInput
+            value={reorderTags}
+            onChange={setReorderTags}
+            reorderable
+          />
+          <p className="text-[11px] text-[var(--muted-foreground)] mt-2">
+            Drag tags to reorder • Order: {reorderTags.map(t => t.label).join(' → ')}
+          </p>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Copyable ───────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Copyable"
+        description="Add a copy button to copy all tags as comma-separated text to clipboard."
+        code={`<TagInput
+  value={tags}
+  onChange={setTags}
+  copyable
+/>`}
+      >
+        <div className="w-full max-w-md">
+          <TagInput
+            value={createTags(['React', 'TypeScript', 'Node.js'])}
+            onChange={() => {}}
+            copyable
+            readOnly
+          />
+          <p className="text-[11px] text-[var(--muted-foreground)] mt-2">
+            Click the copy icon to copy tags to clipboard
+          </p>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Keyboard Navigation ────────────────────────────────── */}
+      <PlaygroundSection
+        title="Keyboard Navigation"
+        description="Navigate between tags using arrow keys. Press Delete or Backspace to remove focused tag."
+        code={`// Keyboard shortcuts:
+// ← → : Navigate between tags
+// Delete/Backspace: Remove focused tag
+// Escape: Return to input
+// ↑ ↓ : Navigate suggestions`}
+      >
+        <div className="w-full max-w-md">
+          <TagInput
+            value={createTags(['Navigate', 'With', 'Arrow', 'Keys'])}
+            onChange={() => {}}
+            placeholder="Press ← to start navigating..."
+          />
+          <p className="text-[11px] text-[var(--muted-foreground)] mt-2">
+            Type something, then press ← to navigate to tags
+          </p>
+        </div>
+      </PlaygroundSection>
+
+      <Separator variant="bold" />
+
+      {/* ─── Long Tags with Tooltip ─────────────────────────────── */}
+      <PlaygroundSection
+        title="Long Tags (Truncated with Tooltip)"
+        description="Long tag text is truncated with ellipsis. Hover to see full text in tooltip."
+        code={`<TagInput
+  value={[
+    { id: '1', label: 'This is a very long tag name' },
+    { id: '2', label: 'Another extremely long tag label' },
+  ]}
+/>`}
+      >
+        <div className="w-full max-w-md">
+          <TagInput
+            value={createTags([
+              'Short',
+              'This is a very long tag that will be truncated',
+              'Another extremely long tag label that shows tooltip'
+            ])}
+            onChange={() => {}}
+            readOnly
+          />
+          <p className="text-[11px] text-[var(--muted-foreground)] mt-2">
+            Hover over truncated tags to see full text
+          </p>
         </div>
       </PlaygroundSection>
 
       {/* ─── With Validation ────────────────────────────────────── */}
       <PlaygroundSection
         title="With Validation"
-        description="Custom validation for specific formats like email addresses. Invalid entries show an error message."
+        description="Custom validation for specific formats like email addresses."
         code={`const validateEmail = (value) => {
   const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
-  return emailRegex.test(value) ? undefined : 'Please enter a valid email';
+  return emailRegex.test(value) ? undefined : 'Invalid email';
 };
 
-<TagInput
-  value={emailTags}
-  onChange={setEmailTags}
-  placeholder="Add email..."
-  validate={validateEmail}
-/>`}
+<TagInput validate={validateEmail} />`}
       >
         <div className="w-full max-w-md">
           <TagInput
@@ -126,88 +280,60 @@ export default function TagInputDemo() {
         </div>
       </PlaygroundSection>
 
-      {/* ─── With Max Limit ─────────────────────────────────────── */}
+      {/* ─── Error & Success States ─────────────────────────────── */}
       <PlaygroundSection
-        title="Max Tags Limit"
-        description="Restrict the number of tags. Shows a counter and error when limit is reached."
-        code={`<TagInput
-  value={tags}
-  onChange={setTags}
-  max={5}
-  placeholder="Add tag (max 5)..."
-/>`}
-      >
-        <div className="w-full max-w-md">
-          <TagInput
-            value={skillTags}
-            onChange={setSkillTags}
-            max={5}
-            placeholder="Add skill (max 5)..."
-          />
-        </div>
-      </PlaygroundSection>
-
-      {/* ─── Tag Variants ───────────────────────────────────────── */}
-      <PlaygroundSection
-        title="Tag Variants"
-        description="Tags can use different Badge variants for visual distinction."
-        code={`<TagInput tagVariant="default" ... />
-<TagInput tagVariant="secondary" ... />
-<TagInput tagVariant="outline" ... />
-<TagInput tagVariant="success" ... />`}
+        title="Error & Success States"
+        description="External validation feedback with colored borders and messages."
+        code={`<TagInput error="Please add at least one tag" />
+<TagInput success="Tags validated successfully" />`}
       >
         <div className="w-full max-w-md space-y-4">
           <div>
-            <p className="text-caption text-[var(--muted-foreground)] mb-2">Secondary (default)</p>
+            <p className="text-caption text-[var(--muted-foreground)] mb-2">Error state</p>
             <TagInput
-              value={createTags(['Tag 1', 'Tag 2'])}
+              value={[]}
               onChange={() => {}}
-              tagVariant="secondary"
-              readOnly
+              error="Please add at least one tag"
+              placeholder="Required tags..."
             />
           </div>
           <div>
-            <p className="text-caption text-[var(--muted-foreground)] mb-2">Outline</p>
+            <p className="text-caption text-[var(--muted-foreground)] mb-2">Success state</p>
             <TagInput
-              value={createTags(['Tag 1', 'Tag 2'])}
+              value={createTags(['React', 'TypeScript'])}
               onChange={() => {}}
-              tagVariant="outline"
-              readOnly
-            />
-          </div>
-          <div>
-            <p className="text-caption text-[var(--muted-foreground)] mb-2">Success</p>
-            <TagInput
-              value={createTags(['Approved', 'Verified'])}
-              onChange={() => {}}
-              tagVariant="success"
-              readOnly
+              success="Tags validated successfully"
             />
           </div>
         </div>
       </PlaygroundSection>
+
+      <Separator variant="bold" />
 
       {/* ─── TagList (Display Only) ─────────────────────────────── */}
       <PlaygroundSection
         title="TagList (Display Only)"
-        description="Use TagList when you only need to display tags without input functionality."
+        description="Use TagList when you only need to display tags without input. Supports maxVisibleTags too."
         code={`<TagList
-  tags={[{ id: '1', label: 'React' }, { id: '2', label: 'TypeScript' }]}
+  tags={tags}
+  maxVisibleTags={5}
 />
 
-// Removable tags
 <TagList
   tags={tags}
-  onRemove={(tag) => setTags(tags.filter(t => t.id !== tag.id))}
+  onRemove={(tag) => handleRemove(tag)}
 />`}
       >
         <div className="space-y-4">
           <div>
-            <p className="text-caption text-[var(--muted-foreground)] mb-2">Static display</p>
-            <TagList tags={createTags(['React', 'TypeScript', 'Node.js', 'GraphQL'])} />
+            <p className="text-caption text-[var(--muted-foreground)] mb-2">Static display with overflow</p>
+            <TagList 
+              tags={createTags(['React', 'TypeScript', 'Node.js', 'GraphQL', 'Docker', 'K8s', 'AWS'])} 
+              maxVisibleTags={4}
+            />
           </div>
           <div>
-            <p className="text-caption text-[var(--muted-foreground)] mb-2">Removable</p>
+            <p className="text-caption text-[var(--muted-foreground)] mb-2">Removable tags</p>
             <TagList
               tags={tags}
               onRemove={(tag) => setTags(tags.filter(t => t.id !== tag.id))}
@@ -216,74 +342,36 @@ export default function TagInputDemo() {
         </div>
       </PlaygroundSection>
 
-      {/* ─── States ─────────────────────────────────────────────── */}
-      <PlaygroundSection
-        title="States"
-        description="Disabled and read-only states for different use cases."
-        code={`<TagInput value={tags} disabled />
-<TagInput value={tags} readOnly />`}
-      >
-        <div className="w-full max-w-md space-y-4">
-          <div>
-            <p className="text-caption text-[var(--muted-foreground)] mb-2">Disabled</p>
-            <TagInput
-              value={createTags(['Locked', 'Tags'])}
-              onChange={() => {}}
-              disabled
-            />
-          </div>
-          <div>
-            <p className="text-caption text-[var(--muted-foreground)] mb-2">Read-only</p>
-            <TagInput
-              value={createTags(['Display', 'Only'])}
-              onChange={() => {}}
-              readOnly
-            />
-          </div>
-        </div>
-      </PlaygroundSection>
-
       <Separator variant="bold" />
 
-      {/* ─── Use Cases ──────────────────────────────────────────── */}
+      {/* ─── Combined Features ──────────────────────────────────── */}
       <div className="space-y-3">
-        <h3 className="text-[var(--foreground)] font-[700]">Use Cases</h3>
-        <p className="text-[var(--muted-foreground)]">Common patterns for tag management.</p>
+        <h3 className="text-[var(--foreground)] font-[700]">Combined Features</h3>
+        <p className="text-[var(--muted-foreground)]">All features working together for production use.</p>
       </div>
 
-      <DemoGrid columns={2}>
+      <DemoGrid columns={1}>
         <DemoCard
-          title="Article Tags"
-          description="Add categorization tags to blog posts or articles."
+          title="Full-Featured Tag Input"
+          description="All features: suggestions, reorder, copy, clear, overflow."
         >
-          <Card className="w-full">
-            <CardContent className="pt-4 pb-4 space-y-3">
-              <p className="text-caption font-medium">Tags</p>
-              <TagInput
-                value={createTags(['Tutorial', 'React'])}
-                onChange={() => {}}
-                placeholder="Add tag..."
-                max={5}
-              />
-            </CardContent>
-          </Card>
-        </DemoCard>
-
-        <DemoCard
-          title="Email Recipients"
-          description="Collect multiple email addresses with validation."
-        >
-          <Card className="w-full">
-            <CardContent className="pt-4 pb-4 space-y-3">
-              <p className="text-caption font-medium">Recipients</p>
-              <TagInput
-                value={createTags(['team@company.com'])}
-                onChange={() => {}}
-                placeholder="Add email..."
-                validate={validateEmail}
-              />
-            </CardContent>
-          </Card>
+          <div className="w-full">
+            <TagInput
+              value={manyTags}
+              onChange={setManyTags}
+              suggestions={techSuggestions}
+              maxVisibleTags={6}
+              maxHeight={120}
+              reorderable
+              copyable
+              clearable
+              max={20}
+              placeholder="Type to add or search..."
+            />
+            <p className="text-[11px] text-[var(--muted-foreground)] mt-2">
+              {manyTags.length}/20 tags • Drag to reorder • Type to search suggestions
+            </p>
+          </div>
         </DemoCard>
       </DemoGrid>
 

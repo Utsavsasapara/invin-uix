@@ -45,6 +45,8 @@ export default function TooltipDemo() {
             ],
           },
           { name: 'arrow', type: 'boolean', label: 'Show Arrow', default: true },
+          { name: 'disabled', type: 'boolean', label: 'Disabled', default: false },
+          { name: 'maxWidth', type: 'number', label: 'Max Width', default: 220, min: 100, max: 400, step: 20 },
           { name: 'content', type: 'text', label: 'Content', default: 'This is a tooltip', placeholder: 'Tooltip text' },
         ]}
       >
@@ -54,6 +56,8 @@ export default function TooltipDemo() {
             placement={props.placement}
             trigger={props.trigger}
             arrow={props.arrow}
+            disabled={props.disabled}
+            maxWidth={props.maxWidth}
           >
             <Button variant="outline">Hover or Click Me</Button>
           </Tooltip>
@@ -69,6 +73,8 @@ export default function TooltipDemo() {
           { name: 'trigger', type: "'hover' | 'focus' | 'click' | array", default: "'hover'", description: 'What triggers the tooltip' },
           { name: 'color', type: 'string', default: '—', description: 'Custom background colour (text auto-sets to white)' },
           { name: 'arrow', type: 'boolean', default: 'true', description: 'Show directional arrow' },
+          { name: 'disabled', type: 'boolean', default: 'false', description: 'Disable the tooltip entirely' },
+          { name: 'maxWidth', type: 'number | string', default: '220', description: 'Maximum width of tooltip content' },
           { name: 'open', type: 'boolean', default: '—', description: 'Controlled open state' },
           { name: 'onOpenChange', type: '(open: boolean) => void', default: '—', description: 'Open/close callback' },
           { name: 'mouseEnterDelay', type: 'number (ms)', default: '100', description: 'Delay before showing on hover' },

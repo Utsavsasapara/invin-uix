@@ -1,18 +1,17 @@
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
 import { KpiCard } from 'invin-uix/ui/kpi-card';
 import { Progress } from 'invin-uix/ui/progress';
-import { Badge } from 'invin-uix/ui/badge';
 import { Separator } from 'invin-uix/ui/separator';
 import {
   Users, CreditCard, Pulse, WarningCircle, TrendUp,
-  Shield, Lightning, Clock,
+  Shield, Lightning, Clock, Link, GitBranch, ChartLine,
 } from 'invin-uix/ui/icons';
 
 export default function KpiCardDemo() {
   return (
     <ComponentPage
       name="KPI Card"
-      description="Key Performance Indicator cards for dashboards. Displays a metric label, big number value, change indicator, and optional children (sparklines, progress bars)."
+      description="Key Performance Indicator cards for dashboards. Displays a metric label, value, description, and optional trend indicator. Supports variants, accent highlighting, loading state, and custom children."
       importCode={`import { KpiCard } from 'invin-uix/ui/kpi-card';`}
     >
 
@@ -21,113 +20,464 @@ export default function KpiCardDemo() {
         title="KPI Card Playground"
         description="Experiment with KPI Card configurations."
         controls={[
-          { name: 'up', type: 'boolean', label: 'Positive Change', default: true },
+          { name: 'label', type: 'text', label: 'Label', default: 'WORKFLOWS', placeholder: 'Enter label' },
+          { name: 'value', type: 'text', label: 'Value', default: '11', placeholder: 'Enter value' },
+          { name: 'description', type: 'text', label: 'Description', default: 'Across the organization', placeholder: 'Enter description' },
+          {
+            name: 'variant',
+            label: 'Variant',
+            type: 'select',
+            default: 'default',
+            options: [
+              { value: 'default', label: 'Default' },
+              { value: 'bordered', label: 'Bordered' },
+              { value: 'filled', label: 'Filled' },
+            ]
+          },
+          { name: 'accent', type: 'boolean', label: 'Accent Value', default: false },
           { name: 'selected', type: 'boolean', label: 'Selected', default: false },
-          { name: 'label', type: 'text', label: 'Label', default: 'Total Users', placeholder: 'Enter label' },
-          { name: 'value', type: 'text', label: 'Value', default: '2,350', placeholder: 'Enter value' },
+          { name: 'loading', type: 'boolean', label: 'Loading', default: false },
         ]}
       >
         {(props) => (
           <KpiCard 
             label={props.label}
             value={props.value}
-            change={props.up ? "+12.5%" : "-8.3%"} 
-            up={props.up} 
+            description={props.description}
+            accent={props.accent}
             selected={props.selected}
-            icon={<Users style={{ width: 16, height: 16 }} />} 
+            loading={props.loading}
+            variant={props.variant}
+            icon={<GitBranch style={{ width: 16, height: 16 }} />} 
           />
         )}
       </InteractiveDemo>
+
       <Separator variant="bold" />
 
+      {/* ─── Props Table ────────────────────────────────────────── */}
       <PropsTable
         props={[
-          { name: 'label', type: 'string', default: '—', description: 'Metric label (e.g. "Total Users")', required: true },
+          { name: 'label', type: 'string', default: '—', description: 'Metric label (e.g. "WORKFLOWS", "Total Users")', required: true },
           { name: 'value', type: 'string', default: '—', description: 'Big number display value', required: true },
-          { name: 'change', type: 'string', default: '—', description: 'Change text (e.g. "+12.5%")' },
-          { name: 'up', type: 'boolean', default: '—', description: 'Is the change positive?' },
+          { name: 'description', type: 'string', default: '—', description: 'Subtitle text below value' },
+          { name: 'trend', type: "{ value: string; direction: 'up' | 'down' | 'neutral' }", default: '—', description: 'Trend indicator with value and direction' },
           { name: 'icon', type: 'ReactNode', default: '—', description: 'Icon in top-right corner' },
+          { name: 'variant', type: "'default' | 'bordered' | 'filled'", default: "'default'", description: 'Visual style variant' },
+          { name: 'accent', type: 'boolean', default: 'false', description: 'Display value in accent color' },
           { name: 'selected', type: 'boolean', default: 'false', description: 'Active/selected state (accent border + glow)' },
+          { name: 'loading', type: 'boolean', default: 'false', description: 'Show skeleton loading state' },
+          { name: 'onClick', type: 'function', default: '—', description: 'Click handler (adds pointer cursor)' },
         ]}
       />
 
-      <Separator />
+      <Separator variant="bold" />
 
-      {/* ─── Basic grid ───────────────────────────────────────── */}
+      {/* ─── Basic Usage ──────────────────────────────────────── */}
       <PlaygroundSection
-        title="Basic KPI grid"
-        description="Standard dashboard stat cards with change indicators."
+        title="Basic Usage"
+        description="Simple KPI card with label, value, and description. Perfect for dashboard overview metrics."
+        code={`<KpiCard 
+  label="WORKFLOWS" 
+  value="11" 
+  description="Across the organization"
+  icon={<GitBranch size={16} />} 
+/>`}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KpiCard label="Total Revenue" value="$45,231" change="+20.1%" up icon={<CreditCard style={{ width: 16, height: 16 }} />} />
-          <KpiCard label="Subscriptions" value="+2,350" change="+180.1%" up icon={<Users style={{ width: 16, height: 16 }} />} />
-          <KpiCard label="Active Now" value="573" change="+19%" up icon={<Pulse style={{ width: 16, height: 16 }} />} />
-          <KpiCard label="Incidents" value="12" change="-3" up={false} icon={<WarningCircle style={{ width: 16, height: 16 }} />} />
+        <KpiCard 
+          label="WORKFLOWS" 
+          value="11" 
+          description="Across the organization"
+          icon={<GitBranch style={{ width: 16, height: 16 }} />} 
+        />
+      </PlaygroundSection>
+
+      {/* ─── Dashboard Overview ─────────────────────────────────── */}
+      <PlaygroundSection
+        title="Dashboard Overview"
+        description="Real-world dashboard pattern. Use description for context, accent to highlight important metrics."
+        code={`<KpiCard 
+  label="WORKFLOWS" 
+  value="11" 
+  description="Across the organization"
+  icon={<GitBranch size={16} />} 
+/>
+<KpiCard 
+  label="EXECUTIONS (30D)" 
+  value="5" 
+  description="Manual + triggered runs"
+  icon={<Lightning size={16} />} 
+/>
+<KpiCard 
+  label="INTEGRATIONS" 
+  value="18" 
+  description="All currently active"
+  accent
+  icon={<Link size={16} />} 
+/>
+<KpiCard 
+  label="USERS" 
+  value="4" 
+  description="3 admins · 1 viewer"
+  icon={<Users size={16} />} 
+/>`}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+          <KpiCard 
+            label="WORKFLOWS" 
+            value="11" 
+            description="Across the organization"
+            icon={<GitBranch style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="EXECUTIONS (30D)" 
+            value="5" 
+            description="Manual + triggered runs"
+            icon={<Lightning style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="INTEGRATIONS" 
+            value="18" 
+            description="All currently active"
+            accent
+            icon={<Link style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="USERS" 
+            value="4" 
+            description="3 admins · 1 viewer"
+            icon={<Users style={{ width: 16, height: 16 }} />} 
+          />
         </div>
       </PlaygroundSection>
 
-      {/* ─── With progress children ──────────────────────────── */}
+      {/* ─── Trend Indicator ──────────────────────────────────── */}
       <PlaygroundSection
-        title="With children (progress bar)"
-        description="Add extra content below the value — progress bars, sparklines, or badges."
+        title="Trend Indicator"
+        description="Use the trend prop for metrics with change indicators. Direction controls color: up (green), down (red), neutral (muted)."
+        code={`<KpiCard 
+  label="Total Revenue" 
+  value="$45,231" 
+  trend={{ value: "+20.1% from last month", direction: "up" }}
+  icon={<CreditCard size={16} />} 
+/>
+<KpiCard 
+  label="Active Now" 
+  value="573" 
+  trend={{ value: "+19% from yesterday", direction: "up" }}
+  icon={<Pulse size={16} />} 
+/>
+<KpiCard 
+  label="Churn Rate" 
+  value="2.4%" 
+  trend={{ value: "+0.3% increase", direction: "down" }}
+  icon={<ChartLine size={16} />} 
+/>
+<KpiCard 
+  label="Balance" 
+  value="$0" 
+  trend={{ value: "No change", direction: "neutral" }}
+  icon={<TrendUp size={16} />} 
+/>`}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <KpiCard label="Storage Used" value="7.2 GB" change="72%" icon={<Shield style={{ width: 16, height: 16 }} />}>
-            <Progress value={72} size="sm" />
-          </KpiCard>
-          <KpiCard label="API Calls" value="12,847" change="+5.2%" up icon={<Lightning style={{ width: 16, height: 16 }} />}>
-            <Progress value={48} size="sm" />
-          </KpiCard>
-          <KpiCard label="Uptime" value="99.98%" icon={<Clock style={{ width: 16, height: 16 }} />}>
-            <Progress value={99.98} size="sm" variant="gradient" />
-          </KpiCard>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+          <KpiCard 
+            label="Total Revenue" 
+            value="$45,231" 
+            trend={{ value: "+20.1% from last month", direction: "up" }}
+            icon={<CreditCard style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="Active Now" 
+            value="573" 
+            trend={{ value: "+19% from yesterday", direction: "up" }}
+            icon={<Pulse style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="Churn Rate" 
+            value="2.4%" 
+            trend={{ value: "+0.3% increase", direction: "down" }}
+            icon={<ChartLine style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="Balance" 
+            value="$0" 
+            trend={{ value: "No change", direction: "neutral" }}
+            icon={<TrendUp style={{ width: 16, height: 16 }} />} 
+          />
         </div>
       </PlaygroundSection>
 
       {/* ─── Variants ─────────────────────────────────────────── */}
       <PlaygroundSection
         title="Variants"
-        description="Three visual styles: default, bordered, and filled."
+        description="Three visual styles: default (standard), bordered (thicker border emphasis), filled (subtle background)."
+        code={`<KpiCard 
+  label="DEFAULT" 
+  value="1,234" 
+  description="Standard card style"
+  variant="default" 
+  icon={<TrendUp size={16} />} 
+/>
+<KpiCard 
+  label="BORDERED" 
+  value="5,678" 
+  description="Thicker border emphasis"
+  variant="bordered" 
+  icon={<TrendUp size={16} />} 
+/>
+<KpiCard 
+  label="FILLED" 
+  value="9,012" 
+  description="Subtle background fill"
+  variant="filled" 
+  icon={<TrendUp size={16} />} 
+/>`}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <KpiCard label="Default" value="1,234" variant="default" change="+8%" up icon={<TrendUp style={{ width: 16, height: 16 }} />} />
-          <KpiCard label="Bordered" value="5,678" variant="bordered" change="+12%" up icon={<TrendUp style={{ width: 16, height: 16 }} />} />
-          <KpiCard label="Filled" value="9,012" variant="filled" change="-2%" up={false} icon={<TrendUp style={{ width: 16, height: 16 }} />} />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+          <KpiCard 
+            label="DEFAULT" 
+            value="1,234" 
+            description="Standard card style"
+            variant="default" 
+            icon={<TrendUp style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="BORDERED" 
+            value="5,678" 
+            description="Thicker border emphasis"
+            variant="bordered" 
+            icon={<TrendUp style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="FILLED" 
+            value="9,012" 
+            description="Subtle background fill"
+            variant="filled" 
+            icon={<TrendUp style={{ width: 16, height: 16 }} />} 
+          />
         </div>
       </PlaygroundSection>
 
-      {/* ─── Sizes ────────────────────────────────────────────── */}
+      {/* ─── Accent & Selected ────────────────────────────────── */}
       <PlaygroundSection
-        title="Sizes"
-        description="Three size presets affecting padding and radius."
+        title="Accent & Selected States"
+        description="Use accent to highlight active metrics with accent-colored value. Use selected for clickable selection patterns with accent border + glow."
+        code={`<KpiCard 
+  label="NORMAL" 
+  value="100" 
+  description="Default value color"
+  icon={<Shield size={16} />} 
+/>
+<KpiCard 
+  label="ACCENT" 
+  value="200" 
+  description="Highlighted with accent"
+  accent
+  icon={<Shield size={16} />} 
+/>
+<KpiCard 
+  label="SELECTED" 
+  value="300" 
+  description="Active selection state"
+  selected
+  icon={<Shield size={16} />} 
+/>`}
       >
-        <div className="space-y-4">
-          <div>
-            <p className="text-[11px] font-[500] text-[var(--muted-foreground-faint)] uppercase mb-2">Small</p>
-            <KpiCard label="Users Online" value="42" size="sm" icon={<Users style={{ width: 14, height: 14 }} />} />
-          </div>
-          <div>
-            <p className="text-[11px] font-[500] text-[var(--muted-foreground-faint)] uppercase mb-2">Medium (default)</p>
-            <KpiCard label="Users Online" value="42" size="md" change="+3" up icon={<Users style={{ width: 16, height: 16 }} />} />
-          </div>
-          <div>
-            <p className="text-[11px] font-[500] text-[var(--muted-foreground-faint)] uppercase mb-2">Large</p>
-            <KpiCard label="Users Online" value="42" size="lg" change="+3" up icon={<Users style={{ width: 18, height: 18 }} />} />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+          <KpiCard 
+            label="NORMAL" 
+            value="100" 
+            description="Default value color"
+            icon={<Shield style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="ACCENT" 
+            value="200" 
+            description="Highlighted with accent"
+            accent
+            icon={<Shield style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="SELECTED" 
+            value="300" 
+            description="Active selection state"
+            selected
+            icon={<Shield style={{ width: 16, height: 16 }} />} 
+          />
         </div>
       </PlaygroundSection>
 
-      {/* ─── SOC use case ─────────────────────────────────────── */}
+      {/* ─── Loading State ────────────────────────────────────── */}
       <PlaygroundSection
-        title="SOC dashboard use case"
-        description="Real-world security operations metrics."
+        title="Loading State"
+        description="Show skeleton placeholders while data is being fetched. Works with all variants."
+        code={`<KpiCard label="" value="" loading />
+<KpiCard label="" value="" loading variant="bordered" />
+<KpiCard label="" value="" loading variant="filled" />`}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KpiCard label="OPEN INCIDENTS" value="7" change="-2 from yesterday" up={false} icon={<WarningCircle style={{ width: 16, height: 16 }} />} />
-          <KpiCard label="MTTR" value="4.2h" change="-18%" up icon={<Clock style={{ width: 16, height: 16 }} />} />
-          <KpiCard label="BLOCKED THREATS" value="1,247" change="+156 today" up icon={<Shield style={{ width: 16, height: 16 }} />} />
-          <KpiCard label="COMPLIANCE" value="94%" icon={<TrendUp style={{ width: 16, height: 16 }} />}>
-            <Progress value={94} size="sm" variant="gradient" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+          <KpiCard label="" value="" loading />
+          <KpiCard label="" value="" loading variant="bordered" />
+          <KpiCard label="" value="" loading variant="filled" />
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── With Children ────────────────────────────────────── */}
+      <PlaygroundSection
+        title="With Children"
+        description="Add extra content below the card using children — progress bars, sparklines, or custom elements."
+        code={`<KpiCard 
+  label="STORAGE USED" 
+  value="7.2 GB" 
+  description="72% of 10 GB"
+  icon={<Shield size={16} />}
+>
+  <Progress value={72} size="sm" className="mt-2" />
+</KpiCard>
+
+<KpiCard 
+  label="API CALLS" 
+  value="12,847" 
+  trend={{ value: "+5.2% from last week", direction: "up" }}
+  icon={<Lightning size={16} />}
+>
+  <Progress value={48} size="sm" className="mt-2" />
+</KpiCard>
+
+<KpiCard 
+  label="UPTIME" 
+  value="99.98%" 
+  description="Last 30 days"
+  icon={<Clock size={16} />}
+>
+  <Progress value={99.98} size="sm" variant="gradient" className="mt-2" />
+</KpiCard>`}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+          <KpiCard 
+            label="STORAGE USED" 
+            value="7.2 GB" 
+            description="72% of 10 GB"
+            icon={<Shield style={{ width: 16, height: 16 }} />}
+          >
+            <Progress value={72} size="sm" className="mt-2" />
+          </KpiCard>
+          <KpiCard 
+            label="API CALLS" 
+            value="12,847" 
+            trend={{ value: "+5.2% from last week", direction: "up" }}
+            icon={<Lightning style={{ width: 16, height: 16 }} />}
+          >
+            <Progress value={48} size="sm" className="mt-2" />
+          </KpiCard>
+          <KpiCard 
+            label="UPTIME" 
+            value="99.98%" 
+            description="Last 30 days"
+            icon={<Clock style={{ width: 16, height: 16 }} />}
+          >
+            <Progress value={99.98} size="sm" variant="gradient" className="mt-2" />
+          </KpiCard>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Clickable Cards ──────────────────────────────────── */}
+      <PlaygroundSection
+        title="Clickable Cards"
+        description="Add onClick handler for interactive cards. Cursor changes to pointer automatically."
+        code={`<KpiCard 
+  label="VIEW DETAILS" 
+  value="Click me" 
+  description="Opens detail panel"
+  onClick={() => handleClick()}
+  icon={<Link size={16} />} 
+/>`}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+          <KpiCard 
+            label="VIEW DETAILS" 
+            value="Click me" 
+            description="Opens detail panel"
+            onClick={() => alert('Card clicked!')}
+            icon={<Link style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="SELECTED METRIC" 
+            value="Active" 
+            description="Currently viewing"
+            selected
+            onClick={() => alert('Selected card clicked!')}
+            icon={<Link style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="ACCENT METRIC" 
+            value="Highlighted" 
+            description="Important value"
+            accent
+            onClick={() => alert('Accent card clicked!')}
+            icon={<Link style={{ width: 16, height: 16 }} />} 
+          />
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── SOC Dashboard ────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Security Operations Center"
+        description="Real-world SOC dashboard combining descriptions, trends, and progress indicators."
+        code={`<KpiCard 
+  label="OPEN INCIDENTS" 
+  value="7" 
+  trend={{ value: "-2 from yesterday", direction: "down" }}
+  icon={<WarningCircle size={16} />} 
+/>
+<KpiCard 
+  label="MTTR" 
+  value="4.2h" 
+  trend={{ value: "-18% improvement", direction: "up" }}
+  icon={<Clock size={16} />} 
+/>
+<KpiCard 
+  label="BLOCKED THREATS" 
+  value="1,247" 
+  trend={{ value: "+156 today", direction: "up" }}
+  icon={<Shield size={16} />} 
+/>
+<KpiCard 
+  label="COMPLIANCE" 
+  value="94%" 
+  description="SOC 2 Type II"
+  icon={<TrendUp size={16} />}
+>
+  <Progress value={94} size="sm" variant="gradient" className="mt-2" />
+</KpiCard>`}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+          <KpiCard 
+            label="OPEN INCIDENTS" 
+            value="7" 
+            trend={{ value: "-2 from yesterday", direction: "down" }}
+            icon={<WarningCircle style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="MTTR" 
+            value="4.2h" 
+            trend={{ value: "-18% improvement", direction: "up" }}
+            icon={<Clock style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="BLOCKED THREATS" 
+            value="1,247" 
+            trend={{ value: "+156 today", direction: "up" }}
+            icon={<Shield style={{ width: 16, height: 16 }} />} 
+          />
+          <KpiCard 
+            label="COMPLIANCE" 
+            value="94%" 
+            description="SOC 2 Type II"
+            icon={<TrendUp style={{ width: 16, height: 16 }} />}
+          >
+            <Progress value={94} size="sm" variant="gradient" className="mt-2" />
           </KpiCard>
         </div>
       </PlaygroundSection>

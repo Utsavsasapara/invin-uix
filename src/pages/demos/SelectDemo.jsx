@@ -1,16 +1,18 @@
+import { useState, useEffect } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup, SelectLabel, SelectSeparator } from 'invin-uix/ui/select';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup, SelectLabel, SelectSeparator, SelectEmpty } from 'invin-uix/ui/select';
 import { Label } from 'invin-uix/ui/label';
 import { Button } from 'invin-uix/ui/button';
 import { Input } from 'invin-uix/ui/input';
 import { Card, CardContent } from 'invin-uix/ui/card';
 import { Separator } from 'invin-uix/ui/separator';
+import { MagnifyingGlass } from 'invin-uix/ui/icons';
 
 export default function SelectDemo() {
   return (
     <ComponentPage
       name="Select"
-      description="Dropdown select built on Radix UI. Full keyboard navigation, portal rendering, grouped options, size variants matching Input/Button, and built-in error handling."
+      description="Dropdown select built on Radix UI. Full keyboard navigation, portal rendering, grouped options, size variants, and error/success validation states with proper accessibility."
       importCode={`import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from 'invin-uix/ui/select';
 // Optional: SelectGroup, SelectLabel, SelectSeparator`}
     >
@@ -32,13 +34,20 @@ export default function SelectDemo() {
             ],
           },
           { name: 'disabled', type: 'boolean', label: 'Disabled', default: false },
+          { name: 'loading', type: 'boolean', label: 'Loading', default: false },
           { name: 'hasError', type: 'boolean', label: 'Show Error', default: false },
+          { name: 'hasSuccess', type: 'boolean', label: 'Show Success', default: false },
         ]}
       >
         {(props) => (
           <div className="w-64">
-            <Select disabled={props.disabled}>
-              <SelectTrigger size={props.size} error={props.hasError ? "Please select an option" : undefined}>
+            <Select disabled={props.disabled || props.loading}>
+              <SelectTrigger 
+                size={props.size} 
+                loading={props.loading}
+                error={props.hasError ? "Please select an option" : undefined}
+                success={!props.hasError && props.hasSuccess ? "Great choice!" : undefined}
+              >
                 <SelectValue placeholder="Select a fruit" />
               </SelectTrigger>
               <SelectContent>
@@ -61,7 +70,10 @@ export default function SelectDemo() {
         <PropsTable
           props={[
             { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Height — sm (28px), md (38px), lg (44px). Matches Input/Button.' },
-            { name: 'error', type: 'string', default: '—', description: 'Error message — renders below trigger and sets aria-invalid' },
+            { name: 'error', type: 'string', default: '—', description: 'Error message — red border, message below, auto aria-invalid + aria-describedby' },
+            { name: 'success', type: 'string', default: '—', description: 'Success message — green border, message below (error takes precedence)' },
+            { name: 'loading', type: 'boolean', default: 'false', description: 'Show loading spinner while fetching options' },
+            { name: 'loadingText', type: 'string', default: "'Loading...'", description: 'Text shown while loading' },
             { name: 'placeholder', type: '—', default: '—', description: 'Use <SelectValue placeholder="..." /> inside trigger' },
             { name: 'disabled', type: 'boolean', default: 'false', description: 'Set on <Select disabled> root' },
           ]}
@@ -220,10 +232,99 @@ export default function SelectDemo() {
         </div>
       </PlaygroundSection>
 
+      {/* ─── Loading State ──────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Loading state"
+        description="Show a spinner while fetching options from an API. The select is disabled during loading."
+        code={`<Select disabled={loading}>
+  <SelectTrigger loading={loading} loadingText="Loading users...">
+    <SelectValue placeholder="Select user" />
+  </SelectTrigger>
+  <SelectContent>
+    {users.map(user => (
+      <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>
+    ))}
+  </SelectContent>
+</Select>`}
+      >
+        <div className="space-y-4 w-full max-w-xs">
+          <div className="space-y-1.5">
+            <Label>Loading state</Label>
+            <Select disabled>
+              <SelectTrigger loading loadingText="Loading users...">
+                <SelectValue placeholder="Select user" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="a">User A</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Custom loading text</Label>
+            <Select disabled>
+              <SelectTrigger loading loadingText="Fetching countries...">
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="a">Country A</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Empty State ────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Empty state"
+        description="Show a message when no options are available. Use SelectEmpty inside SelectContent."
+        code={`<Select>
+  <SelectTrigger>
+    <SelectValue placeholder="Select user" />
+  </SelectTrigger>
+  <SelectContent>
+    {users.length > 0 ? (
+      users.map(user => <SelectItem key={user.id} value={user.id}>{user.name}</SelectItem>)
+    ) : (
+      <SelectEmpty>No users found</SelectEmpty>
+    )}
+  </SelectContent>
+</Select>
+
+// With icon
+<SelectEmpty icon={<SearchIcon />}>No matching results</SelectEmpty>`}
+      >
+        <div className="space-y-4 w-full max-w-xs">
+          <div className="space-y-1.5">
+            <Label>Empty list</Label>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select user" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectEmpty>No users found</SelectEmpty>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>With icon</Label>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Search results" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectEmpty icon={<MagnifyingGlass style={{ width: 24, height: 24 }} />}>
+                  No matching results
+                </SelectEmpty>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </PlaygroundSection>
+
       {/* ─── Error State ────────────────────────────────────────── */}
       <PlaygroundSection
         title="Error state"
-        description="Pass error='message' to SelectTrigger. Renders red border + error text below."
+        description="Pass error='message' to SelectTrigger. Shows red border + error text. aria-invalid and aria-describedby set automatically."
         code={`<Select>
   <SelectTrigger error="Please select a country.">
     <SelectValue placeholder="Choose country" />
@@ -239,6 +340,35 @@ export default function SelectDemo() {
           <Select>
             <SelectTrigger error="Please select a country.">
               <SelectValue placeholder="Choose country" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="us">United States</SelectItem>
+              <SelectItem value="uk">United Kingdom</SelectItem>
+              <SelectItem value="in">India</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Success State ──────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Success state"
+        description="Pass success='message' to SelectTrigger. Shows green border + success text. Great for showing validation passed."
+        code={`<Select defaultValue="us">
+  <SelectTrigger success="Great choice!">
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="us">United States</SelectItem>
+    <SelectItem value="uk">United Kingdom</SelectItem>
+  </SelectContent>
+</Select>`}
+      >
+        <div className="space-y-1.5 w-full max-w-xs">
+          <Label>Country</Label>
+          <Select defaultValue="us">
+            <SelectTrigger success="Great choice!">
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="us">United States</SelectItem>

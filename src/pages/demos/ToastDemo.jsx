@@ -1,7 +1,73 @@
-import { ComponentPage, PlaygroundSection, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
-import { Toaster, toast } from 'invin-uix/ui/toast';
+import { ComponentPage, PlaygroundSection, InteractiveDemo, PropsTable } from '../../components/PlaygroundSection.jsx';
+import { Toaster, toast, useToast } from 'invin-uix/ui/toast';
 import { Button } from 'invin-uix/ui/button';
 import { Separator } from 'invin-uix/ui/separator';
+import { useState } from 'react';
+
+// Demo component for action buttons
+function ActionToastDemo() {
+  const handleUndo = () => {
+    toast({ title: 'Undo successful', variant: 'success', duration: 2000 });
+  };
+  
+  return (
+    <Button 
+      variant="outline" 
+      onClick={() => toast({ 
+        title: 'File deleted', 
+        description: 'document.pdf has been moved to trash.',
+        variant: 'destructive',
+        duration: 6000,
+        action: (
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={handleUndo}
+            style={{ marginLeft: '8px', backgroundColor: 'rgba(255,255,255,0.2)' }}
+          >
+            Undo
+          </Button>
+        )
+      })}
+    >
+      Delete with Undo
+    </Button>
+  );
+}
+
+// Demo component for programmatic dismiss
+function ProgrammaticDismissDemo() {
+  const [toastId, setToastId] = useState(null);
+  
+  const showPersistent = () => {
+    const { id, dismiss } = toast({ 
+      title: 'Processing...', 
+      description: 'This toast stays until dismissed.',
+      duration: 0, // infinite
+      variant: 'info'
+    });
+    setToastId({ id, dismiss });
+  };
+  
+  const dismissToast = () => {
+    if (toastId) {
+      toastId.dismiss();
+      setToastId(null);
+      toast({ title: 'Toast dismissed', variant: 'success', duration: 2000 });
+    }
+  };
+  
+  return (
+    <div className="flex gap-2">
+      <Button variant="outline" onClick={showPersistent} disabled={!!toastId}>
+        Show Persistent Toast
+      </Button>
+      <Button variant="outline" onClick={dismissToast} disabled={!toastId}>
+        Dismiss Programmatically
+      </Button>
+    </div>
+  );
+}
 
 export default function ToastDemo() {
   return (
@@ -96,6 +162,137 @@ toast({ title: 'Long', duration: 8000 });`}
           <Button variant="outline" size="sm" onClick={() => toast({ title: 'Long toast', description: 'Stays for 8s', duration: 8000 })}>8s</Button>
         </div>
       </PlaygroundSection>
+
+      <PlaygroundSection
+        title="With Action Button"
+        description="Add an action button for undo, retry, or other quick actions."
+        code={`toast({
+  title: 'File deleted',
+  description: 'document.pdf has been moved to trash.',
+  variant: 'destructive',
+  duration: 6000,
+  action: <Button size="sm" onClick={handleUndo}>Undo</Button>
+});`}
+      >
+        <ActionToastDemo />
+      </PlaygroundSection>
+
+      <PlaygroundSection
+        title="Programmatic Dismiss"
+        description="Use toast() return value to dismiss programmatically. Set duration: 0 for persistent toasts."
+        code={`const { id, dismiss } = toast({ 
+  title: 'Processing...', 
+  duration: 0  // infinite
+});
+
+// Later...
+dismiss();  // or use id with useToast().dismiss(id)`}
+      >
+        <ProgrammaticDismissDemo />
+      </PlaygroundSection>
+
+      <Separator variant="bold" />
+
+      {/* ─── Use Cases ──────────────────────────────────────────── */}
+      <div className="space-y-3">
+        <h3 className="text-[var(--foreground)] font-[700]">Real-world use cases</h3>
+        <p className="text-[var(--foreground)] text-[var(--muted-foreground)]">Common patterns for production apps.</p>
+      </div>
+
+      <PlaygroundSection
+        title="Form submission feedback"
+        description="Success/error toasts after form submit."
+        code={`// On success
+toast({ title: 'Profile updated', variant: 'success' });
+
+// On error
+toast({ 
+  title: 'Failed to save', 
+  description: 'Please try again.',
+  variant: 'destructive' 
+});`}
+      >
+        <div className="flex gap-2">
+          <Button variant="default" size="sm" onClick={() => toast({ title: 'Profile updated', description: 'Your changes have been saved.', variant: 'success' })}>
+            Save Profile ✓
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Failed to save', description: 'Network error. Please try again.', variant: 'destructive' })}>
+            Save (Error)
+          </Button>
+        </div>
+      </PlaygroundSection>
+
+      <PlaygroundSection
+        title="Copy to clipboard"
+        description="Quick feedback after copying."
+        code={`navigator.clipboard.writeText(text);
+toast({ title: 'Copied!', variant: 'success', duration: 2000 });`}
+      >
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => {
+            navigator.clipboard.writeText('https://example.com/share/abc123');
+            toast({ title: 'Link copied!', description: 'Share link copied to clipboard.', variant: 'success', duration: 2000 });
+          }}
+        >
+          Copy Share Link
+        </Button>
+      </PlaygroundSection>
+
+      <PlaygroundSection
+        title="Background task notification"
+        description="Notify when async operations complete."
+        code={`// Start task
+toast({ title: 'Exporting...', variant: 'info' });
+
+// When done
+toast({ title: 'Export complete', description: 'Download ready.', variant: 'success' });`}
+      >
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => {
+            toast({ title: 'Exporting report...', description: 'This may take a moment.', variant: 'info', duration: 2000 });
+            setTimeout(() => {
+              toast({ title: 'Export complete', description: 'Your report is ready for download.', variant: 'success' });
+            }, 2500);
+          }}
+        >
+          Export Report
+        </Button>
+      </PlaygroundSection>
+
+      <Separator variant="bold" />
+
+      <PropsTable
+        props={[
+          { name: 'title', type: 'string', default: '—', description: 'Toast title (required)' },
+          { name: 'description', type: 'string', default: '—', description: 'Additional description text' },
+          { name: 'variant', type: "'default' | 'success' | 'destructive' | 'warning' | 'info'", default: "'default'", description: 'Visual style/color' },
+          { name: 'duration', type: 'number', default: '4000', description: 'Auto-dismiss time in ms (0 = persistent)' },
+          { name: 'action', type: 'ReactNode', default: '—', description: 'Action button or content' },
+        ]}
+      />
+
+      <div className="mt-4">
+        <h4 className="text-[var(--foreground)] font-[600] text-sm mb-2">Toaster Props</h4>
+        <PropsTable
+          props={[
+            { name: 'position', type: "'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center'", default: "'bottom-right'", description: 'Position of toast stack' },
+          ]}
+        />
+      </div>
+
+      <div className="mt-4">
+        <h4 className="text-[var(--foreground)] font-[600] text-sm mb-2">toast() Return Value</h4>
+        <PropsTable
+          props={[
+            { name: 'id', type: 'string', default: '—', description: 'Unique toast identifier' },
+            { name: 'dismiss', type: '() => void', default: '—', description: 'Function to dismiss this toast' },
+          ]}
+        />
+      </div>
     </ComponentPage>
   );
 }

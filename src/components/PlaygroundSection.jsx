@@ -199,7 +199,7 @@ export function PlaygroundSection({
         )}
       </div>
 
-      <Card className="overflow-hidden">
+      <Card className="overflow-visible">
         {/* Tabs Header */}
         {code && (
           <div className="px-4 py-2 border-b border-[var(--border)] flex items-center justify-between">
@@ -244,7 +244,7 @@ export function PlaygroundSection({
         {/* Content */}
         {code ? (
           activeView === 'preview' ? (
-            <CardContent className="pt-5 pb-5">
+            <CardContent className="pt-5 pb-5 overflow-visible">
               {children}
             </CardContent>
           ) : (
@@ -269,7 +269,7 @@ export function PlaygroundSection({
           )
         ) : (
           /* No code provided - just show children */
-          <CardContent className="pt-5 pb-5">
+          <CardContent className="pt-5 pb-5 overflow-visible">
             {children}
           </CardContent>
         )}
@@ -483,10 +483,10 @@ export function InteractiveDemo({
       </div>
 
       {/* Main playground container */}
-      <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--card)]">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--card)] overflow-visible">
         
         {/* Preview Panel */}
-        <div className="relative overflow-hidden rounded-t-[var(--radius-lg)]">
+        <div className="relative overflow-visible rounded-t-[var(--radius-lg)]">
           {/* Header */}
           <div className="px-4 py-2.5 border-b border-[var(--border)] bg-[var(--secondary)]/30 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -505,7 +505,7 @@ export function InteractiveDemo({
           
           {/* Preview content with pattern background */}
           <div 
-            className="relative min-h-[200px] flex items-center justify-center p-8"
+            className="relative min-h-[200px] flex items-center justify-center p-8 overflow-visible"
             style={{
               backgroundImage: `
                 radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0)
@@ -517,7 +517,7 @@ export function InteractiveDemo({
             <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/[0.02] via-transparent to-[var(--accent)]/[0.02]" />
             
             {/* Component render */}
-            <div className="relative z-10" key={JSON.stringify(props)}>
+            <div className="relative z-10 w-full flex items-center justify-center overflow-visible" key={JSON.stringify(props)}>
               {typeof children === 'function' ? children(props) : children}
             </div>
           </div>

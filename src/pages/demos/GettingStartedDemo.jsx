@@ -86,7 +86,7 @@ cd my-app`} />
 
         <Step num="2" title="Install dependencies">
           <CodeBlock code={`npm install invin-uix
-npm install -D tailwindcss @tailwindcss/vite`} />
+npm install tailwindcss @tailwindcss/vite`} />
         </Step>
 
         <Step num="3" title="Configure Vite">

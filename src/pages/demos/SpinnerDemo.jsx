@@ -44,10 +44,11 @@ export default function SpinnerDemo() {
             options: [
               { value: 'sm', label: 'Small (16px)' },
               { value: 'md', label: 'Medium (24px)' },
-              { value: 'lg', label: 'Large (40px)' },
+              { value: 'lg', label: 'Large (32px)' },
             ],
           },
           { name: 'tip', type: 'text', label: 'Tip Text', default: 'Loading...', placeholder: 'Enter tip text' },
+          { name: 'color', type: 'text', label: 'Color', default: '', placeholder: 'e.g., red, #3b82f6' },
         ]}
       >
         {(props) => (
@@ -55,6 +56,7 @@ export default function SpinnerDemo() {
             variant={props.variant}
             size={props.size}
             tip={props.tip || undefined}
+            color={props.color || undefined}
           />
         )}
       </InteractiveDemo>
@@ -65,12 +67,13 @@ export default function SpinnerDemo() {
       <PropsTable
         props={[
           { name: 'spinning', type: 'boolean', default: 'true', description: 'Controls visibility (useful for toggling)' },
-          { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Spinner dimensions (16px / 24px / 40px)' },
+          { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Spinner dimensions (16px / 24px / 32px)' },
           { name: 'variant', type: "'default' | 'dots' | 'ring' | 'bars'", default: "'default'", description: 'Animation style' },
           { name: 'tip', type: 'ReactNode', default: '—', description: 'Text shown below the spinner' },
           { name: 'delay', type: 'number (ms)', default: '0', description: 'Delay before showing — prevents flash for fast loads' },
           { name: 'indicator', type: 'ReactNode', default: '—', description: 'Custom spinner element (overrides variant)' },
           { name: 'fullscreen', type: 'boolean', default: 'false', description: 'Fixed overlay covering the entire viewport' },
+          { name: 'color', type: 'string', default: '—', description: 'Custom spinner color (CSS value)' },
           { name: 'children', type: 'ReactNode', default: '—', description: 'Content to wrap with loading overlay' },
         ]}
       />
@@ -91,6 +94,23 @@ export default function SpinnerDemo() {
           <Spinner variant="dots" tip="Dots" />
           <Spinner variant="ring" tip="Ring" />
           <Spinner variant="bars" tip="Bars" />
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Custom Color ───────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Custom Color"
+        description="Override the default accent color with any CSS color value."
+        code={`<Spinner color="red" tip="Red" />
+<Spinner color="#3b82f6" tip="Blue" />
+<Spinner color="green" tip="Green" />
+<Spinner color="var(--warning)" tip="Warning" />`}
+      >
+        <div className="flex flex-wrap items-start gap-8">
+          <Spinner color="red" tip="Red" />
+          <Spinner color="#3b82f6" tip="Blue" />
+          <Spinner color="green" tip="Green" />
+          <Spinner color="var(--warning)" tip="Warning" />
         </div>
       </PlaygroundSection>
 

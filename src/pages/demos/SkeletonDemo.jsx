@@ -28,6 +28,7 @@ export default function SkeletonDemo() {
             ],
           },
           { name: 'lines', type: 'number', label: 'Lines', default: 1, min: 1, max: 5 },
+          { name: 'animated', type: 'boolean', label: 'Animated', default: true },
           { name: 'width', type: 'number', label: 'Width (px)', default: 200, min: 50, max: 400 },
           { name: 'height', type: 'number', label: 'Height (px)', default: 40, min: 20, max: 200 },
         ]}
@@ -35,13 +36,13 @@ export default function SkeletonDemo() {
         {(props) => (
           <div className="flex items-center justify-center">
             {props.lines > 1 ? (
-              <Skeleton lines={props.lines} className={`w-[${props.width}px]`} style={{ width: props.width }} />
+              <Skeleton lines={props.lines} animated={props.animated} className={`w-[${props.width}px]`} style={{ width: props.width }} />
             ) : props.variant === 'circle' ? (
-              <Skeleton variant="circle" style={{ width: props.height, height: props.height }} />
+              <Skeleton variant="circle" animated={props.animated} style={{ width: props.height, height: props.height }} />
             ) : props.variant === 'text' ? (
-              <Skeleton variant="text" style={{ width: props.width }} />
+              <Skeleton variant="text" animated={props.animated} style={{ width: props.width }} />
             ) : (
-              <Skeleton style={{ width: props.width, height: props.height }} />
+              <Skeleton animated={props.animated} style={{ width: props.width, height: props.height }} />
             )}
           </div>
         )}
@@ -54,6 +55,7 @@ export default function SkeletonDemo() {
         props={[
           { name: 'variant', type: "'default' | 'circle' | 'text'", default: "'default'", description: 'Shape — default (rounded-md), circle (rounded-full), text (full-width line)' },
           { name: 'lines', type: 'number', default: '—', description: 'Render a multi-line text paragraph (last line shorter). Implies the text look.' },
+          { name: 'animated', type: 'boolean', default: 'true', description: 'Enable/disable pulse animation (for reduced motion or static placeholders)' },
           { name: 'className', type: 'string', default: '—', description: 'Width and height via Tailwind classes (h-10, w-40, etc.)' },
         ]}
       />
@@ -129,6 +131,32 @@ export default function SkeletonDemo() {
           <Skeleton variant="circle" className="h-8 w-8" />
           <Skeleton variant="circle" className="h-12 w-12" />
           <Skeleton variant="circle" className="h-16 w-16" />
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Disable Animation ──────────────────────────────────── */}
+      <PlaygroundSection
+        title="Disable Animation"
+        description="Set animated={false} for static placeholders or to respect prefers-reduced-motion."
+        code={`// Static skeleton without pulse
+<Skeleton animated={false} className="h-8 w-full" />
+
+// With animation (default)
+<Skeleton animated={true} className="h-8 w-full" />`}
+      >
+        <div className="space-y-4 w-full max-w-md">
+          <div className="space-y-1">
+            <p className="text-[10px] text-[var(--muted-foreground-faint)] uppercase tracking-[0.05em]">animated=false (static)</p>
+            <Skeleton animated={false} className="h-8 w-full" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-[10px] text-[var(--muted-foreground-faint)] uppercase tracking-[0.05em]">animated=true (default)</p>
+            <Skeleton animated={true} className="h-8 w-full" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-[10px] text-[var(--muted-foreground-faint)] uppercase tracking-[0.05em]">Multi-line without animation</p>
+            <Skeleton lines={3} animated={false} />
+          </div>
         </div>
       </PlaygroundSection>
 

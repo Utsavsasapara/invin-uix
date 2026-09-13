@@ -208,6 +208,49 @@ export default function FormDemo() {
         </Form>
       </PlaygroundSection>
 
+      {/* ─── Loading State ──────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Loading State"
+        description="Use the loading prop on Form to disable all fields and show a loading indicator during submission."
+        code={`const [isLoading, setIsLoading] = useState(false);
+
+<Form loading={isLoading} onSubmit={handleSubmit}>
+  <FormField name="email" label="Email">
+    <Input type="email" />
+  </FormField>
+  <Button type="submit">Submit</Button>
+</Form>`}
+      >
+        <div className="flex gap-6">
+          <Card className="max-w-xs flex-1">
+            <CardContent className="pt-4">
+              <p className="text-xs text-[var(--muted-foreground)] mb-3">Normal</p>
+              <Form>
+                <FormField name="email" label="Email">
+                  <Input type="email" placeholder="you@example.com" />
+                </FormField>
+                <FormActions>
+                  <Button size="sm">Submit</Button>
+                </FormActions>
+              </Form>
+            </CardContent>
+          </Card>
+          <Card className="max-w-xs flex-1">
+            <CardContent className="pt-4">
+              <p className="text-xs text-[var(--muted-foreground)] mb-3">Loading (disabled + faded)</p>
+              <Form loading>
+                <FormField name="email" label="Email">
+                  <Input type="email" placeholder="you@example.com" defaultValue="test@example.com" />
+                </FormField>
+                <FormActions>
+                  <Button size="sm" loading>Submit</Button>
+                </FormActions>
+              </Form>
+            </CardContent>
+          </Card>
+        </div>
+      </PlaygroundSection>
+
       {/* ─── FormActions ────────────────────────────────────────── */}
       <PlaygroundSection
         title="FormActions"
@@ -239,6 +282,50 @@ export default function FormDemo() {
                 <Button variant="ghost" size="sm">Reset to Defaults</Button>
                 <Button size="sm">Submit</Button>
               </FormActions>
+            </CardContent>
+          </Card>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Error Prop Usage ─────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Error Prop Usage"
+        description="When using FormField, pass error to FormField only — not to the child component. This avoids duplicate error messages."
+        code={`{/* ✅ CORRECT - error goes to FormField */}
+<FormField name="email" label="Email" error={errors.email}>
+  <Input type="email" />
+</FormField>
+
+{/* ❌ WRONG - duplicate error messages! */}
+<FormField name="email" label="Email" error={errors.email}>
+  <Input type="email" error={errors.email} />
+</FormField>
+
+{/* ✅ Standalone usage (without FormField) */}
+<Label>Email</Label>
+<Input type="email" error={errors.email} />`}
+      >
+        <div className="grid grid-cols-2 gap-6">
+          <Card>
+            <CardContent className="pt-4">
+              <Badge variant="success" className="mb-3">✓ Correct</Badge>
+              <Form>
+                <FormField name="email" label="Email" error="Invalid email address">
+                  <Input type="email" placeholder="you@example.com" />
+                </FormField>
+              </Form>
+              <p className="text-xs text-[var(--muted-foreground)] mt-2">Error passed to FormField only</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-4">
+              <Badge variant="destructive" className="mb-3">✗ Wrong</Badge>
+              <Form>
+                <FormField name="email2" label="Email" error="Invalid email address">
+                  <Input type="email" placeholder="you@example.com" error="Invalid email address" />
+                </FormField>
+              </Form>
+              <p className="text-xs text-[var(--muted-foreground)] mt-2">Error passed to both — duplicate!</p>
             </CardContent>
           </Card>
         </div>

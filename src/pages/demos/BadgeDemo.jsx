@@ -1,16 +1,27 @@
+import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
 import { Badge, NotificationBadge, StatusBadge } from 'invin-uix/ui/badge';
 import { Button } from 'invin-uix/ui/button';
 import { Card, CardContent } from 'invin-uix/ui/card';
 import { Separator } from 'invin-uix/ui/separator';
 import { Avatar, AvatarImage, AvatarFallback } from 'invin-uix/ui/avatar';
-import { Bell, Envelope, Star, Check, Lightning, User, Shield, Clock, Pulse } from 'invin-uix/ui/icons';
+import { Bell, Envelope, Star, Check, Lightning, User, Shield, Clock, Pulse, ArrowRight, Tag, X } from 'invin-uix/ui/icons';
 
 export default function BadgeDemo() {
+  const [tags, setTags] = useState(['React', 'TypeScript', 'Tailwind', 'Radix']);
+
+  const removeTag = (tagToRemove) => {
+    setTags(tags.filter(t => t !== tagToRemove));
+  };
+
+  const resetTags = () => {
+    setTags(['React', 'TypeScript', 'Tailwind', 'Radix']);
+  };
+
   return (
     <ComponentPage
       name="Badge"
-      description="Three focused components: Badge (inline label pill), NotificationBadge (count/dot on an element), and StatusBadge (status dot + text). Badge also accepts count/dot/status for back-compat and delegates automatically."
+      description="Three focused components: Badge (inline label pill with icons and removable support), NotificationBadge (count/dot on an element), and StatusBadge (status dot + text). All support pulse animation."
       importCode={`import { Badge, NotificationBadge, StatusBadge } from 'invin-uix/ui/badge';`}
     >
 
@@ -45,11 +56,23 @@ export default function BadgeDemo() {
               { value: 'lg', label: 'Large' },
             ]
           },
+          { name: 'showLeftIcon', label: 'Left Icon', type: 'boolean', default: false },
+          { name: 'showRightIcon', label: 'Right Icon', type: 'boolean', default: false },
+          { name: 'removable', label: 'Removable', type: 'boolean', default: false },
+          { name: 'pulse', label: 'Pulse', type: 'boolean', default: false },
           { name: 'text', label: 'Text', type: 'text', default: 'Badge' },
         ]}
       >
         {(props) => (
-          <Badge variant={props.variant} size={props.size}>
+          <Badge 
+            variant={props.variant} 
+            size={props.size}
+            iconLeft={props.showLeftIcon ? <Star style={{ width: 12, height: 12 }} /> : undefined}
+            iconRight={props.showRightIcon ? <ArrowRight style={{ width: 12, height: 12 }} /> : undefined}
+            removable={props.removable}
+            onRemove={() => alert('Remove clicked!')}
+            pulse={props.pulse}
+          >
             {props.text}
           </Badge>
         )}
@@ -64,6 +87,11 @@ export default function BadgeDemo() {
           props={[
             { name: 'variant', type: "'default' | 'secondary' | 'destructive' | 'success' | 'warning' | 'info' | 'outline'", default: "'default'", description: 'Colour variant' },
             { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'sm (11px, tight), md (12px), lg (12px, roomy)' },
+            { name: 'iconLeft', type: 'ReactNode', default: '—', description: 'Icon on the left side' },
+            { name: 'iconRight', type: 'ReactNode', default: '—', description: 'Icon on the right side' },
+            { name: 'removable', type: 'boolean', default: 'false', description: 'Show close button' },
+            { name: 'onRemove', type: '() => void', default: '—', description: 'Callback when close clicked' },
+            { name: 'pulse', type: 'boolean', default: 'false', description: 'Apply pulse animation' },
             { name: 'children', type: 'ReactNode', default: '—', description: 'Label text' },
           ]}
         />
@@ -79,6 +107,7 @@ export default function BadgeDemo() {
             { name: 'size', type: "'sm' | 'md'", default: "'md'", description: 'Bubble size — 14px / 18px' },
             { name: 'color', type: 'string', default: '—', description: 'Custom bubble/dot colour' },
             { name: 'offset', type: '[right, top]', default: '—', description: 'Pixel offset for the bubble/dot' },
+            { name: 'pulse', type: 'boolean', default: 'false', description: 'Apply pulse animation' },
             { name: 'children', type: 'ReactNode', default: '—', description: 'Element to badge' },
           ]}
         />
@@ -99,7 +128,7 @@ export default function BadgeDemo() {
       {/* ─── Label Variants ─────────────────────────────────────── */}
       <PlaygroundSection
         title="Label Variants"
-        description="Inline badge labels for status tags, categories, and metadata. Default uses the accent colour."
+        description="Seven colour variants for status tags, categories, and metadata."
         code={`<Badge variant="default">Default</Badge>
 <Badge variant="secondary">Secondary</Badge>
 <Badge variant="destructive">Critical</Badge>
@@ -116,6 +145,84 @@ export default function BadgeDemo() {
           <Badge variant="warning">Pending</Badge>
           <Badge variant="info">Info</Badge>
           <Badge variant="outline">Draft</Badge>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── With Icons ─────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="With Icons"
+        description="Add icons to the left, right, or both sides of the badge."
+        code={`<Badge iconLeft={<Star />}>Featured</Badge>
+<Badge iconRight={<ArrowRight />}>Next</Badge>
+<Badge iconLeft={<Check />} iconRight={<ArrowRight />} variant="success">
+  Completed
+</Badge>`}
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          <Badge iconLeft={<Star style={{ width: 12, height: 12 }} />}>Featured</Badge>
+          <Badge iconRight={<ArrowRight style={{ width: 12, height: 12 }} />} variant="secondary">Next</Badge>
+          <Badge iconLeft={<Check style={{ width: 12, height: 12 }} />} variant="success">Verified</Badge>
+          <Badge iconLeft={<Shield style={{ width: 12, height: 12 }} />} variant="info">Secure</Badge>
+          <Badge iconLeft={<Lightning style={{ width: 12, height: 12 }} />} iconRight={<ArrowRight style={{ width: 12, height: 12 }} />} variant="warning">
+            Upgrade
+          </Badge>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Removable Badges ───────────────────────────────────── */}
+      <PlaygroundSection
+        title="Removable Badges"
+        description="Show a close button to dismiss badges. Great for tag-like usage. Click to remove."
+        code={`const [tags, setTags] = useState(['React', 'TypeScript', 'Tailwind']);
+
+{tags.map(tag => (
+  <Badge 
+    key={tag} 
+    removable 
+    onRemove={() => setTags(tags.filter(t => t !== tag))}
+  >
+    {tag}
+  </Badge>
+))}`}
+      >
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            {tags.map(tag => (
+              <Badge 
+                key={tag} 
+                variant="secondary"
+                iconLeft={<Tag style={{ width: 12, height: 12 }} />}
+                removable 
+                onRemove={() => removeTag(tag)}
+              >
+                {tag}
+              </Badge>
+            ))}
+            {tags.length === 0 && (
+              <span className="text-[var(--muted-foreground)] text-sm">All tags removed</span>
+            )}
+          </div>
+          {tags.length < 4 && (
+            <Button size="sm" variant="outline" onClick={resetTags}>Reset Tags</Button>
+          )}
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Pulse Animation ────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Pulse Animation"
+        description="Apply pulse animation to draw attention to important badges."
+        code={`<Badge variant="success" pulse>Live</Badge>
+<Badge variant="destructive" pulse>Alert</Badge>
+<Badge variant="info" pulse>New</Badge>`}
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          <Badge variant="success" pulse>Live</Badge>
+          <Badge variant="destructive" pulse>Alert</Badge>
+          <Badge variant="info" pulse>New</Badge>
+          <Badge variant="warning" pulse iconLeft={<Lightning style={{ width: 12, height: 12 }} />}>
+            Urgent
+          </Badge>
         </div>
       </PlaygroundSection>
 
@@ -154,8 +261,8 @@ export default function BadgeDemo() {
   <Avatar size="md"><AvatarFallback>U</AvatarFallback></Avatar>
 </NotificationBadge>
 
-// Show when count is 0
-<NotificationBadge count={0} showZero>
+// With pulse animation
+<NotificationBadge count={3} pulse>
   <Button size="icon" variant="outline"><Bell /></Button>
 </NotificationBadge>`}
       >
@@ -169,36 +276,8 @@ export default function BadgeDemo() {
           <NotificationBadge count={120} overflowCount={99}>
             <Avatar size="md"><AvatarImage src="https://i.pravatar.cc/100?u=badge3" /><AvatarFallback>U</AvatarFallback></Avatar>
           </NotificationBadge>
-          <NotificationBadge count={0} showZero>
-            <Button size="icon" variant="outline" aria-label="Notifications"><Bell style={{ width: 16, height: 16 }} /></Button>
-          </NotificationBadge>
-        </div>
-      </PlaygroundSection>
-
-      {/* ─── Counter Size ───────────────────────────────────────── */}
-      <PlaygroundSection
-        title="Counter Size"
-        description="sm (14px bubble) vs md (18px bubble, default) for the notification counter. Both use 11px text."
-        code={`<NotificationBadge count={5} size="sm">
-  <Button size="icon-sm" variant="outline"><Bell /></Button>
-</NotificationBadge>
-
-<NotificationBadge count={5} size="md">
-  <Button size="icon" variant="outline"><Bell /></Button>
-</NotificationBadge>`}
-      >
-        <div className="flex flex-wrap items-center gap-5">
-          <NotificationBadge count={5} size="sm">
-            <Button size="icon-sm" variant="outline" aria-label="Notifications"><Bell style={{ width: 14, height: 14 }} /></Button>
-          </NotificationBadge>
-          <NotificationBadge count={5} size="md">
-            <Button size="icon" variant="outline" aria-label="Notifications"><Bell style={{ width: 16, height: 16 }} /></Button>
-          </NotificationBadge>
-          <NotificationBadge count={25} size="sm">
-            <Avatar size="sm"><AvatarFallback>A</AvatarFallback></Avatar>
-          </NotificationBadge>
-          <NotificationBadge count={25} size="md">
-            <Avatar size="sm"><AvatarFallback>B</AvatarFallback></Avatar>
+          <NotificationBadge count={3} pulse>
+            <Button size="icon" variant="outline" aria-label="Alerts"><Bell style={{ width: 16, height: 16 }} /></Button>
           </NotificationBadge>
         </div>
       </PlaygroundSection>
@@ -208,21 +287,26 @@ export default function BadgeDemo() {
       {/* ─── Dot Mode ───────────────────────────────────────────── */}
       <PlaygroundSection
         title="Dot Mode"
-        description="Minimal dot indicator without a number. Shows a 7px circle in the top-right corner."
+        description="Minimal dot indicator without a number. Shows a 7px circle in the top-right corner. Supports pulse."
         code={`<NotificationBadge dot>
   <Button size="icon" variant="outline"><Bell /></Button>
 </NotificationBadge>
 
+// With pulse
+<NotificationBadge dot pulse>
+  <Avatar><AvatarFallback>U</AvatarFallback></Avatar>
+</NotificationBadge>
+
 // Custom dot colour
 <NotificationBadge dot color="var(--ok)">
-  <Avatar size="sm"><AvatarFallback>U</AvatarFallback></Avatar>
+  <Avatar><AvatarFallback>U</AvatarFallback></Avatar>
 </NotificationBadge>`}
       >
         <div className="flex flex-wrap items-center gap-5">
           <NotificationBadge dot>
             <Button size="icon" variant="outline" aria-label="Notifications"><Bell style={{ width: 16, height: 16 }} /></Button>
           </NotificationBadge>
-          <NotificationBadge dot>
+          <NotificationBadge dot pulse>
             <Avatar size="sm"><AvatarImage src="https://i.pravatar.cc/100?u=dot1" /><AvatarFallback>U</AvatarFallback></Avatar>
           </NotificationBadge>
           <NotificationBadge dot color="var(--ok)">
@@ -234,36 +318,12 @@ export default function BadgeDemo() {
         </div>
       </PlaygroundSection>
 
-      {/* ─── Custom Colors ──────────────────────────────────────── */}
-      <PlaygroundSection
-        title="Custom Colours"
-        description="Override the default red counter/dot colour with any CSS colour value."
-        code={`<NotificationBadge count={3} color="var(--ok)">...</NotificationBadge>
-<NotificationBadge count={2} color="var(--degraded)">...</NotificationBadge>
-<NotificationBadge count={1} color="var(--accent)">...</NotificationBadge>`}
-      >
-        <div className="flex flex-wrap items-center gap-5">
-          <NotificationBadge count={8} color="var(--accent)">
-            <Button size="icon" variant="outline" aria-label="Stars"><Star style={{ width: 16, height: 16 }} /></Button>
-          </NotificationBadge>
-          <NotificationBadge count={3} color="var(--ok)">
-            <Button size="icon" variant="outline" aria-label="Done"><Check style={{ width: 16, height: 16 }} /></Button>
-          </NotificationBadge>
-          <NotificationBadge count={2} color="var(--degraded)">
-            <Button size="icon" variant="outline" aria-label="Alerts"><Lightning style={{ width: 16, height: 16 }} /></Button>
-          </NotificationBadge>
-          <NotificationBadge count={1} color="var(--accent)">
-            <Button size="icon" variant="outline" aria-label="Pulse"><Pulse style={{ width: 16, height: 16 }} /></Button>
-          </NotificationBadge>
-        </div>
-      </PlaygroundSection>
-
       <Separator />
 
       {/* ─── Status Dot Mode ────────────────────────────────────── */}
       <PlaygroundSection
         title="Status Dot (StatusBadge)"
-        description="Standalone status indicator with an animated dot and text. 'processing' pulses."
+        description="Standalone status indicator with an animated dot and text. 'processing' pulses automatically."
         code={`<StatusBadge status="success" text="Active" />
 <StatusBadge status="processing" text="Syncing..." />
 <StatusBadge status="error" text="Failed" />
@@ -289,13 +349,13 @@ export default function BadgeDemo() {
 
       <PlaygroundSection
         title="Notification header"
-        description="Topbar notification bell with unread count."
-        code={`<NotificationBadge count={3} size="sm">
+        description="Topbar notification bell with unread count and pulse for urgency."
+        code={`<NotificationBadge count={3} size="sm" pulse>
   <Button variant="ghost" size="icon-sm"><Bell /></Button>
 </NotificationBadge>`}
       >
         <div className="flex items-center gap-1 p-1 rounded-[8px] border border-[var(--border)] w-fit">
-          <NotificationBadge count={3} size="sm">
+          <NotificationBadge count={3} size="sm" pulse>
             <Button variant="ghost" size="icon-sm" aria-label="Notifications"><Bell style={{ width: 16, height: 16 }} /></Button>
           </NotificationBadge>
           <NotificationBadge count={7} size="sm" color="var(--accent)">
@@ -311,10 +371,6 @@ export default function BadgeDemo() {
         code={`// Online / away / offline via token colours
 <NotificationBadge dot color="var(--ok)">
   <Avatar size="sm"><AvatarFallback>SC</AvatarFallback></Avatar>
-</NotificationBadge>
-
-<NotificationBadge dot color="var(--degraded)">
-  <Avatar size="sm"><AvatarFallback>LP</AvatarFallback></Avatar>
 </NotificationBadge>`}
       >
         <div className="flex flex-wrap items-center gap-4">
@@ -339,8 +395,7 @@ export default function BadgeDemo() {
         description="Status dots in a data list or table row."
         code={`<StatusBadge status="success" text="Running" />
 <StatusBadge status="processing" text="Deploying..." />
-<StatusBadge status="error" text="Crashed" />
-<StatusBadge status="warning" text="Degraded" />`}
+<StatusBadge status="error" text="Crashed" />`}
       >
         <Card>
           <CardContent className="py-3">
@@ -365,17 +420,17 @@ export default function BadgeDemo() {
       </PlaygroundSection>
 
       <PlaygroundSection
-        title="Tag labels in cards"
-        description="Categorize content with badge labels."
-        code={`<Badge variant="info" size="sm">Security</Badge>
-<Badge variant="success" size="sm">Resolved</Badge>
+        title="Tag labels with icons"
+        description="Categorize content with badge labels and icons."
+        code={`<Badge variant="info" size="sm" iconLeft={<Shield />}>Security</Badge>
+<Badge variant="success" size="sm" iconLeft={<Check />}>Resolved</Badge>
 <Badge variant="outline" size="sm">v2.1</Badge>`}
       >
         <Card hover>
           <CardContent className="py-4">
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="info" size="sm">Security</Badge>
-              <Badge variant="success" size="sm">Resolved</Badge>
+              <Badge variant="info" size="sm" iconLeft={<Shield style={{ width: 10, height: 10 }} />}>Security</Badge>
+              <Badge variant="success" size="sm" iconLeft={<Check style={{ width: 10, height: 10 }} />}>Resolved</Badge>
               <Badge variant="outline" size="sm">v2.1</Badge>
             </div>
             <p className="text-[var(--foreground)] font-[600]">Fix authentication bypass vulnerability</p>
@@ -386,26 +441,31 @@ export default function BadgeDemo() {
 
       <PlaygroundSection
         title="Feature flags / permissions"
-        description="Combine variants to show feature status and access level."
-        code={`<div className="flex items-center gap-2">
-  <Shield style={{ width: 14, height: 14 }} />
-  <span>Role-Based Access</span>
-  <Badge variant="success" size="sm">Enabled</Badge>
-</div>`}
+        description="Combine variants and icons to show feature status and access level."
+        code={`<Badge variant="success" size="sm" iconLeft={<Check />}>Enabled</Badge>
+<Badge variant="warning" size="sm" pulse>Beta</Badge>
+<Badge variant="info" size="sm">Preview</Badge>`}
       >
         <Card>
           <CardContent className="py-3">
             <div className="space-y-3">
               {[
-                { icon: Shield, label: 'Role-Based Access', badge: 'success', text: 'Enabled' },
-                { icon: Pulse, label: 'Real-time Sync', badge: 'warning', text: 'Beta' },
+                { icon: Shield, label: 'Role-Based Access', badge: 'success', text: 'Enabled', iconBadge: Check },
+                { icon: Pulse, label: 'Real-time Sync', badge: 'warning', text: 'Beta', pulse: true },
                 { icon: Lightning, label: 'AI Copilot', badge: 'info', text: 'Preview' },
                 { icon: Clock, label: 'Scheduled Reports', badge: 'secondary', text: 'Disabled' },
               ].map(f => (
                 <div key={f.label} className="flex items-center gap-2">
                   <f.icon style={{ width: 14, height: 14, color: 'var(--muted-foreground)' }} />
                   <span className="text-[var(--foreground)] flex-1">{f.label}</span>
-                  <Badge variant={f.badge} size="sm">{f.text}</Badge>
+                  <Badge 
+                    variant={f.badge} 
+                    size="sm" 
+                    pulse={f.pulse}
+                    iconLeft={f.iconBadge ? <f.iconBadge style={{ width: 10, height: 10 }} /> : undefined}
+                  >
+                    {f.text}
+                  </Badge>
                 </div>
               ))}
             </div>

@@ -45,7 +45,7 @@ const TabsDemo = lazy(() => import('./demos/TabsDemo.jsx'));
 
 // Tier 3: Overlay / Floating
 const DialogDemo = lazy(() => import('./demos/DialogDemo.jsx'));
-const SheetDemo = lazy(() => import('./demos/SheetDemo.jsx'));
+const DrawerDemo = lazy(() => import('./demos/DrawerDemo.jsx'));
 const TooltipDemo = lazy(() => import('./demos/TooltipDemo.jsx'));
 const PopoverDemo = lazy(() => import('./demos/PopoverDemo.jsx'));
 const DropdownDemo = lazy(() => import('./demos/DropdownDemo.jsx'));
@@ -97,7 +97,6 @@ const NumberInputDemo = lazy(() => import('./demos/NumberInputDemo.jsx'));
 const FormDemo = lazy(() => import('./demos/FormDemo.jsx'));
 
 // Tier 8: New input components (v1.2.0)
-const ColorPickerDemo = lazy(() => import('./demos/ColorPickerDemo.jsx'));
 const SearchInputDemo = lazy(() => import('./demos/SearchInputDemo.jsx'));
 const TagInputDemo = lazy(() => import('./demos/TagInputDemo.jsx'));
 
@@ -151,7 +150,6 @@ const categories = [
       { key: 'slider', label: 'Slider', component: SliderDemo },
       { key: 'toggle', label: 'Toggle', component: ToggleDemo },
       { key: 'tag-input', label: 'Tag Input', component: TagInputDemo, badge: 'New' },
-      { key: 'color-picker', label: 'Color Picker', component: ColorPickerDemo, badge: 'New' },
     ],
   },
   {
@@ -184,7 +182,7 @@ const categories = [
     children: [
       { key: 'dialog', label: 'Dialog', component: DialogDemo },
       { key: 'alert-dialog', label: 'Alert Dialog', component: AlertDialogDemo },
-      { key: 'sheet', label: 'Drawer', component: SheetDemo },
+      { key: 'drawer', label: 'Drawer', component: DrawerDemo },
       { key: 'popover', label: 'Popover', component: PopoverDemo },
       { key: 'dropdown', label: 'Dropdown Menu', component: DropdownDemo },
       { key: 'context-menu', label: 'Context Menu', component: ContextMenuDemo },

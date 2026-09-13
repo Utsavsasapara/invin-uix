@@ -22,7 +22,7 @@ export default function ButtonDemo() {
   return (
     <ComponentPage
       name="Button"
-      description="Versatile button built with CVA (Class Variance Authority). Five variants, four sizes, pill shape, full-width, left/right icon slots, and a loading state with spinner. Pair with ButtonGroup for segmented controls."
+      description="Versatile button built with CVA (Class Variance Authority). Seven variants, four sizes, pill shape, full-width, left/right icon slots, and a loading state with spinner. Pair with ButtonGroup for segmented controls."
       importCode={`import { Button, ButtonGroup } from 'invin-uix/ui/button';`}
     >
 
@@ -43,6 +43,7 @@ export default function ButtonDemo() {
               { value: 'ghost', label: 'Ghost' },
               { value: 'destructive', label: 'Destructive' },
               { value: 'destructive-solid', label: 'Destructive Solid' },
+              { value: 'link', label: 'Link' },
             ]
           },
           {
@@ -99,7 +100,7 @@ export default function ButtonDemo() {
       {/* ─── Props Table ────────────────────────────────────────── */}
       <PropsTable
         props={[
-          { name: 'variant', type: "'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'destructive-solid'", default: "'primary'", description: 'Visual style. primary is accent fill, secondary is neutral fill, outline is bordered, ghost is transparent, destructive is subtle danger, destructive-solid is solid red fill.' },
+          { name: 'variant', type: "'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'destructive-solid' | 'link'", default: "'primary'", description: 'Visual style. primary is accent fill, secondary is neutral fill, outline is bordered, ghost is transparent, destructive is subtle danger, destructive-solid is solid red fill, link is text-link style.' },
           { name: 'size', type: "'sm' | 'md' | 'icon' | 'icon-sm'", default: "'md'", description: 'Size preset — md is default, icon/icon-sm for square icon buttons' },
           { name: 'shape', type: "'default' | 'pill'", default: "'default'", description: 'Border radius — pill gives fully rounded corners' },
           { name: 'leftIcon', type: 'ReactNode', default: '—', description: 'Icon before the label. Replaced by the spinner while loading (width stays stable).' },
@@ -118,13 +119,14 @@ export default function ButtonDemo() {
       {/* ─── All Variants ───────────────────────────────────────── */}
       <PlaygroundSection
         title="Variants"
-        description="Six visual styles. Primary is the default action, secondary for second-tier actions, outline for tertiary, ghost for toolbar/subtle. Destructive comes in two weights: subtle (default danger) and solid (a confirmed, loud danger action)."
+        description="Seven visual styles. Primary is the default action, secondary for second-tier actions, outline for tertiary, ghost for toolbar/subtle. Destructive comes in two weights: subtle (default danger) and solid (a confirmed, loud danger action). Link for text-link style buttons."
         code={`<Button>Primary</Button>
 <Button variant="secondary">Secondary</Button>
 <Button variant="outline">Outline</Button>
 <Button variant="ghost">Ghost</Button>
 <Button variant="destructive">Destructive</Button>
-<Button variant="destructive-solid">Destructive solid</Button>`}
+<Button variant="destructive-solid">Destructive solid</Button>
+<Button variant="link">Link</Button>`}
       >
         <div className="flex flex-wrap items-center gap-3">
           <Button>Primary</Button>
@@ -133,6 +135,7 @@ export default function ButtonDemo() {
           <Button variant="ghost">Ghost</Button>
           <Button variant="destructive">Destructive</Button>
           <Button variant="destructive-solid">Destructive solid</Button>
+          <Button variant="link">Link</Button>
         </div>
       </PlaygroundSection>
 

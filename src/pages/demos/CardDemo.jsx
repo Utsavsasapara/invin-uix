@@ -4,7 +4,7 @@ import { Button } from 'invin-uix/ui/button';
 import { Badge } from 'invin-uix/ui/badge';
 import { Separator } from 'invin-uix/ui/separator';
 import { Avatar, AvatarImage, AvatarFallback } from 'invin-uix/ui/avatar';
-import { ArrowUp, ArrowDown, CreditCard, Users, Pulse } from 'invin-uix/ui/icons';
+import { ArrowUp, ArrowDown, CreditCard, Users, Pulse, ArrowSquareOut } from 'invin-uix/ui/icons';
 
 export default function CardDemo() {
   return (
@@ -55,6 +55,7 @@ export default function CardDemo() {
         props={[
           { name: 'hover', type: 'boolean', default: 'false', description: 'Enables hover lift animation and border-colour transition' },
           { name: 'selected', type: 'boolean', default: 'false', description: 'Accent border + glow ring (for active/selected state)' },
+          { name: 'asChild', type: 'boolean', default: 'false', description: 'Render as child element (e.g., <a> for link cards)' },
           { name: 'className', type: 'string', default: '—', description: 'Additional Tailwind/CSS classes' },
         ]}
       />
@@ -151,6 +152,64 @@ export default function CardDemo() {
             </p>
           </CardContent>
         </Card>
+      </PlaygroundSection>
+
+      {/* ─── Link Card (asChild) ────────────────────────────────── */}
+      <PlaygroundSection
+        title="Link Card (asChild)"
+        description="Use asChild to render the card as an anchor element for navigation. The card inherits all styling while becoming a native link."
+        code={`<Card asChild hover>
+  <a href="https://example.com" target="_blank" rel="noopener noreferrer">
+    <CardContent>
+      <div className="flex items-center justify-between">
+        <span>Visit Documentation</span>
+        <ArrowSquareOut />
+      </div>
+    </CardContent>
+  </a>
+</Card>`}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+          <Card asChild hover>
+            <a href="https://example.com" target="_blank" rel="noopener noreferrer">
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[var(--foreground)] font-[600]">Documentation</p>
+                    <p className="text-[var(--muted-foreground)] text-[12px] mt-1">View the full docs</p>
+                  </div>
+                  <ArrowSquareOut style={{ width: 16, height: 16, color: 'var(--muted-foreground)' }} />
+                </div>
+              </CardContent>
+            </a>
+          </Card>
+          <Card asChild hover>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[var(--foreground)] font-[600]">GitHub</p>
+                    <p className="text-[var(--muted-foreground)] text-[12px] mt-1">View source code</p>
+                  </div>
+                  <ArrowSquareOut style={{ width: 16, height: 16, color: 'var(--muted-foreground)' }} />
+                </div>
+              </CardContent>
+            </a>
+          </Card>
+          <Card asChild hover selected>
+            <a href="https://example.com/dashboard" target="_blank" rel="noopener noreferrer">
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[var(--foreground)] font-[600]">Dashboard</p>
+                    <p className="text-[var(--muted-foreground)] text-[12px] mt-1">Current page</p>
+                  </div>
+                  <ArrowSquareOut style={{ width: 16, height: 16, color: 'var(--accent)' }} />
+                </div>
+              </CardContent>
+            </a>
+          </Card>
+        </div>
       </PlaygroundSection>
 
       <Separator variant="bold" />

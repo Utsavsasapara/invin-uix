@@ -1,5 +1,5 @@
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
-import { Popover, PopoverTrigger, PopoverContent } from 'invin-uix/ui/popover';
+import { Popover, PopoverTrigger, PopoverContent, PopoverClose } from 'invin-uix/ui/popover';
 import { Button } from 'invin-uix/ui/button';
 import { Input } from 'invin-uix/ui/input';
 import { Label } from 'invin-uix/ui/label';
@@ -13,7 +13,7 @@ export default function PopoverDemo() {
     <ComponentPage
       name="Popover"
       description="Floating panel triggered by click, positioned relative to a trigger element. Built on Radix — portal rendering, focus trap, keyboard dismiss (Escape), outside-click dismiss. For forms, settings, and contextual content."
-      importCode={`import { Popover, PopoverTrigger, PopoverContent } from 'invin-uix/ui/popover';`}
+      importCode={`import { Popover, PopoverTrigger, PopoverContent, PopoverClose } from 'invin-uix/ui/popover';`}
     >
 
       {/* ─── Interactive Playground ─────────────────────────────── */}

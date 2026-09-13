@@ -23,7 +23,7 @@ export default function DropdownDemo() {
   return (
     <ComponentPage
       name="Dropdown Menu"
-      description="Action menu with icons, keyboard shortcuts, sub-menus, checkbox/radio items, descriptions, and danger state. Built on Radix — full keyboard nav, type-ahead search, portal rendering."
+      description="Action menu with icons, keyboard shortcuts, sub-menus, checkbox/radio items, descriptions, and destructive state. Built on Radix — full keyboard nav (Enter/Space to open, arrows to navigate), type-ahead search, portal rendering. Hover shows accent background and text color."
       importCode={`import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
   DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel,
@@ -69,10 +69,10 @@ export default function DropdownDemo() {
               <Button variant="outline">Open Menu</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side={props.side} align={props.align}>
-              <DropdownMenuItem><User style={{ width: 14, height: 14 }} />Profile</DropdownMenuItem>
-              <DropdownMenuItem><Gear style={{ width: 14, height: 14 }} />Settings</DropdownMenuItem>
+              <DropdownMenuItem icon={<User style={{ width: 14, height: 14 }} />}>Profile</DropdownMenuItem>
+              <DropdownMenuItem icon={<Gear style={{ width: 14, height: 14 }} />}>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem danger><SignOut style={{ width: 14, height: 14 }} />Log out</DropdownMenuItem>
+              <DropdownMenuItem icon={<SignOut style={{ width: 14, height: 14 }} />} destructive>Log out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
@@ -82,7 +82,10 @@ export default function DropdownDemo() {
 
       <PropsTable
         props={[
-          { name: 'danger', type: 'boolean', default: 'false', description: 'Red text for destructive actions (on DropdownMenuItem)' },
+          { name: 'icon', type: 'ReactNode', default: '—', description: 'Icon displayed before the item text (on DropdownMenuItem)' },
+          { name: 'badge', type: 'ReactNode', default: '—', description: 'Badge content (number or text) after the item (on DropdownMenuItem)' },
+          { name: 'loading', type: 'boolean', default: 'false', description: 'Shows spinner and disables interaction (on DropdownMenuItem)' },
+          { name: 'destructive', type: 'boolean', default: 'false', description: 'Red text and hover for destructive actions (on DropdownMenuItem)' },
           { name: 'shortcut', type: 'string', default: '—', description: 'Keyboard shortcut hint, right-aligned (on DropdownMenuItem)' },
           { name: 'description', type: 'string', default: '—', description: 'Helper text below the item label (on DropdownMenuItem)' },
           { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables interaction (on DropdownMenuItem)' },
@@ -133,7 +136,7 @@ export default function DropdownDemo() {
       <DropdownMenuItem shortcut="⌘S"><Gear /> Gear</DropdownMenuItem>
     </DropdownMenuGroup>
     <DropdownMenuSeparator />
-    <DropdownMenuItem danger><SignOut /> Log out</DropdownMenuItem>
+    <DropdownMenuItem destructive><SignOut /> Log out</DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>`}
       >
@@ -157,7 +160,7 @@ export default function DropdownDemo() {
             <DropdownMenuSeparator />
             <DropdownMenuItem><Cloud style={{ width: 14, height: 14 }} />API</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem danger><SignOut style={{ width: 14, height: 14 }} />Log out</DropdownMenuItem>
+            <DropdownMenuItem destructive><SignOut style={{ width: 14, height: 14 }} />Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </PlaygroundSection>
@@ -168,7 +171,7 @@ export default function DropdownDemo() {
         code={`<DropdownMenuItem description="Create a copy of this item">
   <Copy /> Duplicate
 </DropdownMenuItem>
-<DropdownMenuItem danger description="This action cannot be undone">
+<DropdownMenuItem destructive description="This action cannot be undone">
   <Trash /> Delete
 </DropdownMenuItem>`}
       >
@@ -181,16 +184,17 @@ export default function DropdownDemo() {
             <DropdownMenuItem description="Share with team members"><ShareNetwork style={{ width: 14, height: 14 }} />Share</DropdownMenuItem>
             <DropdownMenuItem description="Move to archive folder"><Archive style={{ width: 14, height: 14 }} />Archive</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem danger description="This action cannot be undone"><Trash style={{ width: 14, height: 14 }} />Delete</DropdownMenuItem>
+            <DropdownMenuItem destructive description="This action cannot be undone"><Trash style={{ width: 14, height: 14 }} />Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </PlaygroundSection>
 
       <PlaygroundSection
         title="Sub-menu"
-        description="Nested menus for hierarchical actions."
+        description="Nested menus for hierarchical actions. Note: Portal is built-in — do NOT wrap SubContent in DropdownMenuPortal."
         code={`<DropdownMenuSub>
   <DropdownMenuSubTrigger><Plus /> Invite users</DropdownMenuSubTrigger>
+  {/* No Portal needed - built into SubContent */}
   <DropdownMenuSubContent>
     <DropdownMenuItem><Envelope /> Email</DropdownMenuItem>
     <DropdownMenuItem><Smiley /> Slack</DropdownMenuItem>
@@ -221,7 +225,7 @@ export default function DropdownDemo() {
               </DropdownMenuSubContent>
             </DropdownMenuSub>
             <DropdownMenuSeparator />
-            <DropdownMenuItem danger><Trash style={{ width: 14, height: 14 }} />Delete</DropdownMenuItem>
+            <DropdownMenuItem destructive><Trash style={{ width: 14, height: 14 }} />Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </PlaygroundSection>
@@ -322,6 +326,86 @@ export default function DropdownDemo() {
         </DropdownMenu>
         </div>
       </PlaygroundSection>
+
+      <PlaygroundSection
+        title="Icon prop"
+        description="Use the icon prop for consistent icon placement instead of passing icons as children."
+        code={`<DropdownMenuItem icon={<User size={14} />}>Profile</DropdownMenuItem>
+<DropdownMenuItem icon={<Gear size={14} />} shortcut="⌘,">Settings</DropdownMenuItem>
+<DropdownMenuItem icon={<Trash size={14} />} destructive>Delete</DropdownMenuItem>`}
+      >
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">Icon Prop Demo</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent style={{ minWidth: '180px' }}>
+            <DropdownMenuItem icon={<User style={{ width: 14, height: 14 }} />}>Profile</DropdownMenuItem>
+            <DropdownMenuItem icon={<Gear style={{ width: 14, height: 14 }} />} shortcut="⌘,">Settings</DropdownMenuItem>
+            <DropdownMenuItem icon={<Envelope style={{ width: 14, height: 14 }} />}>Messages</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem icon={<Trash style={{ width: 14, height: 14 }} />} destructive>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </PlaygroundSection>
+
+      <PlaygroundSection
+        title="Badge prop"
+        description="Show notification counts or status indicators on menu items."
+        code={`<DropdownMenuItem icon={<Bell />} badge={3}>Notifications</DropdownMenuItem>
+<DropdownMenuItem icon={<Mail />} badge="New">Messages</DropdownMenuItem>
+<DropdownMenuItem icon={<Trash />} badge={99} destructive>Trash</DropdownMenuItem>`}
+      >
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">Badge Demo</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent style={{ minWidth: '200px' }}>
+            <DropdownMenuItem icon={<Envelope style={{ width: 14, height: 14 }} />} badge={3}>Inbox</DropdownMenuItem>
+            <DropdownMenuItem icon={<Users style={{ width: 14, height: 14 }} />} badge="New">Team Updates</DropdownMenuItem>
+            <DropdownMenuItem icon={<Archive style={{ width: 14, height: 14 }} />}>Archived</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem icon={<Trash style={{ width: 14, height: 14 }} />} badge={12} destructive>Trash</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </PlaygroundSection>
+
+      <PlaygroundSection
+        title="Loading state"
+        description="Show a spinner while an action is in progress. The item is disabled during loading."
+        code={`<DropdownMenuItem icon={<Cloud />} loading={syncing}>
+  {syncing ? 'Syncing...' : 'Sync Now'}
+</DropdownMenuItem>`}
+      >
+        <LoadingDropdownDemo />
+      </PlaygroundSection>
     </ComponentPage>
+  );
+}
+
+// Loading dropdown demo component
+function LoadingDropdownDemo() {
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSync = async (e) => {
+    e.preventDefault();
+    setSyncing(true);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setSyncing(false);
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Loading Demo</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent style={{ minWidth: '180px' }}>
+        <DropdownMenuItem icon={<Cloud style={{ width: 14, height: 14 }} />} loading={syncing} onSelect={handleSync}>
+          {syncing ? 'Syncing...' : 'Sync Now'}
+        </DropdownMenuItem>
+        <DropdownMenuItem icon={<Gear style={{ width: 14, height: 14 }} />}>Settings</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem icon={<SignOut style={{ width: 14, height: 14 }} />}>Log out</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

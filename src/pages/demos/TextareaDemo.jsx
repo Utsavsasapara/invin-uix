@@ -10,7 +10,7 @@ export default function TextareaDemo() {
   return (
     <ComponentPage
       name="Textarea"
-      description="Multi-line text input with 3 sizes, vertical resize, focus ring, disabled state, error validation via aria-invalid, and a built-in character counter (showCount). Same design language as Input."
+      description="Multi-line text input with 3 sizes, vertical resize, focus ring (no offset gap), disabled/readOnly states, error/success validation with aria-describedby, and a built-in character counter (showCount). Same design language as Input."
       importCode={`import { Textarea } from 'invin-uix/ui/textarea';`}
     >
 
@@ -58,9 +58,16 @@ export default function TextareaDemo() {
           { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Size preset. Min-height + equal padding: sm 60px/8px, md 80px/12px, lg 120px/14px.' },
           { name: 'placeholder', type: 'string', default: '—', description: 'Placeholder text' },
           { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables textarea (50% opacity)' },
-          { name: 'error', type: 'string', default: '—', description: 'Error message — renders below textarea and auto-sets aria-invalid' },
+          { name: 'readOnly', type: 'boolean', default: 'false', description: 'Makes textarea read-only (muted background, no focus ring)' },
+          { name: 'error', type: 'string', default: '—', description: 'Error message — renders below textarea and auto-sets aria-invalid + aria-describedby' },
+          { name: 'success', type: 'string', default: '—', description: 'Success message — renders below textarea with green border' },
           { name: 'showCount', type: 'boolean', default: 'false', description: 'Show a live character counter. With maxLength shows count/max and turns red at the limit.' },
           { name: 'maxLength', type: 'number', default: '—', description: 'Native character limit (browser enforces); also drives the counter' },
+          { name: 'autoResize', type: 'boolean', default: 'false', description: 'Textarea grows/shrinks with content instead of scrolling' },
+          { name: 'minRows', type: 'number', default: '2', description: 'Minimum rows for auto-resize mode' },
+          { name: 'maxRows', type: 'number', default: '—', description: 'Maximum rows before scrolling (auto-resize mode)' },
+          { name: 'clearable', type: 'boolean', default: 'false', description: 'Show clear button when textarea has content' },
+          { name: 'onClear', type: '() => void', default: '—', description: 'Callback when clear button is clicked' },
           { name: 'rows', type: 'number', default: '—', description: 'Initial visible rows (overrides min-height)' },
           { name: 'className', type: 'string', default: '—', description: 'Additional Tailwind/CSS classes' },
         ]}
@@ -111,15 +118,39 @@ export default function TextareaDemo() {
         </div>
       </PlaygroundSection>
 
+      {/* ─── Read Only ──────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Read Only"
+        description="Muted background, no focus ring. User can select and copy but not edit."
+        code={`<Textarea readOnly defaultValue="This content cannot be edited but can be selected and copied." />`}
+      >
+        <div className="space-y-1.5 w-full max-w-sm">
+          <Label htmlFor="readonly-ta">Terms (Read Only)</Label>
+          <Textarea id="readonly-ta" readOnly defaultValue="This content cannot be edited but can be selected and copied. Useful for displaying terms, policies, or generated content." />
+        </div>
+      </PlaygroundSection>
+
       {/* ─── Error State ────────────────────────────────────────── */}
       <PlaygroundSection
         title="Error state"
-        description="Pass error='message' to show red border + error text below. aria-invalid is set automatically."
+        description="Pass error='message' to show red border + error text below. aria-invalid and aria-describedby are set automatically for accessibility."
         code={`<Textarea error="Bio must be at least 20 characters." defaultValue="x" />`}
       >
         <div className="space-y-1.5 w-full max-w-sm">
           <Label htmlFor="bio-err">Bio</Label>
           <Textarea id="bio-err" error="Bio must be at least 20 characters." defaultValue="x" />
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Success State ──────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Success state"
+        description="Pass success='message' to show green border + success text below."
+        code={`<Textarea success="Bio saved successfully!" defaultValue="This is my professional bio..." />`}
+      >
+        <div className="space-y-1.5 w-full max-w-sm">
+          <Label htmlFor="bio-success">Bio</Label>
+          <Textarea id="bio-success" success="Bio saved successfully!" defaultValue="This is my professional bio with all the required information." />
         </div>
       </PlaygroundSection>
 
@@ -141,6 +172,56 @@ export default function TextareaDemo() {
           <div className="space-y-1.5">
             <Label htmlFor="notes">Notes</Label>
             <Textarea id="notes" showCount placeholder="No limit — running count only..." />
+          </div>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Auto-Resize ────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Auto-resize"
+        description="Pass autoResize to make the textarea grow/shrink with content. Use minRows and maxRows to constrain height. Great for chat inputs and comment boxes."
+        code={`// Grows from 2 rows (default min) to unlimited
+<Textarea autoResize placeholder="Start typing..." />
+
+// Constrained: 3 to 6 rows
+<Textarea autoResize minRows={3} maxRows={6} placeholder="Limited growth..." />
+
+// Single-line feel that expands
+<Textarea autoResize minRows={1} maxRows={4} placeholder="Chat message..." />`}
+      >
+        <div className="space-y-4 w-full max-w-sm">
+          <div className="space-y-1.5">
+            <Label htmlFor="auto1">Unlimited growth</Label>
+            <Textarea id="auto1" autoResize placeholder="Grows with content..." />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="auto2">Constrained (3-6 rows)</Label>
+            <Textarea id="auto2" autoResize minRows={3} maxRows={6} placeholder="Limited growth — scrolls after 6 rows..." />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="auto3">Chat-style (1-4 rows)</Label>
+            <Textarea id="auto3" autoResize minRows={1} maxRows={4} placeholder="Single line that expands..." />
+          </div>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Clearable ──────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Clearable"
+        description="Pass clearable to show a clear button when textarea has content. Works for both controlled and uncontrolled usage."
+        code={`<Textarea clearable placeholder="Type something to see clear button..." />
+
+// With callback
+<Textarea clearable onClear={() => console.log('Cleared!')} />`}
+      >
+        <div className="space-y-4 w-full max-w-sm">
+          <div className="space-y-1.5">
+            <Label htmlFor="clearable1">Feedback</Label>
+            <Textarea id="clearable1" clearable placeholder="Type something to see clear button..." />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="clearable2">With auto-resize</Label>
+            <Textarea id="clearable2" clearable autoResize minRows={1} maxRows={4} placeholder="Clearable + auto-resize combo..." />
           </div>
         </div>
       </PlaygroundSection>

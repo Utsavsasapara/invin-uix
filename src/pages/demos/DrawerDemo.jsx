@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
-import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetFooter, SheetTitle, SheetDescription, SheetClose } from 'invin-uix/ui/sheet';
+import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerFooter, DrawerTitle, DrawerDescription, DrawerClose } from 'invin-uix/ui/drawer';
 import { Button } from 'invin-uix/ui/button';
 import { Input } from 'invin-uix/ui/input';
 import { Label } from 'invin-uix/ui/label';
@@ -8,7 +8,7 @@ import { Separator } from 'invin-uix/ui/separator';
 import { Card, CardContent } from 'invin-uix/ui/card';
 import { Gear, Funnel, ShareNetwork, List } from 'invin-uix/ui/icons';
 
-export default function SheetDemo() {
+export default function DrawerDemo() {
   const [loadingOpen, setLoadingOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,24 +21,24 @@ export default function SheetDemo() {
 
   return (
     <ComponentPage
-      name="Sheet"
+      name="Drawer"
       description="Slide-in panels from any side (left/right/top/bottom). Use for navigation, filters, settings, and detail views. Supports loading state for async operations."
       importCode={`import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetFooter,
-  SheetTitle,
-  SheetDescription,
-  SheetClose,
-} from 'invin-uix/ui/sheet';`}
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerFooter,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerClose,
+} from 'invin-uix/ui/drawer';`}
     >
 
       {/* ─── Interactive Playground ─────────────────────────────── */}
       <InteractiveDemo
-        title="Sheet Playground"
-        description="Experiment with different sheet configurations. Click the button to open."
+        title="Drawer Playground"
+        description="Experiment with different drawer configurations. Click the button to open."
         controls={[
           {
             name: 'side',
@@ -69,27 +69,27 @@ export default function SheetDemo() {
         ]}
       >
         {(props) => (
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline">Open Sheet ({props.side}, {props.size})</Button>
-            </SheetTrigger>
-            <SheetContent side={props.side} size={props.size} hideClose={props.hideClose} loading={props.loading}>
-              <SheetHeader>
-                <SheetTitle>Sheet Title</SheetTitle>
-                <SheetDescription>This is a {props.side} sheet panel ({props.size} size).</SheetDescription>
-              </SheetHeader>
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button variant="outline">Open Drawer ({props.side}, {props.size})</Button>
+            </DrawerTrigger>
+            <DrawerContent side={props.side} size={props.size} hideClose={props.hideClose} loading={props.loading}>
+              <DrawerHeader>
+                <DrawerTitle>Drawer Title</DrawerTitle>
+                <DrawerDescription>This is a {props.side} drawer panel ({props.size} size).</DrawerDescription>
+              </DrawerHeader>
               <div className="py-4">
                 <p className="text-[var(--muted-foreground)]">Your content goes here.</p>
                 {props.loading && (
                   <p className="text-[var(--accent)] mt-2 text-sm">Loading state active — cannot close via X, overlay, or Escape.</p>
                 )}
               </div>
-              <SheetFooter>
-                <SheetClose asChild><Button variant="outline" disabled={props.loading}>Close</Button></SheetClose>
+              <DrawerFooter>
+                <DrawerClose asChild><Button variant="outline" disabled={props.loading}>Close</Button></DrawerClose>
                 <Button disabled={props.loading}>Save</Button>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
         )}
       </InteractiveDemo>
 
@@ -97,7 +97,7 @@ export default function SheetDemo() {
 
       {/* ─── Props Table ────────────────────────────────────────── */}
       <div className="space-y-4">
-        <p className="font-[600] uppercase tracking-[0.05em] text-[var(--muted-foreground-faint)] text-xs">SheetContent Props</p>
+        <p className="font-[600] uppercase tracking-[0.05em] text-[var(--muted-foreground-faint)] text-xs">DrawerContent Props</p>
         <PropsTable
           props={[
             { name: 'side', type: "'left' | 'right' | 'top' | 'bottom'", default: "'right'", description: 'Slide-in direction' },
@@ -122,36 +122,36 @@ export default function SheetDemo() {
 
       <Separator variant="bold" />
 
-      {/* ─── Sheet: Right ───────────────────────────────────────── */}
+      {/* ─── Drawer: Right ───────────────────────────────────────── */}
       <PlaygroundSection
         title="Right (default)"
         description="Slides in from the right. Good for settings, details, and forms."
-        code={`<Sheet>
-  <SheetTrigger asChild>
+        code={`<Drawer>
+  <DrawerTrigger asChild>
     <Button variant="outline">Settings</Button>
-  </SheetTrigger>
-  <SheetContent>
-    <SheetHeader>
-      <SheetTitle>Settings</SheetTitle>
-      <SheetDescription>Adjust preferences.</SheetDescription>
-    </SheetHeader>
+  </DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader>
+      <DrawerTitle>Settings</DrawerTitle>
+      <DrawerDescription>Adjust preferences.</DrawerDescription>
+    </DrawerHeader>
     {/* content */}
-    <SheetFooter>
-      <SheetClose asChild><Button variant="outline">Cancel</Button></SheetClose>
+    <DrawerFooter>
+      <DrawerClose asChild><Button variant="outline">Cancel</Button></DrawerClose>
       <Button>Save</Button>
-    </SheetFooter>
-  </SheetContent>
-</Sheet>`}
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>`}
       >
-        <Sheet>
-          <SheetTrigger asChild>
+        <Drawer>
+          <DrawerTrigger asChild>
             <Button variant="outline"><Gear style={{ width: 14, height: 14 }} /> Settings</Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Settings</SheetTitle>
-              <SheetDescription>Adjust your preferences below.</SheetDescription>
-            </SheetHeader>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Settings</DrawerTitle>
+              <DrawerDescription>Adjust your preferences below.</DrawerDescription>
+            </DrawerHeader>
             <div className="space-y-4 mt-4">
               <div className="space-y-1.5">
                 <Label>Display name</Label>
@@ -162,38 +162,38 @@ export default function SheetDemo() {
                 <Input defaultValue="admin@invin.io" />
               </div>
             </div>
-            <SheetFooter>
-              <SheetClose asChild><Button variant="outline">Cancel</Button></SheetClose>
+            <DrawerFooter>
+              <DrawerClose asChild><Button variant="outline">Cancel</Button></DrawerClose>
               <Button>Save</Button>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
       </PlaygroundSection>
 
-      {/* ─── Sheet: Left ────────────────────────────────────────── */}
+      {/* ─── Drawer: Left ────────────────────────────────────────── */}
       <PlaygroundSection
         title="Left"
         description="Slides from left. Common for mobile navigation and sidebars."
-        code={`<Sheet>
-  <SheetTrigger asChild>
+        code={`<Drawer>
+  <DrawerTrigger asChild>
     <Button variant="ghost" size="icon"><List /></Button>
-  </SheetTrigger>
-  <SheetContent side="left">
-    <SheetHeader>
-      <SheetTitle>Navigation</SheetTitle>
-    </SheetHeader>
+  </DrawerTrigger>
+  <DrawerContent side="left">
+    <DrawerHeader>
+      <DrawerTitle>Navigation</DrawerTitle>
+    </DrawerHeader>
     {/* nav items */}
-  </SheetContent>
-</Sheet>`}
+  </DrawerContent>
+</Drawer>`}
       >
-        <Sheet>
-          <SheetTrigger asChild>
+        <Drawer>
+          <DrawerTrigger asChild>
             <Button variant="ghost" size="icon-sm"><List style={{ width: 16, height: 16 }} /></Button>
-          </SheetTrigger>
-          <SheetContent side="left">
-            <SheetHeader>
-              <SheetTitle>Navigation</SheetTitle>
-            </SheetHeader>
+          </DrawerTrigger>
+          <DrawerContent side="left">
+            <DrawerHeader>
+              <DrawerTitle>Navigation</DrawerTitle>
+            </DrawerHeader>
             <div className="space-y-1 mt-4">
               {['Dashboard', 'Projects', 'Team', 'Settings', 'Help'].map(item => (
                 <div key={item} className="px-3 py-2 rounded-md hover:bg-[var(--secondary)] cursor-pointer text-[var(--foreground)]">
@@ -201,41 +201,41 @@ export default function SheetDemo() {
                 </div>
               ))}
             </div>
-          </SheetContent>
-        </Sheet>
+          </DrawerContent>
+        </Drawer>
       </PlaygroundSection>
 
-      {/* ─── Sheet: Bottom ──────────────────────────────────────── */}
+      {/* ─── Drawer: Bottom ──────────────────────────────────────── */}
       <PlaygroundSection
         title="Bottom"
         description="Slides up from bottom. Fixed height. Good for quick actions and share menus."
-        code={`<Sheet>
-  <SheetTrigger asChild>
+        code={`<Drawer>
+  <DrawerTrigger asChild>
     <Button variant="outline">Share</Button>
-  </SheetTrigger>
-  <SheetContent side="bottom">
-    <SheetHeader>
-      <SheetTitle>Share</SheetTitle>
-    </SheetHeader>
+  </DrawerTrigger>
+  <DrawerContent side="bottom">
+    <DrawerHeader>
+      <DrawerTitle>Share</DrawerTitle>
+    </DrawerHeader>
     {/* share options */}
-  </SheetContent>
-</Sheet>`}
+  </DrawerContent>
+</Drawer>`}
       >
-        <Sheet>
-          <SheetTrigger asChild>
+        <Drawer>
+          <DrawerTrigger asChild>
             <Button variant="outline"><ShareNetwork style={{ width: 14, height: 14 }} /> Share</Button>
-          </SheetTrigger>
-          <SheetContent side="bottom">
-            <SheetHeader>
-              <SheetTitle>Share this project</SheetTitle>
-              <SheetDescription>Anyone with the link can view.</SheetDescription>
-            </SheetHeader>
+          </DrawerTrigger>
+          <DrawerContent side="bottom">
+            <DrawerHeader>
+              <DrawerTitle>Share this project</DrawerTitle>
+              <DrawerDescription>Anyone with the link can view.</DrawerDescription>
+            </DrawerHeader>
             <div className="flex gap-2 mt-3">
               <Input defaultValue="https://app.invin.io/project/abc123" readOnly className="flex-1" />
               <Button size="sm">Copy</Button>
             </div>
-          </SheetContent>
-        </Sheet>
+          </DrawerContent>
+        </Drawer>
       </PlaygroundSection>
 
       <Separator variant="bold" />
@@ -243,7 +243,7 @@ export default function SheetDemo() {
       {/* ─── Loading State ──────────────────────────────────────── */}
       <PlaygroundSection
         title="Loading State"
-        description="Use loading prop during async operations. Sheet cannot be closed while loading."
+        description="Use loading prop during async operations. Drawer cannot be closed while loading."
         code={`const [open, setOpen] = useState(false);
 const [loading, setLoading] = useState(false);
 
@@ -254,32 +254,32 @@ const handleSave = async () => {
   setOpen(false);
 };
 
-<Sheet open={open} onOpenChange={setOpen}>
-  <SheetTrigger asChild>
+<Drawer open={open} onOpenChange={setOpen}>
+  <DrawerTrigger asChild>
     <Button>Settings</Button>
-  </SheetTrigger>
-  <SheetContent loading={loading}>
-    <SheetHeader>
-      <SheetTitle>Settings</SheetTitle>
-    </SheetHeader>
+  </DrawerTrigger>
+  <DrawerContent loading={loading}>
+    <DrawerHeader>
+      <DrawerTitle>Settings</DrawerTitle>
+    </DrawerHeader>
     {/* form */}
-    <SheetFooter>
+    <DrawerFooter>
       <Button onClick={handleSave} disabled={loading}>
         {loading ? 'Saving...' : 'Save'}
       </Button>
-    </SheetFooter>
-  </SheetContent>
-</Sheet>`}
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>`}
       >
-        <Sheet open={loadingOpen} onOpenChange={setLoadingOpen}>
-          <SheetTrigger asChild>
+        <Drawer open={loadingOpen} onOpenChange={setLoadingOpen}>
+          <DrawerTrigger asChild>
             <Button variant="outline">Save Settings (with loading)</Button>
-          </SheetTrigger>
-          <SheetContent loading={isLoading}>
-            <SheetHeader>
-              <SheetTitle>Settings</SheetTitle>
-              <SheetDescription>Click save to see loading state (2s delay).</SheetDescription>
-            </SheetHeader>
+          </DrawerTrigger>
+          <DrawerContent loading={isLoading}>
+            <DrawerHeader>
+              <DrawerTitle>Settings</DrawerTitle>
+              <DrawerDescription>Click save to see loading state (2s delay).</DrawerDescription>
+            </DrawerHeader>
             <div className="space-y-4 mt-4">
               <div className="space-y-1.5">
                 <Label>Username</Label>
@@ -290,14 +290,14 @@ const handleSave = async () => {
                 <Input defaultValue="admin@invin.io" disabled={isLoading} />
               </div>
             </div>
-            <SheetFooter>
-              <SheetClose asChild><Button variant="outline" disabled={isLoading}>Cancel</Button></SheetClose>
+            <DrawerFooter>
+              <DrawerClose asChild><Button variant="outline" disabled={isLoading}>Cancel</Button></DrawerClose>
               <Button onClick={handleSave} disabled={isLoading}>
                 {isLoading ? 'Saving...' : 'Save'}
               </Button>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
       </PlaygroundSection>
 
       <Separator variant="bold" />
@@ -306,29 +306,29 @@ const handleSave = async () => {
       <PlaygroundSection
         title="Filter Panel"
         description="Right-side filter panel for data tables."
-        code={`<Sheet>
-  <SheetTrigger asChild>
+        code={`<Drawer>
+  <DrawerTrigger asChild>
     <Button variant="outline" size="sm"><Funnel /> Filters</Button>
-  </SheetTrigger>
-  <SheetContent>
-    <SheetHeader><SheetTitle>Filters</SheetTitle></SheetHeader>
+  </DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader><DrawerTitle>Filters</DrawerTitle></DrawerHeader>
     {/* filter controls */}
-    <SheetFooter>
+    <DrawerFooter>
       <Button variant="outline">Reset</Button>
       <Button>Apply</Button>
-    </SheetFooter>
-  </SheetContent>
-</Sheet>`}
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>`}
       >
-        <Sheet>
-          <SheetTrigger asChild>
+        <Drawer>
+          <DrawerTrigger asChild>
             <Button variant="outline" size="sm"><Funnel style={{ width: 14, height: 14 }} /> Filters</Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Filters</SheetTitle>
-              <SheetDescription>Narrow down results.</SheetDescription>
-            </SheetHeader>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Filters</DrawerTitle>
+              <DrawerDescription>Narrow down results.</DrawerDescription>
+            </DrawerHeader>
             <div className="space-y-4 mt-4">
               <div className="space-y-1.5">
                 <Label>Status</Label>
@@ -343,12 +343,12 @@ const handleSave = async () => {
                 <Input placeholder="Any member" />
               </div>
             </div>
-            <SheetFooter>
+            <DrawerFooter>
               <Button variant="outline">Reset</Button>
               <Button>Apply Filters</Button>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
       </PlaygroundSection>
 
       <Separator variant="bold" />
@@ -369,7 +369,7 @@ const handleSave = async () => {
               </div>
               <div className="flex gap-3">
                 <span className="text-[var(--accent)] font-[600] shrink-0 w-16">Bottom</span>
-                <span className="text-[var(--muted-foreground)]">Share menus, quick actions (fixed height)</span>
+                <span className="text-[var(--muted-foreground)]">Share menus, quick actions, mobile actions</span>
               </div>
               <div className="flex gap-3">
                 <span className="text-[var(--accent)] font-[600] shrink-0 w-16">Top</span>
@@ -383,14 +383,14 @@ const handleSave = async () => {
       <Card className="mt-4">
         <CardContent className="py-4">
           <div className="space-y-3 text-[var(--foreground)]">
-            <p className="font-[600] text-sm">Sheet vs Drawer</p>
-            <div className="flex gap-3 text-sm">
-              <span className="text-[var(--accent)] font-[600] shrink-0 w-16">Sheet</span>
-              <span className="text-[var(--muted-foreground)]">Any side, fixed sizes. Desktop pattern for navigation, filters, settings.</span>
-            </div>
+            <p className="font-[600] text-sm">Drawer vs Dialog</p>
             <div className="flex gap-3 text-sm">
               <span className="text-[var(--accent)] font-[600] shrink-0 w-16">Drawer</span>
-              <span className="text-[var(--muted-foreground)]">Bottom-only, draggable with snap points. Mobile-first pattern for actions and menus.</span>
+              <span className="text-[var(--muted-foreground)]">Slides from edge. Use for navigation, filters, settings, detail views.</span>
+            </div>
+            <div className="flex gap-3 text-sm">
+              <span className="text-[var(--accent)] font-[600] shrink-0 w-16">Dialog</span>
+              <span className="text-[var(--muted-foreground)]">Centered modal. Use for confirmations, alerts, short forms.</span>
             </div>
           </div>
         </CardContent>

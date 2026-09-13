@@ -13,7 +13,7 @@ export default function RadioGroupDemo() {
   return (
     <ComponentPage
       name="Radio Group"
-      description="Single-selection from a list of options. Built on Radix UI with arrow-key navigation, focus management, and ARIA roles. Accent dot indicator on selected."
+      description="Single-selection from a list of options. Built on Radix UI with arrow-key navigation, focus ring (no offset gap), error state with aria-describedby, and accent dot indicator on selected."
       importCode={`import { RadioGroup, RadioGroupItem } from 'invin-uix/ui/radio-group';`}
     >
 
@@ -78,6 +78,9 @@ export default function RadioGroupDemo() {
             { name: 'value', type: 'string', default: '—', description: 'Controlled selected value' },
             { name: 'defaultValue', type: 'string', default: '—', description: 'Uncontrolled initial value' },
             { name: 'onValueChange', type: '(value: string) => void', default: '—', description: 'Selection change callback' },
+            { name: 'label', type: 'string', default: '—', description: 'Label text rendered above the group' },
+            { name: 'required', type: 'boolean', default: 'false', description: 'Shows asterisk next to label' },
+            { name: 'error', type: 'string', default: '—', description: 'Error message — renders below and sets aria-invalid' },
             { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables entire group' },
             { name: 'orientation', type: "'vertical' | 'horizontal'", default: "'vertical'", description: 'Layout direction for arrow key navigation' },
           ]}
@@ -224,6 +227,56 @@ export default function RadioGroupDemo() {
           <div className="flex items-center gap-2"><RadioGroupItem value="opt2" id="dis-2" /><Label htmlFor="dis-2" className="opacity-50">Option 2</Label></div>
           <div className="flex items-center gap-2"><RadioGroupItem value="opt3" id="dis-3" /><Label htmlFor="dis-3" className="opacity-50">Option 3</Label></div>
         </RadioGroup>
+      </PlaygroundSection>
+
+      {/* ─── Error State ────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Error state"
+        description="Pass error='message' to RadioGroup to show validation error. Sets aria-invalid and aria-describedby automatically."
+        code={`<RadioGroup error="Please select an option">
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="opt1" id="err-1" />
+    <Label htmlFor="err-1">Option 1</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="opt2" id="err-2" />
+    <Label htmlFor="err-2">Option 2</Label>
+  </div>
+</RadioGroup>`}
+      >
+        <RadioGroup error="Please select an option" className="space-y-2">
+          <div className="flex items-center gap-2"><RadioGroupItem value="opt1" id="err-1" /><Label htmlFor="err-1">Option 1</Label></div>
+          <div className="flex items-center gap-2"><RadioGroupItem value="opt2" id="err-2" /><Label htmlFor="err-2">Option 2</Label></div>
+          <div className="flex items-center gap-2"><RadioGroupItem value="opt3" id="err-3" /><Label htmlFor="err-3">Option 3</Label></div>
+        </RadioGroup>
+      </PlaygroundSection>
+
+      {/* ─── Label with Required ────────────────────────────────── */}
+      <PlaygroundSection
+        title="Label with required indicator"
+        description="Use label and required props for built-in label with asterisk. Adds aria-required and aria-labelledby automatically."
+        code={`<RadioGroup label="Subscription Plan" required>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="free" id="plan1" />
+    <Label htmlFor="plan1">Free</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="pro" id="plan2" />
+    <Label htmlFor="plan2">Pro</Label>
+  </div>
+</RadioGroup>`}
+      >
+        <div className="space-y-4 w-full max-w-sm">
+          <RadioGroup label="Subscription Plan" required defaultValue="pro" className="space-y-2">
+            <div className="flex items-center gap-2"><RadioGroupItem value="free" id="req-1" /><Label htmlFor="req-1">Free — 5 projects</Label></div>
+            <div className="flex items-center gap-2"><RadioGroupItem value="pro" id="req-2" /><Label htmlFor="req-2">Pro — Unlimited</Label></div>
+            <div className="flex items-center gap-2"><RadioGroupItem value="enterprise" id="req-3" /><Label htmlFor="req-3">Enterprise — Custom</Label></div>
+          </RadioGroup>
+          <RadioGroup label="Contact preference" required error="Please select how we can reach you" className="space-y-2">
+            <div className="flex items-center gap-2"><RadioGroupItem value="email" id="contact-1" /><Label htmlFor="contact-1">Email</Label></div>
+            <div className="flex items-center gap-2"><RadioGroupItem value="phone" id="contact-2" /><Label htmlFor="contact-2">Phone</Label></div>
+          </RadioGroup>
+        </div>
       </PlaygroundSection>
 
       <Separator variant="bold" />

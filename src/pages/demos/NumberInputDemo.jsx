@@ -84,6 +84,7 @@ export default function NumberInputDemo() {
           { name: 'prefix', type: 'string', default: '—', description: 'Prefix text (e.g., "$")' },
           { name: 'suffix', type: 'string', default: '—', description: 'Suffix text (e.g., "kg")' },
           { name: 'error', type: 'string', default: '—', description: 'Error message' },
+          { name: 'success', type: 'string', default: '—', description: 'Success message (green border + message)' },
           { name: 'disabled', type: 'boolean', default: 'false', description: 'Disable input' },
         ]}
       />
@@ -244,10 +245,11 @@ export default function NumberInputDemo() {
       {/* ─── States ─────────────────────────────────────────────── */}
       <PlaygroundSection
         title="States"
-        description="Disabled, read-only, and error states."
+        description="Disabled, read-only, error, and success states."
         code={`<NumberInput disabled />
 <NumberInput readOnly value={42} />
-<NumberInput error="Value must be positive" />`}
+<NumberInput error="Value must be positive" />
+<NumberInput success="Valid quantity" defaultValue={5} />`}
       >
         <div className="flex flex-wrap gap-4">
           <div className="space-y-2">
@@ -261,6 +263,10 @@ export default function NumberInputDemo() {
           <div className="space-y-2 w-40">
             <Label>With error</Label>
             <NumberInput defaultValue={-5} error="Must be positive" />
+          </div>
+          <div className="space-y-2 w-40">
+            <Label>With success</Label>
+            <NumberInput defaultValue={5} success="Valid quantity" />
           </div>
         </div>
       </PlaygroundSection>

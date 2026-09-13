@@ -87,6 +87,8 @@ export default function SearchInputDemo() {
           { name: 'debounce', type: 'number', default: '0', description: 'Debounce delay in milliseconds for onChange' },
           { name: 'loading', type: 'boolean', default: 'false', description: 'Show loading spinner' },
           { name: 'showClear', type: 'boolean', default: 'true', description: 'Show clear button when has value' },
+          { name: 'error', type: 'string', default: '—', description: 'Error message (red border + message below)' },
+          { name: 'success', type: 'string', default: '—', description: 'Success message (green border + message below)' },
           { name: 'disabled', type: 'boolean', default: 'false', description: 'Disable the input' },
           { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Input size' },
         ]}
@@ -215,6 +217,38 @@ export default function SearchInputDemo() {
           <SearchInput placeholder="Default state" />
           <SearchInput placeholder="Disabled state" disabled />
           <SearchInput defaultValue="Pre-filled value" />
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Error & Success States ─────────────────────────────── */}
+      <PlaygroundSection
+        title="Error & Success States"
+        description="Validation feedback with colored borders and messages below the input."
+        code={`<SearchInput 
+  error="Search query is too short" 
+  placeholder="Enter at least 3 characters..."
+/>
+
+<SearchInput 
+  success="Found 24 results" 
+  defaultValue="dashboard"
+/>`}
+      >
+        <div className="w-full max-w-md space-y-4">
+          <div>
+            <p className="text-caption text-[var(--muted-foreground)] mb-2">Error state</p>
+            <SearchInput 
+              error="Search query is too short" 
+              placeholder="Enter at least 3 characters..."
+            />
+          </div>
+          <div>
+            <p className="text-caption text-[var(--muted-foreground)] mb-2">Success state</p>
+            <SearchInput 
+              success="Found 24 results" 
+              defaultValue="dashboard"
+            />
+          </div>
         </div>
       </PlaygroundSection>
 

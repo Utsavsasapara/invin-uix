@@ -1,19 +1,17 @@
-import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
 import { Input } from 'invin-uix/ui/input';
 import { Label } from 'invin-uix/ui/label';
 import { Button } from 'invin-uix/ui/button';
 import { Card, CardContent } from 'invin-uix/ui/card';
 import { Separator } from 'invin-uix/ui/separator';
-import { MagnifyingGlass, Envelope, Lock, Eye, EyeSlash, User, Check } from 'invin-uix/ui/icons';
+import { MagnifyingGlass, Envelope, Lock, User, Check } from 'invin-uix/ui/icons';
 
 export default function InputDemo() {
-  const [showPw, setShowPw] = useState(false);
 
   return (
     <ComponentPage
       name="Input"
-      description="Form text input with 3 sizes, built-in leftIcon/rightIcon slots, focus ring, disabled state, error validation styling (aria-invalid), and file input support."
+      description="Form text input with 3 sizes, built-in leftIcon/rightIcon slots, focus ring, disabled/read-only states, error/success validation with proper aria-describedby linking for screen readers."
       importCode={`import { Input } from 'invin-uix/ui/input';`}
     >
 
@@ -47,8 +45,12 @@ export default function InputDemo() {
           },
           { name: 'placeholder', label: 'Placeholder', type: 'text', default: 'Enter text...' },
           { name: 'disabled', label: 'Disabled', type: 'boolean', default: false },
+          { name: 'readOnly', label: 'Read-only', type: 'boolean', default: false },
           { name: 'showIcon', label: 'Show Icon', type: 'boolean', default: false },
+          { name: 'showPasswordToggle', label: 'Password Toggle', type: 'boolean', default: false },
+          { name: 'showCount', label: 'Show Count', type: 'boolean', default: false },
           { name: 'hasError', label: 'Has Error', type: 'boolean', default: false },
+          { name: 'hasSuccess', label: 'Has Success', type: 'boolean', default: false },
         ]}
       >
         {(props) => (
@@ -58,8 +60,14 @@ export default function InputDemo() {
               type={props.type}
               placeholder={props.placeholder}
               disabled={props.disabled}
+              readOnly={props.readOnly}
+              defaultValue={props.readOnly ? 'Read-only value' : undefined}
               leftIcon={props.showIcon ? <MagnifyingGlass style={{ width: 16, height: 16 }} /> : undefined}
+              showPasswordToggle={props.type === 'password' && props.showPasswordToggle}
+              showCount={props.showCount}
+              maxLength={props.showCount ? 50 : undefined}
               error={props.hasError ? 'This field is required' : undefined}
+              success={!props.hasError && props.hasSuccess ? 'Looks good!' : undefined}
             />
           </div>
         )}
@@ -75,8 +83,13 @@ export default function InputDemo() {
           { name: 'rightIcon', type: 'ReactNode', default: '—', description: 'Icon inside the input on the right. Padding adjusts automatically.' },
           { name: 'type', type: 'string', default: "'text'", description: 'HTML input type (text, email, password, number, file, etc.)' },
           { name: 'placeholder', type: 'string', default: '—', description: 'Placeholder text (styled with text-dim)' },
-          { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables input (50% opacity, no interaction)' },
-          { name: 'error', type: 'string', default: '—', description: 'Error message — renders below input and auto-sets aria-invalid' },
+          { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables input (50% opacity, cursor not-allowed)' },
+          { name: 'readOnly', type: 'boolean', default: 'false', description: 'Read-only mode (gray background, no focus ring)' },
+          { name: 'error', type: 'string', default: '—', description: 'Error message — red border, message below, auto aria-invalid + aria-describedby' },
+          { name: 'success', type: 'string', default: '—', description: 'Success message — green border, message below (error takes precedence)' },
+          { name: 'showCount', type: 'boolean', default: 'false', description: 'Show character count when maxLength is set. Displays "45/280" format.' },
+          { name: 'showPasswordToggle', type: 'boolean', default: 'false', description: 'Show eye icon to toggle password visibility (only for type="password").' },
+          { name: 'maxLength', type: 'number', default: '—', description: 'Maximum character length. Enables counter when used with showCount.' },
           { name: 'className', type: 'string', default: '—', description: 'Additional Tailwind/CSS classes for the input' },
         ]}
       />
@@ -133,20 +146,33 @@ export default function InputDemo() {
       {/* ─── Disabled ───────────────────────────────────────────── */}
       <PlaygroundSection
         title="Disabled"
-        description="50% opacity, no pointer events. Value is still readable."
+        description="50% opacity, cursor not-allowed. Value is still readable."
         code={`<Input disabled placeholder="Cannot edit" />
 <Input disabled defaultValue="Read-only value" />`}
       >
         <div className="space-y-3 w-full max-w-sm">
           <Input disabled placeholder="Cannot edit" />
-          <Input disabled defaultValue="Read-only value" />
+          <Input disabled defaultValue="Disabled with value" />
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Read-only ──────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Read-only"
+        description="Gray background indicates non-editable. Focus ring is suppressed. Different from disabled — value can be selected/copied."
+        code={`<Input readOnly value="Read-only value" />
+<Input readOnly defaultValue="Can select but not edit" />`}
+      >
+        <div className="space-y-3 w-full max-w-sm">
+          <Input readOnly value="Read-only value" />
+          <Input readOnly defaultValue="Can select but not edit" />
         </div>
       </PlaygroundSection>
 
       {/* ─── Error / Validation ─────────────────────────────────── */}
       <PlaygroundSection
         title="Error state"
-        description="Pass error='message' to show red border + error text below the input. aria-invalid is set automatically."
+        description="Pass error='message' to show red border + error text below the input. aria-invalid and aria-describedby are set automatically for screen readers."
         code={`<Input error="Please enter a valid email address." defaultValue="not-an-email" />
 
 <Input type="password" error="Password must be at least 8 characters." defaultValue="123" />`}
@@ -159,6 +185,26 @@ export default function InputDemo() {
           <div className="space-y-1.5">
             <Label htmlFor="err-pw">Password</Label>
             <Input id="err-pw" type="password" error="Password must be at least 8 characters." defaultValue="123" />
+          </div>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Success State ──────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Success state"
+        description="Pass success='message' to show green border + success text. Great for showing validation passed. Error takes precedence if both are provided."
+        code={`<Input success="Username is available!" defaultValue="johndoe" />
+
+<Input success="Email looks good!" defaultValue="valid@email.com" />`}
+      >
+        <div className="space-y-4 w-full max-w-sm">
+          <div className="space-y-1.5">
+            <Label htmlFor="suc-user">Username</Label>
+            <Input id="suc-user" success="Username is available!" defaultValue="johndoe" />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="suc-email">Email</Label>
+            <Input id="suc-email" success="Email looks good!" defaultValue="valid@email.com" />
           </div>
         </div>
       </PlaygroundSection>
@@ -188,45 +234,90 @@ export default function InputDemo() {
 
       <PlaygroundSection
         title="Password with toggle"
-        description="leftIcon holds the lock; the interactive show/hide Button is layered on the right (it needs pointer events, so it sits outside the decorative rightIcon slot)."
-        code={`const [showPw, setShowPw] = useState(false);
+        description="Use showPasswordToggle prop for built-in password visibility toggle. The eye icon appears automatically with proper accessibility."
+        code={`<Input
+  type="password"
+  placeholder="Enter password"
+  showPasswordToggle
+/>
 
-<div className="relative">
-  <Input
-    leftIcon={<Lock style={{ width: 16, height: 16 }} />}
-    className="pr-10"
-    type={showPw ? 'text' : 'password'}
-    placeholder="••••••••"
-  />
-  <Button
-    variant="ghost" size="icon-sm"
-    className="absolute right-1 top-1/2 -translate-y-1/2"
-    onClick={() => setShowPw(!showPw)}
-    aria-label={showPw ? 'Hide password' : 'Show password'}
-  >
-    {showPw ? <EyeSlash /> : <Eye />}
-  </Button>
-</div>`}
+// With left icon
+<Input
+  type="password"
+  leftIcon={<Lock style={{ width: 16, height: 16 }} />}
+  placeholder="••••••••"
+  showPasswordToggle
+/>`}
       >
-        <div className="w-full max-w-sm">
-          <Label htmlFor="pw-toggle" className="mb-1.5 block">Password</Label>
-          <div className="relative">
+        <div className="w-full max-w-sm space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="pw-simple">Password (simple)</Label>
             <Input
-              id="pw-toggle"
-              leftIcon={<Lock style={{ width: 16, height: 16 }} />}
-              className="pr-10"
-              type={showPw ? 'text' : 'password'}
-              placeholder="••••••••"
+              id="pw-simple"
+              type="password"
+              placeholder="Enter password"
+              showPasswordToggle
             />
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="absolute right-1 top-1/2 -translate-y-1/2"
-              onClick={() => setShowPw(!showPw)}
-              aria-label={showPw ? 'Hide password' : 'Show password'}
-            >
-              {showPw ? <EyeSlash style={{ width: 14, height: 14 }} /> : <Eye style={{ width: 14, height: 14 }} />}
-            </Button>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="pw-icon">Password (with icon)</Label>
+            <Input
+              id="pw-icon"
+              type="password"
+              leftIcon={<Lock style={{ width: 16, height: 16 }} />}
+              placeholder="••••••••"
+              showPasswordToggle
+            />
+          </div>
+        </div>
+      </PlaygroundSection>
+
+      <PlaygroundSection
+        title="Character counter"
+        description="Use showCount with maxLength to display live character count. Counter turns yellow at 90% and red when over limit."
+        code={`// Basic counter
+<Input
+  placeholder="Enter bio..."
+  maxLength={100}
+  showCount
+/>
+
+// Counter with error when over limit
+<Input
+  placeholder="Tweet something..."
+  maxLength={280}
+  showCount
+  error={charCount > 280 ? "Too long" : undefined}
+/>`}
+      >
+        <div className="w-full max-w-sm space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="bio-counter">Bio (max 100 characters)</Label>
+            <Input
+              id="bio-counter"
+              placeholder="Tell us about yourself..."
+              maxLength={100}
+              showCount
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="tweet-counter">Tweet (max 280 characters)</Label>
+            <Input
+              id="tweet-counter"
+              placeholder="What's happening?"
+              maxLength={280}
+              showCount
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="username-counter">Username (max 20 characters)</Label>
+            <Input
+              id="username-counter"
+              placeholder="Choose username"
+              maxLength={20}
+              showCount
+              defaultValue="this_is_a_very_long_username"
+            />
           </div>
         </div>
       </PlaygroundSection>
@@ -250,9 +341,9 @@ export default function InputDemo() {
           </div>
           <div className="flex gap-2">
             <div className="flex-1">
-              <Input leftIcon={<MagnifyingGlass style={{ width: 16, height: 16 }} />} placeholder="MagnifyingGlass documentation..." />
+              <Input leftIcon={<MagnifyingGlass style={{ width: 16, height: 16 }} />} placeholder="Search documentation..." />
             </div>
-            <Button variant="outline">MagnifyingGlass</Button>
+            <Button variant="outline">Search</Button>
           </div>
         </div>
       </PlaygroundSection>
