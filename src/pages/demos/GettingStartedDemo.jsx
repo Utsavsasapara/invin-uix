@@ -40,7 +40,7 @@ export default function GettingStartedDemo() {
       <div>
         <div className="flex items-center gap-2 mb-3">
           <Badge variant="info" size="sm">Guide</Badge>
-          <Badge variant="outline" size="sm">v1.2</Badge>
+          <Badge variant="outline" size="sm">v1.3</Badge>
         </div>
         <h2 className="text-display font-bold text-[var(--foreground)] tracking-[-0.02em]">Getting Started</h2>
         <p className="text-body text-[var(--muted-foreground)] mt-1 max-w-2xl leading-relaxed">
@@ -232,7 +232,7 @@ import 'invin-uix/tokens.css'`} />
         <h3 className="text-section font-semibold text-[var(--foreground)]">What's included</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[
-            { icon: Stack, title: '56+ Components', desc: 'Button, Card, Dialog, DataTable, Sidebar, and more' },
+            { icon: Stack, title: '59+ Components', desc: 'Button, Card, Dialog, DataTable, Sidebar, and more' },
             { icon: Palette, title: 'Design Tokens', desc: 'Colours, typography, spacing, borders, motion' },
             { icon: Sparkle, title: '7 Product Accents', desc: 'ISOC Core, UEMP, GRC, CPS Pulse, RegimentAI, Assentra' },
             { icon: Code, title: 'Zero Config', desc: 'Tailwind v4 @theme utilities — no preset or config file' },

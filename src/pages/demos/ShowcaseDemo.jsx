@@ -478,7 +478,7 @@ export default function KitchenSinkDemo() {
       <section className="pt-4 border-t border-[var(--border)]">
         <div className="flex items-center justify-between">
           <p className="text-[12px] text-[var(--muted-foreground)]">
-            invin-uix v1.1.0 · 62+ components
+            invin-uix v1.3.0 · 59+ components
           </p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" leftIcon={<FileText style={{ width: 12, height: 12 }} />}>

@@ -145,7 +145,7 @@ const componentCategories = [
   {
     key: 'overlay',
     label: 'Overlay',
-    description: 'Dialog, Sheet, Popover, Dropdown, Context Menu',
+    description: 'Dialog, Drawer, Popover, Dropdown, Context Menu',
     icon: Stack,
     color: 'var(--error)',
     bgColor: 'color-mix(in srgb, var(--error) 15%, transparent)',
@@ -227,7 +227,7 @@ const features = [
   },
   {
     icon: GridFour,
-    title: '62+ Components',
+    title: '59+ Components',
     description: 'From Button to Flow Builder. Everything you need for product UIs.'
   }
 ];
@@ -317,7 +317,7 @@ export default function HomePage() {
             {/* Badges */}
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="secondary" size="sm">invin-uix</Badge>
-              <Badge variant="outline" size="sm">v1.1.0</Badge>
+              <Badge variant="outline" size="sm">v1.3.0</Badge>
               <Badge variant="info" size="sm">React 19</Badge>
               <Badge variant="info" size="sm">Tailwind v4</Badge>
             </div>
