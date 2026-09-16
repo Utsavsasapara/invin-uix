@@ -348,7 +348,7 @@ export default function MenuDemo() {
 
       <PlaygroundSection
         title="Collapsed Mode"
-        description="Icon-only mode with tooltips on hover. Toggle to see the transition."
+        description="Icon-only mode with tooltips on hover. Toggle to see the transition. Tooltips work for all items including those with sub-menus."
         code={`<Menu
   mode="sidebar"
   collapsed={true}
@@ -356,8 +356,15 @@ export default function MenuDemo() {
   selectedKeys={['dashboard']}
   items={[
     { key: 'dashboard', label: 'Dashboard', icon: <House /> },
-    { key: 'inbox', label: 'Tray', icon: <Tray /> },
-    { key: 'settings', label: 'Gear', icon: <Gear /> },
+    { key: 'inbox', label: 'Inbox', icon: <Tray /> },
+    {
+      key: 'navigation', label: 'Navigation', icon: <Envelope />,
+      children: [
+        { key: 'opt1', label: 'Option 1' },
+        { key: 'opt2', label: 'Option 2' },
+      ]
+    },
+    { key: 'settings', label: 'Settings', icon: <Gear /> },
   ]}
 />`}
       >
@@ -378,9 +385,16 @@ export default function MenuDemo() {
                   onClick={({ key }) => setCollapsedSelected([key])}
                   items={[
                     { key: 'dashboard', label: 'Dashboard', icon: icon(House) },
-                    { key: 'inbox', label: 'Tray', icon: icon(Tray) },
+                    { key: 'inbox', label: 'Inbox', icon: icon(Tray) },
+                    {
+                      key: 'navigation', label: 'Navigation', icon: icon(Envelope),
+                      children: [
+                        { key: 'nav-opt1', label: 'Option 1' },
+                        { key: 'nav-opt2', label: 'Option 2' },
+                      ]
+                    },
                     { key: 'calendar', label: 'Calendar', icon: icon(Calendar) },
-                    { key: 'settings', label: 'Gear', icon: icon(Gear) },
+                    { key: 'settings', label: 'Settings', icon: icon(Gear) },
                   ]}
                 />
               </div>
@@ -396,9 +410,9 @@ export default function MenuDemo() {
                   onClick={({ key }) => setCollapsedSelected([key])}
                   items={[
                     { key: 'dashboard', label: 'Dashboard', icon: icon(House) },
-                    { key: 'inbox', label: 'Tray', icon: icon(Tray) },
+                    { key: 'inbox', label: 'Inbox', icon: icon(Tray) },
                     { key: 'calendar', label: 'Calendar', icon: icon(Calendar) },
-                    { key: 'settings', label: 'Gear', icon: icon(Gear) },
+                    { key: 'settings', label: 'Settings', icon: icon(Gear) },
                   ]}
                 />
               </div>

@@ -3,6 +3,7 @@ import { Card, CardContent } from 'invin-uix/ui/card';
 import { Badge } from 'invin-uix/ui/badge';
 import { Button } from 'invin-uix/ui/button';
 import { Separator } from 'invin-uix/ui/separator';
+import { LIB_CONFIG } from 'invin-uix/lib-config';
 import {
   ArrowRight, BookOpen, Package, Shield, Lightning, Star,
   Cube, Palette, Code, Terminal, Sparkle, GridFour,
@@ -115,7 +116,7 @@ const componentCategories = [
   {
     key: 'form',
     label: 'Form & Input',
-    description: 'Input, Select, Checkbox, Switch, TagInput, ColorPicker',
+    description: 'Input, Select, Checkbox, Switch, TagInput, SearchInput',
     icon: ToggleLeft,
     color: 'var(--ok)',
     bgColor: 'color-mix(in srgb, var(--ok) 15%, transparent)',
@@ -227,7 +228,7 @@ const features = [
   },
   {
     icon: GridFour,
-    title: '59+ Components',
+    title: `${LIB_CONFIG.componentCountDisplay} Components`,
     description: 'From Button to Flow Builder. Everything you need for product UIs.'
   }
 ];
@@ -316,10 +317,10 @@ export default function HomePage() {
           <div className="space-y-6">
             {/* Badges */}
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="secondary" size="sm">invin-uix</Badge>
-              <Badge variant="outline" size="sm">v1.3.0</Badge>
-              <Badge variant="info" size="sm">React 19</Badge>
-              <Badge variant="info" size="sm">Tailwind v4</Badge>
+              <Badge variant="secondary" size="sm">{LIB_CONFIG.name}</Badge>
+              <Badge variant="outline" size="sm">v{LIB_CONFIG.version}</Badge>
+              <Badge variant="info" size="sm">React {LIB_CONFIG.reactVersion}</Badge>
+              <Badge variant="info" size="sm">Tailwind v{LIB_CONFIG.tailwindVersion}</Badge>
             </div>
 
             {/* Headline */}
@@ -354,9 +355,9 @@ export default function HomePage() {
             {/* Stats */}
             <div className="flex items-center gap-6 pt-2">
               {[
-                { value: '59+', label: 'Components' },
-                { value: '7', label: 'Accents' },
-                { value: '1500+', label: 'Icons' }
+                { value: LIB_CONFIG.componentCountDisplay, label: 'Components' },
+                { value: String(LIB_CONFIG.accentCount), label: 'Accents' },
+                { value: LIB_CONFIG.iconCountDisplay, label: 'Icons' }
               ].map(stat => (
                 <div key={stat.label}>
                   <p className="text-xl font-bold text-[var(--foreground)]">{stat.value}</p>
@@ -557,7 +558,7 @@ export default function HomePage() {
         <div className="max-w-md mx-auto space-y-4">
           <h2 className="text-xl font-bold text-[var(--foreground)]">Ready to build?</h2>
           <p className="text-caption text-[var(--muted-foreground)]">
-            Start building beautiful, consistent product interfaces with invin-uix.
+            Start building beautiful, consistent product interfaces with {LIB_CONFIG.name}.
           </p>
           <div className="flex items-center justify-center gap-3">
             <Link to="/components">

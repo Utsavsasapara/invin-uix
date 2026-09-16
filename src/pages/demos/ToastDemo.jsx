@@ -2,12 +2,14 @@ import { ComponentPage, PlaygroundSection, InteractiveDemo, PropsTable } from '.
 import { Toaster, toast, useToast } from 'invin-uix/ui/toast';
 import { Button } from 'invin-uix/ui/button';
 import { Separator } from 'invin-uix/ui/separator';
+import { Card, CardContent, CardHeader, CardTitle } from 'invin-uix/ui/card';
 import { useState } from 'react';
 
-// Demo component for action buttons
+// Demo component for action buttons - UI Guide: toasts with actions never auto-dismiss
 function ActionToastDemo() {
   const handleUndo = () => {
-    toast({ title: 'Undo successful', variant: 'success', duration: 2000 });
+    // Past tense, no exclamation marks per UI Guide v2.0 §13
+    toast({ title: 'Deletion undone', variant: 'success' });
   };
   
   return (
@@ -15,15 +17,15 @@ function ActionToastDemo() {
       variant="outline" 
       onClick={() => toast({ 
         title: 'File deleted', 
-        description: 'document.pdf has been moved to trash.',
+        description: 'document.pdf moved to trash.',
         variant: 'destructive',
-        duration: 6000,
+        // UI Guide: toasts with actions never auto-dismiss (handled automatically)
         action: (
           <Button 
             size="sm" 
             variant="outline" 
             onClick={handleUndo}
-            style={{ marginLeft: '8px', backgroundColor: 'rgba(255,255,255,0.2)' }}
+            className="ml-2 bg-white/10 hover:bg-white/20"
           >
             Undo
           </Button>
@@ -41,10 +43,10 @@ function ProgrammaticDismissDemo() {
   
   const showPersistent = () => {
     const { id, dismiss } = toast({ 
-      title: 'Processing...', 
-      description: 'This toast stays until dismissed.',
-      duration: 0, // infinite
+      title: 'Processing request', 
+      description: 'This may take a moment.',
       variant: 'info'
+      // Error toasts never auto-dismiss; for info, use default duration
     });
     setToastId({ id, dismiss });
   };
@@ -53,14 +55,14 @@ function ProgrammaticDismissDemo() {
     if (toastId) {
       toastId.dismiss();
       setToastId(null);
-      toast({ title: 'Toast dismissed', variant: 'success', duration: 2000 });
+      toast({ title: 'Toast dismissed', variant: 'success' });
     }
   };
   
   return (
     <div className="flex gap-2">
       <Button variant="outline" onClick={showPersistent} disabled={!!toastId}>
-        Show Persistent Toast
+        Show Toast
       </Button>
       <Button variant="outline" onClick={dismissToast} disabled={!toastId}>
         Dismiss Programmatically
@@ -73,33 +75,66 @@ export default function ToastDemo() {
   return (
     <ComponentPage
       name="Toast"
-      description="Non-intrusive notification messages that appear temporarily. Supports variants, positioning, duration, and action buttons."
+      description="Non-intrusive notifications following UI Guide v2.0 §13. Features severity-based durations, 3px edge stripe, close button, and responsive positioning."
       importCode={`import { Toaster, toast } from 'invin-uix/ui/toast';
 // Place <Toaster /> once in your app root`}
     >
-      <Toaster position="top-right" />
+      <Toaster position="bottom-right" />
+
+      {/* ─── UI Guide v2.0 §13 Reference ────────────────────────── */}
+      <Card className="border-[var(--accent)]/30 bg-[var(--accent)]/5">
+        <CardHeader>
+          <CardTitle className="text-sm flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+            UI Guide v2.0 §13 — Toast Rules
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm space-y-3">
+          <div className="grid gap-2 sm:grid-cols-2">
+            <div>
+              <p className="font-[600] text-[var(--foreground)]">Duration by Severity</p>
+              <ul className="text-[var(--muted-foreground)] text-xs mt-1 space-y-1">
+                <li>• <strong>Info/Success:</strong> 4 seconds</li>
+                <li>• <strong>Warning:</strong> 7 seconds</li>
+                <li>• <strong>Error:</strong> Never auto-dismiss</li>
+                <li>• <strong>With action:</strong> Never auto-dismiss</li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-[600] text-[var(--foreground)]">Content Guidelines</p>
+              <ul className="text-[var(--muted-foreground)] text-xs mt-1 space-y-1">
+                <li>• Success: Past tense, no exclamation marks</li>
+                <li>• Error: Says what to do next</li>
+                <li>• Max 3 visible, 4th queues</li>
+                <li>• Below 640px: top-center position</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Separator />
 
       {/* ─── Interactive Playground ─────────────────────────────── */}
       <InteractiveDemo
         title="Toast Playground"
-        description="Experiment with different toast configurations. Click the button to trigger a toast."
+        description="Experiment with different toast configurations. Severity determines duration automatically."
         controls={[
           {
             name: 'variant',
             type: 'select',
-            label: 'Variant',
+            label: 'Severity',
             default: 'default',
             options: [
-              { value: 'default', label: 'Default' },
-              { value: 'success', label: 'Success' },
-              { value: 'warning', label: 'Warning' },
-              { value: 'destructive', label: 'Destructive' },
-              { value: 'info', label: 'Info' },
+              { value: 'default', label: 'Default (4s)' },
+              { value: 'success', label: 'Success (4s)' },
+              { value: 'info', label: 'Info (4s)' },
+              { value: 'warning', label: 'Warning (7s)' },
+              { value: 'destructive', label: 'Error (persistent)' },
             ],
           },
-          { name: 'duration', type: 'number', label: 'Duration (ms)', default: 4000, min: 1000, max: 10000 },
-          { name: 'title', type: 'text', label: 'Title', default: 'Notification', placeholder: 'Toast title' },
-          { name: 'description', type: 'text', label: 'Description', default: 'This is a toast message.', placeholder: 'Toast description' },
+          { name: 'title', type: 'text', label: 'Title', default: 'Changes saved', placeholder: 'Toast title' },
+          { name: 'description', type: 'text', label: 'Description', default: 'Your preferences have been updated.', placeholder: 'Toast description' },
         ]}
       >
         {(props) => (
@@ -108,8 +143,8 @@ export default function ToastDemo() {
             onClick={() => toast({ 
               title: props.title, 
               description: props.description, 
-              variant: props.variant,
-              duration: props.duration
+              variant: props.variant
+              // Duration is automatically set by severity per UI Guide v2.0
             })}
           >
             Show Toast
@@ -119,74 +154,146 @@ export default function ToastDemo() {
 
       <Separator variant="bold" />
 
+      {/* ─── Severity Variants ──────────────────────────────────── */}
       <PlaygroundSection
-        title="Variants"
-        description="Five semantic variants for different message types."
-        code={`toast({ title: 'Default notification' });
-toast({ title: 'Success!', variant: 'success' });
-toast({ title: 'Warning', variant: 'warning' });
-toast({ title: 'Error occurred', variant: 'destructive' });
-toast({ title: 'Info message', variant: 'info' });`}
+        title="Severity Variants"
+        description="Each severity has automatic duration: info/success (4s), warning (7s), error (never auto-dismiss)."
+        code={`// Info/Success: 4 seconds
+toast({ title: 'Settings saved', variant: 'success' });
+
+// Warning: 7 seconds  
+toast({ title: 'Session expiring', description: 'Save your work.', variant: 'warning' });
+
+// Error: Never auto-dismiss
+toast({ title: 'Connection failed', description: 'Check your network.', variant: 'destructive' });`}
       >
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Default notification', description: 'This is a default toast.' })}>Default</Button>
-          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Success!', description: 'Action completed.', variant: 'success' })}>Success</Button>
-          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Warning', description: 'Check this out.', variant: 'warning' })}>Warning</Button>
-          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Error', description: 'Something went wrong.', variant: 'destructive' })}>Destructive</Button>
-          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Info', description: 'Here is some info.', variant: 'info' })}>Info</Button>
+          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Notification', description: 'Default toast.' })}>Default (4s)</Button>
+          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Settings saved', description: 'Your changes have been applied.', variant: 'success' })}>Success (4s)</Button>
+          <Button variant="outline" size="sm" onClick={() => toast({ title: 'New update available', description: 'Refresh to see changes.', variant: 'info' })}>Info (4s)</Button>
+          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Session expiring soon', description: 'You have 5 minutes remaining. Save your work.', variant: 'warning' })}>Warning (7s)</Button>
+          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Connection failed', description: 'Check your network and try again.', variant: 'destructive' })}>Error (persistent)</Button>
         </div>
       </PlaygroundSection>
 
+      {/* ─── Content Guidelines ─────────────────────────────────── */}
       <PlaygroundSection
-        title="With Description"
-        description="Add a description for more context."
-        code={`toast({
-  title: 'Scheduled',
-  description: 'Meeting set for Friday at 3pm.',
+        title="Content Guidelines"
+        description="UI Guide v2.0: Success uses past tense, no exclamation marks. Errors say what to do next."
+        code={`// ✓ Good success message (past tense, no !)
+toast({ title: 'Profile updated', variant: 'success' });
+
+// ✗ Avoid: "Profile updated!" or "Updating profile..."
+
+// ✓ Good error message (says what to do)
+toast({ 
+  title: 'Upload failed', 
+  description: 'File too large. Try a file under 10MB.',
+  variant: 'destructive' 
 });`}
       >
-        <Button variant="outline" onClick={() => toast({ title: 'Scheduled', description: 'Your meeting has been set for Friday at 3:00 PM.' })}>
-          Show with Description
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Card>
+            <CardContent className="py-3">
+              <p className="text-xs font-[600] text-[var(--ok)] uppercase tracking-wider mb-3">✓ Correct Examples</p>
+              <div className="space-y-2">
+                <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => toast({ title: 'Profile updated', variant: 'success' })}>
+                  "Profile updated"
+                </Button>
+                <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => toast({ title: 'File uploaded', description: '3 files added to Documents.', variant: 'success' })}>
+                  "File uploaded"
+                </Button>
+                <Button variant="outline" size="sm" className="w-full justify-start" onClick={() => toast({ title: 'Connection failed', description: 'Check your network and try again.', variant: 'destructive' })}>
+                  Error with next step
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="py-3">
+              <p className="text-xs font-[600] text-[var(--error)] uppercase tracking-wider mb-3">✗ Avoid</p>
+              <div className="space-y-2 text-sm text-[var(--muted-foreground)]">
+                <div className="p-2 bg-[var(--muted)]/50 rounded line-through decoration-[var(--error)]">"Profile updated!"</div>
+                <div className="p-2 bg-[var(--muted)]/50 rounded line-through decoration-[var(--error)]">"Success! Your file was uploaded!"</div>
+                <div className="p-2 bg-[var(--muted)]/50 rounded line-through decoration-[var(--error)]">"Error occurred" (no next step)</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </PlaygroundSection>
+
+      {/* ─── Error with Correlation ID ──────────────────────────── */}
+      <PlaygroundSection
+        title="Error with Correlation ID"
+        description="For API errors, include a correlation ID that users can copy and share with support."
+        code={`toast({
+  title: 'Request failed',
+  description: 'Unable to process your request.',
+  variant: 'destructive',
+  correlationId: 'req_a1b2c3d4e5f6'
+});`}
+      >
+        <Button 
+          variant="outline" 
+          onClick={() => toast({ 
+            title: 'Request failed', 
+            description: 'Unable to process your request. Contact support with the ID below.',
+            variant: 'destructive',
+            correlationId: 'req_' + Math.random().toString(36).substring(2, 14)
+          })}
+        >
+          Show Error with Correlation ID
         </Button>
       </PlaygroundSection>
 
-      <PlaygroundSection
-        title="Custom Duration"
-        description="Control how long the toast stays visible (default 4000ms)."
-        code={`toast({ title: 'Quick', duration: 1500 });
-toast({ title: 'Long', duration: 8000 });`}
-      >
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Quick toast', description: 'Gone in 1.5s', duration: 1500 })}>1.5s</Button>
-          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Standard toast', description: 'Default 4s duration' })}>4s (default)</Button>
-          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Long toast', description: 'Stays for 8s', duration: 8000 })}>8s</Button>
-        </div>
-      </PlaygroundSection>
-
+      {/* ─── With Action Button ─────────────────────────────────── */}
       <PlaygroundSection
         title="With Action Button"
-        description="Add an action button for undo, retry, or other quick actions."
+        description="Toasts with actions never auto-dismiss (UI Guide rule). Action should be relevant to the message."
         code={`toast({
   title: 'File deleted',
-  description: 'document.pdf has been moved to trash.',
+  description: 'document.pdf moved to trash.',
   variant: 'destructive',
-  duration: 6000,
   action: <Button size="sm" onClick={handleUndo}>Undo</Button>
+  // Duration is automatically set to 0 (never auto-dismiss)
 });`}
       >
         <ActionToastDemo />
       </PlaygroundSection>
 
+      {/* ─── Toast Limit ────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Toast Limit (Max 3)"
+        description="UI Guide v2.0: Maximum 3 visible toasts. Additional toasts queue until space opens."
+        code={`// Rapidly show 5 toasts - only 3 will be visible
+for (let i = 1; i <= 5; i++) {
+  toast({ title: \`Toast \${i}\`, variant: 'info' });
+}`}
+      >
+        <Button 
+          variant="outline" 
+          onClick={() => {
+            for (let i = 1; i <= 5; i++) {
+              setTimeout(() => {
+                toast({ title: `Toast ${i} of 5`, description: 'Only 3 visible at once.', variant: 'info' });
+              }, i * 100);
+            }
+          }}
+        >
+          Show 5 Toasts (Max 3 Visible)
+        </Button>
+      </PlaygroundSection>
+
       <PlaygroundSection
         title="Programmatic Dismiss"
-        description="Use toast() return value to dismiss programmatically. Set duration: 0 for persistent toasts."
+        description="Use toast() return value to dismiss programmatically."
         code={`const { id, dismiss } = toast({ 
   title: 'Processing...', 
-  duration: 0  // infinite
+  variant: 'info'
 });
 
 // Later...
-dismiss();  // or use id with useToast().dismiss(id)`}
+dismiss();`}
       >
         <ProgrammaticDismissDemo />
       </PlaygroundSection>
@@ -196,27 +303,27 @@ dismiss();  // or use id with useToast().dismiss(id)`}
       {/* ─── Use Cases ──────────────────────────────────────────── */}
       <div className="space-y-3">
         <h3 className="text-[var(--foreground)] font-[700]">Real-world use cases</h3>
-        <p className="text-[var(--foreground)] text-[var(--muted-foreground)]">Common patterns for production apps.</p>
+        <p className="text-[var(--foreground)] text-[var(--muted-foreground)]">Common patterns following UI Guide v2.0 content rules.</p>
       </div>
 
       <PlaygroundSection
         title="Form submission feedback"
-        description="Success/error toasts after form submit."
-        code={`// On success
-toast({ title: 'Profile updated', variant: 'success' });
+        description="Success uses past tense. Error explains what to do."
+        code={`// On success (past tense, no !)
+toast({ title: 'Profile saved', variant: 'success' });
 
-// On error
+// On error (says what to do)
 toast({ 
-  title: 'Failed to save', 
-  description: 'Please try again.',
+  title: 'Save failed', 
+  description: 'Check your connection and try again.',
   variant: 'destructive' 
 });`}
       >
         <div className="flex gap-2">
-          <Button variant="default" size="sm" onClick={() => toast({ title: 'Profile updated', description: 'Your changes have been saved.', variant: 'success' })}>
+          <Button variant="default" size="sm" onClick={() => toast({ title: 'Profile saved', description: 'Your changes are now live.', variant: 'success' })}>
             Save Profile ✓
           </Button>
-          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Failed to save', description: 'Network error. Please try again.', variant: 'destructive' })}>
+          <Button variant="outline" size="sm" onClick={() => toast({ title: 'Save failed', description: 'Check your connection and try again.', variant: 'destructive' })}>
             Save (Error)
           </Button>
         </div>
@@ -226,14 +333,14 @@ toast({
         title="Copy to clipboard"
         description="Quick feedback after copying."
         code={`navigator.clipboard.writeText(text);
-toast({ title: 'Copied!', variant: 'success', duration: 2000 });`}
+toast({ title: 'Link copied', variant: 'success' });`}
       >
         <Button 
           variant="outline" 
           size="sm" 
           onClick={() => {
             navigator.clipboard.writeText('https://example.com/share/abc123');
-            toast({ title: 'Link copied!', description: 'Share link copied to clipboard.', variant: 'success', duration: 2000 });
+            toast({ title: 'Link copied', description: 'Share link copied to clipboard.', variant: 'success' });
           }}
         >
           Copy Share Link
@@ -242,18 +349,18 @@ toast({ title: 'Copied!', variant: 'success', duration: 2000 });`}
 
       <PlaygroundSection
         title="Background task notification"
-        description="Notify when async operations complete."
-        code={`// Start task
-toast({ title: 'Exporting...', variant: 'info' });
+        description="Info for starting, success for completion."
+        code={`// Start task (info, 4s)
+toast({ title: 'Exporting report', variant: 'info' });
 
-// When done
-toast({ title: 'Export complete', description: 'Download ready.', variant: 'success' });`}
+// When done (success, 4s)
+toast({ title: 'Export complete', variant: 'success' });`}
       >
         <Button 
           variant="outline" 
           size="sm" 
           onClick={() => {
-            toast({ title: 'Exporting report...', description: 'This may take a moment.', variant: 'info', duration: 2000 });
+            toast({ title: 'Exporting report', description: 'This may take a moment.', variant: 'info' });
             setTimeout(() => {
               toast({ title: 'Export complete', description: 'Your report is ready for download.', variant: 'success' });
             }, 2500);
@@ -269,9 +376,10 @@ toast({ title: 'Export complete', description: 'Download ready.', variant: 'succ
         props={[
           { name: 'title', type: 'string', default: '—', description: 'Toast title (required)' },
           { name: 'description', type: 'string', default: '—', description: 'Additional description text' },
-          { name: 'variant', type: "'default' | 'success' | 'destructive' | 'warning' | 'info'", default: "'default'", description: 'Visual style/color' },
-          { name: 'duration', type: 'number', default: '4000', description: 'Auto-dismiss time in ms (0 = persistent)' },
-          { name: 'action', type: 'ReactNode', default: '—', description: 'Action button or content' },
+          { name: 'variant', type: "'default' | 'success' | 'destructive' | 'warning' | 'info'", default: "'default'", description: 'Severity — determines color and duration' },
+          { name: 'duration', type: 'number', default: 'auto', description: 'Auto by severity: info/success=4s, warning=7s, error=persistent. Override with explicit value.' },
+          { name: 'action', type: 'ReactNode', default: '—', description: 'Action button. Toasts with actions never auto-dismiss.' },
+          { name: 'correlationId', type: 'string', default: '—', description: 'Request ID for errors — displayed in mono, user can copy' },
         ]}
       />
 
@@ -279,7 +387,7 @@ toast({ title: 'Export complete', description: 'Download ready.', variant: 'succ
         <h4 className="text-[var(--foreground)] font-[600] text-sm mb-2">Toaster Props</h4>
         <PropsTable
           props={[
-            { name: 'position', type: "'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center'", default: "'bottom-right'", description: 'Position of toast stack' },
+            { name: 'position', type: "'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center'", default: "'bottom-right'", description: 'Position of toast stack. Auto-switches to top-center below 640px.' },
           ]}
         />
       </div>

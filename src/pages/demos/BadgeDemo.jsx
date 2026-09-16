@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
 import { Badge, NotificationBadge, StatusBadge } from 'invin-uix/ui/badge';
 import { Button } from 'invin-uix/ui/button';
-import { Card, CardContent } from 'invin-uix/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from 'invin-uix/ui/card';
 import { Separator } from 'invin-uix/ui/separator';
 import { Avatar, AvatarImage, AvatarFallback } from 'invin-uix/ui/avatar';
-import { Bell, Envelope, Star, Check, Lightning, User, Shield, Clock, Pulse, ArrowRight, Tag, X } from 'invin-uix/ui/icons';
+import { Bell, Envelope, Star, Check, Lightning, User, Shield, Clock, Pulse, ArrowRight, Tag, X, Play, Pause, Warning, Trash, Gear, PaperPlaneTilt, XCircle } from 'invin-uix/ui/icons';
+import { LIB_CONFIG } from 'invin-uix/lib-config';
 
 export default function BadgeDemo() {
   const [tags, setTags] = useState(['React', 'TypeScript', 'Tailwind', 'Radix']);
@@ -116,9 +117,11 @@ export default function BadgeDemo() {
         <p className="text-[var(--muted-foreground)] font-[600] uppercase tracking-[0.05em] text-[var(--muted-foreground-faint)]">StatusBadge (dot + text)</p>
         <PropsTable
           props={[
-            { name: 'status', type: "'default' | 'success' | 'processing' | 'error' | 'warning'", default: '—', description: 'Drives dot colour; processing pulses' },
-            { name: 'text', type: 'string', default: '—', description: 'Text next to the dot' },
+            { name: 'status', type: "HealthStatus | RuleStatus", default: '—', description: "Health: 'ok' | 'degraded' | 'error' | 'offline' | 'idle' | 'pending'. Rule: 'active' | 'paused' | 'failed' | 'draft' | 'deploying' | 'pausing' | 'cancelling' | 'deleting' | 'deleted'. Legacy: 'default' | 'success' | 'processing' | 'warning'" },
+            { name: 'text', type: 'string', default: 'auto', description: 'Text next to dot. Defaults to status label (e.g., "Healthy" for ok)' },
             { name: 'color', type: 'string', default: '—', description: 'Override the dot colour' },
+            { name: 'pulse', type: 'boolean', default: 'auto', description: 'Override pulse. Auto: error/offline pulse by default' },
+            { name: 'dotOnly', type: 'boolean', default: 'false', description: 'Hide text, show only dot' },
           ]}
         />
       </div>
@@ -240,9 +243,9 @@ export default function BadgeDemo() {
           <Badge variant="info" size="lg">Large</Badge>
         </div>
         <div className="flex flex-wrap items-center gap-3 mt-3">
-          <Badge variant="success" size="sm">v1.2.0</Badge>
-          <Badge variant="outline" size="sm">React 19</Badge>
-          <Badge variant="secondary" size="sm">Tailwind v4</Badge>
+          <Badge variant="success" size="sm">v{LIB_CONFIG.version}</Badge>
+          <Badge variant="outline" size="sm">React {LIB_CONFIG.reactVersion}</Badge>
+          <Badge variant="secondary" size="sm">Tailwind v{LIB_CONFIG.tailwindVersion}</Badge>
         </div>
       </PlaygroundSection>
 
@@ -341,6 +344,269 @@ export default function BadgeDemo() {
 
       <Separator variant="bold" />
 
+      {/* ═══════════════════════════════════════════════════════════════════════
+          UI Guide v2.0 §13 — Status Vocabulary
+          ═══════════════════════════════════════════════════════════════════════ */}
+      
+      <div className="space-y-3">
+        <h3 className="text-[var(--foreground)] font-[700]">UI Guide v2.0 — Status Vocabulary</h3>
+        <p className="text-[var(--muted-foreground)]">
+          Standardized status indicators per §13: Health Tones for live system state, 
+          Rule Status for workflows/rules lifecycle. Error and Offline states pulse automatically.
+        </p>
+      </div>
+
+      {/* ─── Health Tones ───────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Health Tones (Live System State)"
+        description="Six health states for collectors, services, and data pipelines. Error and Offline pulse to indicate urgency."
+        code={`// Healthy — events flowing, all good
+<StatusBadge status="ok" />
+
+// Degraded — data lands but errors present
+<StatusBadge status="degraded" />
+
+// Error — failing, nothing arriving (pulses)
+<StatusBadge status="error" />
+
+// Offline — silent past threshold (pulses)
+<StatusBadge status="offline" />
+
+// Idle — alive but nothing to send
+<StatusBadge status="idle" />
+
+// Pending — undetermined state
+<StatusBadge status="pending" />`}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Health Tones Reference</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3">
+              <div className="flex items-center justify-between py-2 border-b border-[var(--border)]">
+                <div className="flex items-center gap-3">
+                  <StatusBadge status="ok" />
+                  <div>
+                    <p className="font-[500] text-[var(--foreground)]">Healthy</p>
+                    <p className="text-xs text-[var(--muted-foreground)]">Events flowing, all systems operational</p>
+                  </div>
+                </div>
+                <code className="text-xs bg-[var(--muted)] px-2 py-1 rounded">ok</code>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-[var(--border)]">
+                <div className="flex items-center gap-3">
+                  <StatusBadge status="degraded" />
+                  <div>
+                    <p className="font-[500] text-[var(--foreground)]">Degraded</p>
+                    <p className="text-xs text-[var(--muted-foreground)]">Data lands while collector errors present</p>
+                  </div>
+                </div>
+                <code className="text-xs bg-[var(--muted)] px-2 py-1 rounded">degraded</code>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-[var(--border)]">
+                <div className="flex items-center gap-3">
+                  <StatusBadge status="error" />
+                  <div>
+                    <p className="font-[500] text-[var(--foreground)]">Error</p>
+                    <p className="text-xs text-[var(--muted-foreground)]">Failing, nothing arriving — pulses for urgency</p>
+                  </div>
+                </div>
+                <code className="text-xs bg-[var(--muted)] px-2 py-1 rounded">error</code>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-[var(--border)]">
+                <div className="flex items-center gap-3">
+                  <StatusBadge status="offline" />
+                  <div>
+                    <p className="font-[500] text-[var(--foreground)]">Offline</p>
+                    <p className="text-xs text-[var(--muted-foreground)]">Silent past threshold — pulses for urgency</p>
+                  </div>
+                </div>
+                <code className="text-xs bg-[var(--muted)] px-2 py-1 rounded">offline</code>
+              </div>
+              <div className="flex items-center justify-between py-2 border-b border-[var(--border)]">
+                <div className="flex items-center gap-3">
+                  <StatusBadge status="idle" />
+                  <div>
+                    <p className="font-[500] text-[var(--foreground)]">Idle</p>
+                    <p className="text-xs text-[var(--muted-foreground)]">Provably alive, nothing to send</p>
+                  </div>
+                </div>
+                <code className="text-xs bg-[var(--muted)] px-2 py-1 rounded">idle</code>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <div className="flex items-center gap-3">
+                  <StatusBadge status="pending" />
+                  <div>
+                    <p className="font-[500] text-[var(--foreground)]">Pending</p>
+                    <p className="text-xs text-[var(--muted-foreground)]">Undetermined state or paused</p>
+                  </div>
+                </div>
+                <code className="text-xs bg-[var(--muted)] px-2 py-1 rounded">pending</code>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </PlaygroundSection>
+
+      {/* ─── Rule Status ────────────────────────────────────────── */}
+      <PlaygroundSection
+        title="Rule Status (Workflow Lifecycle)"
+        description="Nine states for rules, automations, and workflows. Transient states (deploying, pausing, etc.) indicate in-progress operations."
+        code={`// Stable states
+<StatusBadge status="active" />   // Running
+<StatusBadge status="paused" />   // Intentionally stopped
+<StatusBadge status="failed" />   // Execution failed
+<StatusBadge status="draft" />    // Not yet deployed
+
+// Transient states
+<StatusBadge status="deploying" />   // Being deployed
+<StatusBadge status="pausing" />     // Stopping
+<StatusBadge status="cancelling" />  // Aborting
+<StatusBadge status="deleting" />    // Being removed
+<StatusBadge status="deleted" />     // Tombstone`}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Rule Status Reference</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {/* Stable states */}
+              <div>
+                <p className="text-xs font-[600] text-[var(--muted-foreground)] uppercase tracking-wider mb-3">Stable States</p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 p-2 rounded-[var(--radius)] bg-[var(--muted)]/30">
+                    <StatusBadge status="active" />
+                    <span className="text-sm">Active rule</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 rounded-[var(--radius)] bg-[var(--muted)]/30">
+                    <StatusBadge status="paused" />
+                    <span className="text-sm">Paused rule</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 rounded-[var(--radius)] bg-[var(--muted)]/30">
+                    <StatusBadge status="failed" />
+                    <span className="text-sm">Failed rule</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 rounded-[var(--radius)] bg-[var(--muted)]/30">
+                    <StatusBadge status="draft" />
+                    <span className="text-sm">Draft rule</span>
+                  </div>
+                </div>
+              </div>
+              {/* Transient states */}
+              <div>
+                <p className="text-xs font-[600] text-[var(--muted-foreground)] uppercase tracking-wider mb-3">Transient States</p>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 p-2 rounded-[var(--radius)] bg-[var(--muted)]/30">
+                    <StatusBadge status="deploying" />
+                    <span className="text-sm">Deploying...</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 rounded-[var(--radius)] bg-[var(--muted)]/30">
+                    <StatusBadge status="pausing" />
+                    <span className="text-sm">Pausing...</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 rounded-[var(--radius)] bg-[var(--muted)]/30">
+                    <StatusBadge status="cancelling" />
+                    <span className="text-sm">Cancelling...</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 rounded-[var(--radius)] bg-[var(--muted)]/30">
+                    <StatusBadge status="deleting" />
+                    <span className="text-sm">Deleting...</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 rounded-[var(--radius)] bg-[var(--muted)]/30">
+                    <StatusBadge status="deleted" />
+                    <span className="text-sm">Deleted</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </PlaygroundSection>
+
+      {/* ─── Real-world: Service Dashboard ──────────────────────── */}
+      <PlaygroundSection
+        title="Service Health Dashboard"
+        description="Real-world example using health tones for a service monitoring dashboard."
+        code={`const services = [
+  { name: 'API Gateway', status: 'ok', region: 'us-east-1' },
+  { name: 'Auth Service', status: 'degraded', region: 'us-west-2' },
+  { name: 'Worker Queue', status: 'error', region: 'eu-west-1' },
+  { name: 'CDN Edge', status: 'offline', region: 'ap-south-1' },
+];
+
+services.map(s => <StatusBadge status={s.status} />)`}
+      >
+        <Card>
+          <CardContent className="py-3">
+            <div className="space-y-3">
+              {[
+                { name: 'API Gateway', status: 'ok', region: 'us-east-1', latency: '12ms' },
+                { name: 'Auth Service', status: 'degraded', region: 'us-west-2', latency: '245ms' },
+                { name: 'Worker Queue', status: 'error', region: 'eu-west-1', latency: '—' },
+                { name: 'CDN Edge', status: 'offline', region: 'ap-south-1', latency: '—' },
+                { name: 'Cache Layer', status: 'idle', region: 'us-east-1', latency: '2ms' },
+              ].map(s => (
+                <div key={s.name} className="flex items-center justify-between py-1">
+                  <div className="flex items-center gap-3">
+                    <StatusBadge status={s.status} dotOnly />
+                    <div>
+                      <p className="text-[var(--foreground)] font-[500]">{s.name}</p>
+                      <p className="text-[10px] text-[var(--muted-foreground)]">{s.region}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs text-[var(--muted-foreground)] tabular-nums">{s.latency}</span>
+                    <StatusBadge status={s.status} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </PlaygroundSection>
+
+      {/* ─── Real-world: Rules Table ────────────────────────────── */}
+      <PlaygroundSection
+        title="Automation Rules Table"
+        description="Rule status in a management table with action buttons."
+        code={`const rules = [
+  { name: 'Block suspicious IPs', status: 'active' },
+  { name: 'Rate limit API', status: 'deploying' },
+  { name: 'Alert on anomaly', status: 'paused' },
+];`}
+      >
+        <Card>
+          <CardContent className="py-3">
+            <div className="space-y-3">
+              {[
+                { name: 'Block suspicious IPs', desc: 'Auto-block IPs with >5 failed logins', status: 'active' },
+                { name: 'Rate limit API calls', desc: 'Limit to 1000 req/min per client', status: 'deploying' },
+                { name: 'Alert on anomaly', desc: 'ML-based traffic anomaly detection', status: 'paused' },
+                { name: 'Geo-fence access', desc: 'Restrict access by region', status: 'failed' },
+                { name: 'Log retention policy', desc: 'Auto-archive logs after 30 days', status: 'draft' },
+              ].map(r => (
+                <div key={r.name} className="flex items-center justify-between py-2 border-b border-[var(--border)] last:border-0">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[var(--foreground)] font-[500] truncate">{r.name}</p>
+                    <p className="text-[11px] text-[var(--muted-foreground)] truncate">{r.desc}</p>
+                  </div>
+                  <div className="flex items-center gap-3 ml-4">
+                    <StatusBadge status={r.status} />
+                    <Button size="icon-sm" variant="ghost" aria-label="Settings">
+                      <Gear style={{ width: 14, height: 14 }} />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </PlaygroundSection>
+
+      <Separator variant="bold" />
+
       {/* ─── Real-world Use Cases ───────────────────────────────── */}
       <div className="space-y-3">
         <h3 className="text-[var(--foreground)] font-[700]">Use cases</h3>
@@ -392,26 +658,27 @@ export default function BadgeDemo() {
 
       <PlaygroundSection
         title="Status table column"
-        description="Status dots in a data list or table row."
-        code={`<StatusBadge status="success" text="Running" />
-<StatusBadge status="processing" text="Deploying..." />
-<StatusBadge status="error" text="Crashed" />`}
+        description="Status dots in a data list or table row using health tones."
+        code={`<StatusBadge status="ok" />
+<StatusBadge status="degraded" />
+<StatusBadge status="error" />
+<StatusBadge status="offline" />`}
       >
         <Card>
           <CardContent className="py-3">
             <div className="space-y-3">
               {[
-                { name: 'API Gateway', env: 'Production', status: 'success', text: 'Running' },
-                { name: 'Auth Service', env: 'Staging', status: 'processing', text: 'Deploying...' },
-                { name: 'Worker Queue', env: 'Production', status: 'error', text: 'Crashed' },
-                { name: 'CDN Edge', env: 'Production', status: 'warning', text: 'Degraded' },
+                { name: 'API Gateway', env: 'Production', status: 'ok' },
+                { name: 'Auth Service', env: 'Staging', status: 'deploying' },
+                { name: 'Worker Queue', env: 'Production', status: 'error' },
+                { name: 'CDN Edge', env: 'Production', status: 'degraded' },
               ].map(s => (
                 <div key={s.name} className="flex items-center justify-between py-1">
                   <div>
                     <p className="text-[var(--foreground)] font-[500]">{s.name}</p>
                     <p className="text-[10px] text-[var(--muted-foreground-faint)]">{s.env}</p>
                   </div>
-                  <StatusBadge status={s.status} text={s.text} />
+                  <StatusBadge status={s.status} />
                 </div>
               ))}
             </div>

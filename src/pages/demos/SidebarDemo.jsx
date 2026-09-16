@@ -56,14 +56,17 @@ import { Menu } from 'invin-uix/ui/menu';`}
         ]}
       >
         {(props) => (
-          <div className="border border-[var(--border)] rounded-xl overflow-hidden h-[320px] relative">
+          <div className="w-full border border-[var(--border)] rounded-xl overflow-hidden h-[320px] relative bg-[var(--background)]">
             <div className="absolute inset-0 flex">
-              <div className={`shrink-0 transition-[width] duration-200 ${props.collapsed ? 'w-[76px]' : 'w-[220px]'} h-full border-r border-[var(--border)] bg-[var(--sidebar)] flex flex-col`}>
+              <div className={`shrink-0 transition-[width] duration-200 ${props.collapsed ? 'w-[76px]' : 'w-[220px]'} h-full border-r border-[var(--border)] bg-[var(--card)] flex flex-col`}>
                 <div className={`h-[50px] flex items-center border-b border-[var(--border)] ${props.collapsed ? 'justify-center px-3' : 'px-4 gap-2'}`}>
                   {props.collapsed ? (
                     <div className="h-7 w-7 rounded-[8px] bg-[var(--accent)] flex items-center justify-center text-white text-[11px] font-[700]">S</div>
                   ) : (
-                    <span className="text-label font-[600]">Invinsense</span>
+                    <>
+                      <div className="h-6 w-6 rounded-[6px] bg-[var(--accent)] flex items-center justify-center text-white text-[9px] font-[700]">IS</div>
+                      <span className="text-label font-[600]">Invinsense</span>
+                    </>
                   )}
                 </div>
                 <div className="flex-1 p-2">
@@ -80,7 +83,7 @@ import { Menu } from 'invin-uix/ui/menu';`}
                   />
                 </div>
               </div>
-              <div className="flex-1 flex items-center justify-center text-label text-[var(--muted-foreground)]">
+              <div className="flex-1 flex items-center justify-center text-label text-[var(--muted-foreground)] bg-[var(--background)]">
                 Content area
               </div>
             </div>

@@ -2,6 +2,7 @@ import { Card, CardContent } from 'invin-uix/ui/card';
 import { Badge } from 'invin-uix/ui/badge';
 import { Separator } from 'invin-uix/ui/separator';
 import { CheckCircle, Package, Palette, Code, Stack, Sparkle } from 'invin-uix/ui/icons';
+import { LIB_CONFIG } from 'invin-uix/lib-config';
 
 function Step({ num, title, children }) {
   return (
@@ -232,9 +233,9 @@ import 'invin-uix/tokens.css'`} />
         <h3 className="text-section font-semibold text-[var(--foreground)]">What's included</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[
-            { icon: Stack, title: '59+ Components', desc: 'Button, Card, Dialog, DataTable, Sidebar, and more' },
+            { icon: Stack, title: `${LIB_CONFIG.componentCountDisplay} Components`, desc: 'Button, Card, Dialog, DataTable, Sidebar, and more' },
             { icon: Palette, title: 'Design Tokens', desc: 'Colours, typography, spacing, borders, motion' },
-            { icon: Sparkle, title: '7 Product Accents', desc: 'ISOC Core, UEMP, GRC, CPS Pulse, RegimentAI, Assentra' },
+            { icon: Sparkle, title: `${LIB_CONFIG.accentCount} Product Accents`, desc: 'ISOC Core, UEMP, GRC, CPS Pulse, RegimentAI, Assentra' },
             { icon: Code, title: 'Zero Config', desc: 'Tailwind v4 @theme utilities — no preset or config file' },
             { icon: Package, title: 'Tree-shakeable', desc: 'Subpath imports, ESM only, Phosphor icons included' },
             { icon: CheckCircle, title: 'Dark + Light', desc: 'Full theme support — switch via data-theme' },

@@ -97,7 +97,7 @@ export default function TopbarDemo() {
   left={<span className="font-bold">Invin</span>}
   center={
     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--border)] text-[var(--muted-foreground)] text-label">
-      <MagnifyingGlass /> MagnifyingGlass...
+      <MagnifyingGlass /> Search...
     </div>
   }
   right={
@@ -113,7 +113,7 @@ export default function TopbarDemo() {
             left={<span className="text-[var(--foreground)] font-[700]">Invin</span>}
             center={
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--border)] text-[var(--muted-foreground)] text-[var(--muted-foreground)] cursor-pointer hover:bg-[var(--secondary)]">
-                <MagnifyingGlass style={{ width: 14, height: 14 }} /> MagnifyingGlass...
+                <MagnifyingGlass style={{ width: 14, height: 14 }} /> Search...
               </div>
             }
             right={
@@ -135,7 +135,7 @@ export default function TopbarDemo() {
   left={
     <>
       <Button variant="ghost" size="icon-sm" className="lg:hidden"><List /></Button>
-      <h1 className="text-page-title">Gear</h1>
+      <h1 className="text-page-title">Settings</h1>
     </>
   }
   right={
@@ -148,7 +148,7 @@ export default function TopbarDemo() {
             left={
               <>
                 <Button variant="ghost" size="icon-sm"><List style={{ width: 16, height: 16 }} /></Button>
-                <h1 className="text-[var(--foreground)] font-[700] tracking-[-0.02em]">Gear</h1>
+                <h1 className="text-[var(--foreground)] font-[700] tracking-[-0.02em]">Settings</h1>
               </>
             }
             right={

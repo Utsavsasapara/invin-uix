@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import SoarWorkflows from './SoarWorkflows.jsx';
 import SoarWorkflowBuilder from './SoarWorkflowBuilder.jsx';
 import SoarIntegrations from './SoarIntegrations.jsx';
@@ -20,11 +20,15 @@ import {
   Users, UserGear, Tag, Key, FileText, ShieldCheck,
   Lock, Scroll, Gear as SettingsIcon, Cpu,
   ChatCircle, BookOpen, Sun, Moon,
-  Sparkle, ArrowUpRight, House,
+  Sparkle, ArrowUpRight,
   CalendarBlank, Question, CaretDown, SignOut,
 } from 'invin-uix/ui/icons';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from 'invin-uix/ui/dropdown-menu';
 import { useTheme } from '../../useTheme.jsx';
+
+// Import SOAR logos
+import logoFull from '../../assets/main-logo-soar.svg';
+import logoSmall from '../../assets/small-logo-soar.svg';
 
 // ─── Sidebar Nav Items (matching SOAR screenshot) ────────────────────────────
 
@@ -316,7 +320,8 @@ export default function SoarApp() {
 
       {/* ─── Sidebar ──────────────────────────────────────────── */}
       <Sidebar
-        product="Soar"
+        logo={<img src={logoFull} alt="SOAR" style={{ height: 24 }} />}
+        logoCollapsed={<img src={logoSmall} alt="SOAR" style={{ height: 24 }} />}
         collapsed={collapsed}
         onCollapsedChange={setCollapsed}
         footer={
@@ -332,7 +337,7 @@ export default function SoarApp() {
             )}
             {!collapsed && (
               <Tooltip title="Log out">
-                <Button variant="ghost" size="icon-sm">
+                <Button variant="ghost" size="icon-sm" onClick={() => navigate('/')}>
                   <ArrowUpRight style={{ width: 14, height: 14 }} />
                 </Button>
               </Tooltip>
@@ -365,13 +370,6 @@ export default function SoarApp() {
       >
         {/* Topbar */}
         <Topbar
-          left={
-            <Link to="/">
-              <Button variant="ghost" size="sm">
-                <House style={{ width: 14, height: 14 }} /> Home
-              </Button>
-            </Link>
-          }
           right={
             <div className="flex items-center gap-3">
               <Tooltip title="Gear">
@@ -417,7 +415,7 @@ export default function SoarApp() {
                     <SettingsIcon style={{ width: 14, height: 14 }} /> Organization Gear
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/')}>
                     <SignOut style={{ width: 14, height: 14 }} /> Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>

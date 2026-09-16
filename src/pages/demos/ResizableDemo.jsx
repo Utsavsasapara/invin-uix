@@ -28,7 +28,7 @@ export default function ResizableDemo() {
         ]}
       >
         {(props) => (
-          <div className="border border-[var(--border)] rounded-xl overflow-hidden h-[200px]">
+          <div className="w-full border border-[var(--border)] rounded-xl overflow-hidden h-[200px]">
             <ResizablePanelGroup direction={props.direction}>
               <ResizablePanel defaultSize={40} minSize={20}>
                 <PanelContent label="Panel A (40%)" className="bg-[var(--secondary)]/50" />

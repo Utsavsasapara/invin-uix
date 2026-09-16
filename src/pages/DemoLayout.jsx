@@ -6,10 +6,23 @@ import { Spinner } from 'invin-uix/ui/spinner';
 import { Menu } from 'invin-uix/ui/menu';
 import { Topbar } from 'invin-uix/ui/topbar';
 import { Sidebar } from 'invin-uix/ui/sidebar';
-import { Sun, Moon, House } from 'invin-uix/ui/icons';
+import { Separator } from 'invin-uix/ui/separator';
+import { LIB_CONFIG } from 'invin-uix/lib-config';
+import { 
+  Sun, Moon, House, BookOpen, Palette, SquaresFour, TextAa, 
+  TextT, PaintBrush, 
+  Textbox, ListChecks, NavigationArrow, Bell, Stack, GridFour, Wrench,
+  CursorClick, Tag, UserCircle, Cards, Equals, Warning, CircleNotch, 
+  CaretCircleRight, Table, ChartBar,
+} from 'invin-uix/ui/icons';
 import { Tooltip } from 'invin-uix/ui/tooltip';
 import { useTheme } from '../useTheme.jsx';
 import { AppSwitcher } from '../components/AppSwitcher.jsx';
+
+// Import logos
+import logoFullDarkMode from '../assets/main-logo-invinsense-for-darkMode.svg';
+import logoFullLightMode from '../assets/main-logo-invinsense-for-lightMode.svg';
+import logoSmall from '../assets/small-logo-invinsense.svg';
 
 // ─── Lazy-loaded demo pages ─────────────────────────────────────────────────
 
@@ -102,117 +115,127 @@ const TagInputDemo = lazy(() => import('./demos/TagInputDemo.jsx'));
 
 // ─── Component Registry ─────────────────────────────────────────────────────
 
+// Helper to create icon element
+const icon = (Icon) => <Icon weight="bold" style={{ width: 16, height: 16 }} />;
+
 const categories = [
   {
     key: 'foundations',
     label: 'Foundations',
     type: 'group',
+    icon: icon(BookOpen),
     children: [
-      { key: 'getting-started', label: 'Getting Started', component: GettingStartedDemo },
-      { key: 'showcase', label: 'Showcase', component: ShowcaseDemo, badge: 'New' },
-      { key: 'ui-guide', label: 'UI Guide', component: UIGuideV2 },
-      { key: 'typography', label: 'Typography', component: TypographyDemo },
-      { key: 'icons', label: 'Icons', component: IconsDemo },
+      { key: 'getting-started', label: 'Getting Started', component: GettingStartedDemo, icon: icon(CaretCircleRight) },
+      { key: 'showcase', label: 'Showcase', component: ShowcaseDemo, badge: 'New', icon: icon(Palette) },
+      { key: 'ui-guide', label: 'UI Guide', component: UIGuideV2, icon: icon(PaintBrush) },
+      { key: 'typography', label: 'Typography', component: TypographyDemo, icon: icon(TextT) },
+      { key: 'icons', label: 'Icons', component: IconsDemo, icon: icon(SquaresFour) },
     ],
   },
   {
     key: 'display',
     label: 'Display',
     type: 'group',
+    icon: icon(Cards),
     children: [
-      { key: 'button', label: 'Button', component: ButtonDemo },
-      { key: 'badge', label: 'Badge', component: BadgeDemo },
-      { key: 'avatar', label: 'Avatar', component: AvatarDemo },
-      { key: 'card', label: 'Card', component: CardDemo },
-      { key: 'kpi-card', label: 'KPI Card', component: KpiCardDemo },
-      { key: 'label', label: 'Label', component: LabelDemo },
-      { key: 'separator', label: 'Separator', component: SeparatorDemo },
-      { key: 'alert', label: 'Alert', component: AlertDemo },
-      { key: 'skeleton', label: 'Skeleton', component: SkeletonDemo },
-      { key: 'spinner', label: 'Spinner', component: SpinnerDemo },
+      { key: 'button', label: 'Button', component: ButtonDemo, icon: icon(CursorClick) },
+      { key: 'badge', label: 'Badge', component: BadgeDemo, icon: icon(Tag) },
+      { key: 'avatar', label: 'Avatar', component: AvatarDemo, icon: icon(UserCircle) },
+      { key: 'card', label: 'Card', component: CardDemo, icon: icon(Cards) },
+      { key: 'kpi-card', label: 'KPI Card', component: KpiCardDemo, icon: icon(Cards) },
+      { key: 'label', label: 'Label', component: LabelDemo, icon: icon(TextAa) },
+      { key: 'separator', label: 'Separator', component: SeparatorDemo, icon: icon(Equals) },
+      { key: 'alert', label: 'Alert', component: AlertDemo, icon: icon(Warning) },
+      { key: 'skeleton', label: 'Skeleton', component: SkeletonDemo, icon: icon(GridFour) },
+      { key: 'spinner', label: 'Spinner', component: SpinnerDemo, icon: icon(CircleNotch) },
     ],
   },
   {
     key: 'form',
     label: 'Form & Input',
     type: 'group',
+    icon: icon(Textbox),
     children: [
-      { key: 'form', label: 'Form', component: FormDemo },
-      { key: 'input', label: 'Input', component: InputDemo },
-      { key: 'number-input', label: 'Number Input', component: NumberInputDemo },
-      { key: 'search-input', label: 'Search Input', component: SearchInputDemo, badge: 'New' },
-      { key: 'textarea', label: 'Textarea', component: TextareaDemo },
-      { key: 'select', label: 'Select', component: SelectDemo },
-      { key: 'combobox', label: 'Combobox', component: ComboboxDemo },
-      { key: 'checkbox', label: 'Checkbox', component: CheckboxDemo },
-      { key: 'radio-group', label: 'Radio Group', component: RadioGroupDemo },
-      { key: 'switch', label: 'Switch', component: SwitchDemo },
-      { key: 'slider', label: 'Slider', component: SliderDemo },
-      { key: 'toggle', label: 'Toggle', component: ToggleDemo },
-      { key: 'tag-input', label: 'Tag Input', component: TagInputDemo, badge: 'New' },
+      { key: 'form', label: 'Form', component: FormDemo, icon: icon(ListChecks) },
+      { key: 'input', label: 'Input', component: InputDemo, icon: icon(Textbox) },
+      { key: 'number-input', label: 'Number Input', component: NumberInputDemo, icon: icon(Textbox) },
+      { key: 'search-input', label: 'Search Input', component: SearchInputDemo, badge: 'New', icon: icon(Textbox) },
+      { key: 'textarea', label: 'Textarea', component: TextareaDemo, icon: icon(Textbox) },
+      { key: 'select', label: 'Select', component: SelectDemo, icon: icon(ListChecks) },
+      { key: 'combobox', label: 'Combobox', component: ComboboxDemo, icon: icon(ListChecks) },
+      { key: 'checkbox', label: 'Checkbox', component: CheckboxDemo, icon: icon(ListChecks) },
+      { key: 'radio-group', label: 'Radio Group', component: RadioGroupDemo, icon: icon(ListChecks) },
+      { key: 'switch', label: 'Switch', component: SwitchDemo, icon: icon(ListChecks) },
+      { key: 'slider', label: 'Slider', component: SliderDemo, icon: icon(ListChecks) },
+      { key: 'toggle', label: 'Toggle', component: ToggleDemo, icon: icon(ListChecks) },
+      { key: 'tag-input', label: 'Tag Input', component: TagInputDemo, badge: 'New', icon: icon(Tag) },
     ],
   },
   {
     key: 'navigation',
     label: 'Navigation',
     type: 'group',
+    icon: icon(NavigationArrow),
     children: [
-      { key: 'tabs', label: 'Tabs', component: TabsDemo },
-      { key: 'breadcrumb', label: 'Breadcrumb', component: BreadcrumbDemo },
-      { key: 'pagination', label: 'Pagination', component: PaginationDemo },
-      { key: 'menu', label: 'Menu', component: MenuDemo },
-      { key: 'command', label: 'Command Palette', component: CommandDemo },
+      { key: 'tabs', label: 'Tabs', component: TabsDemo, icon: icon(NavigationArrow) },
+      { key: 'breadcrumb', label: 'Breadcrumb', component: BreadcrumbDemo, icon: icon(NavigationArrow) },
+      { key: 'pagination', label: 'Pagination', component: PaginationDemo, icon: icon(NavigationArrow) },
+      { key: 'menu', label: 'Menu', component: MenuDemo, icon: icon(NavigationArrow) },
+      { key: 'command', label: 'Command Palette', component: CommandDemo, icon: icon(NavigationArrow) },
     ],
   },
   {
     key: 'feedback',
     label: 'Feedback',
     type: 'group',
+    icon: icon(Bell),
     children: [
-      { key: 'progress', label: 'Progress', component: ProgressDemo },
-      { key: 'toast', label: 'Toast', component: ToastDemo },
-      { key: 'tooltip', label: 'Tooltip', component: TooltipDemo },
-      { key: 'error-boundary', label: 'Error Boundary', component: ErrorBoundaryDemo },
+      { key: 'progress', label: 'Progress', component: ProgressDemo, icon: icon(CircleNotch) },
+      { key: 'toast', label: 'Toast', component: ToastDemo, icon: icon(Bell) },
+      { key: 'tooltip', label: 'Tooltip', component: TooltipDemo, icon: icon(Bell) },
+      { key: 'error-boundary', label: 'Error Boundary', component: ErrorBoundaryDemo, icon: icon(Warning) },
     ],
   },
   {
     key: 'overlay',
     label: 'Overlay & Floating',
     type: 'group',
+    icon: icon(Stack),
     children: [
-      { key: 'dialog', label: 'Dialog', component: DialogDemo },
-      { key: 'alert-dialog', label: 'Alert Dialog', component: AlertDialogDemo },
-      { key: 'drawer', label: 'Drawer', component: DrawerDemo },
-      { key: 'popover', label: 'Popover', component: PopoverDemo },
-      { key: 'dropdown', label: 'Dropdown Menu', component: DropdownDemo },
-      { key: 'context-menu', label: 'Context Menu', component: ContextMenuDemo },
-      { key: 'hover-card', label: 'Hover Card', component: HoverCardDemo },
+      { key: 'dialog', label: 'Dialog', component: DialogDemo, icon: icon(Stack) },
+      { key: 'alert-dialog', label: 'Alert Dialog', component: AlertDialogDemo, icon: icon(Warning) },
+      { key: 'drawer', label: 'Drawer', component: DrawerDemo, icon: icon(Stack) },
+      { key: 'popover', label: 'Popover', component: PopoverDemo, icon: icon(Stack) },
+      { key: 'dropdown', label: 'Dropdown Menu', component: DropdownDemo, icon: icon(Stack) },
+      { key: 'context-menu', label: 'Context Menu', component: ContextMenuDemo, icon: icon(Stack) },
+      { key: 'hover-card', label: 'Hover Card', component: HoverCardDemo, icon: icon(Stack) },
     ],
   },
   {
     key: 'data',
     label: 'Data & Disclosure',
     type: 'group',
+    icon: icon(GridFour),
     children: [
-      { key: 'table', label: 'Table', component: TableDemo },
-      { key: 'data-table', label: 'Data Table', component: DataTableDemo },
-      { key: 'accordion', label: 'Accordion', component: AccordionDemo },
-      { key: 'collapsible', label: 'Collapsible', component: CollapsibleDemo },
-      { key: 'tree-view', label: 'Tree View', component: TreeViewDemo },
-      { key: 'calendar', label: 'Calendar', component: CalendarDemo },
-      { key: 'date-picker', label: 'Date Picker', component: DatePickerDemo },
-      { key: 'stepper', label: 'Stepper', component: StepperDemo },
-      { key: 'timeline', label: 'Timeline', component: TimelineDemo },
-      { key: 'file-upload', label: 'File Upload', component: FileUploadDemo },
-      { key: 'chart', label: 'Charts', children: [
-        { key: 'chart-overview', label: 'Overview', component: ChartDemo },
-        { key: 'chart-line', label: 'Line Chart', component: LineChartDemo },
-        { key: 'chart-area', label: 'Area Chart', component: AreaChartDemo },
-        { key: 'chart-bar', label: 'Bar Chart', component: BarChartDemo },
-        { key: 'chart-pie', label: 'Pie & Donut', component: PieChartDemo },
-        { key: 'chart-radar', label: 'Radar Chart', component: RadarChartDemo },
-        { key: 'chart-gauge', label: 'Gauge Chart', component: GaugeChartDemo },
-        { key: 'chart-sparkline', label: 'Sparkline', component: SparklineDemo },
+      { key: 'table', label: 'Table', component: TableDemo, icon: icon(Table) },
+      { key: 'data-table', label: 'Data Table', component: DataTableDemo, icon: icon(Table) },
+      { key: 'accordion', label: 'Accordion', component: AccordionDemo, icon: icon(GridFour) },
+      { key: 'collapsible', label: 'Collapsible', component: CollapsibleDemo, icon: icon(GridFour) },
+      { key: 'tree-view', label: 'Tree View', component: TreeViewDemo, icon: icon(GridFour) },
+      { key: 'calendar', label: 'Calendar', component: CalendarDemo, icon: icon(GridFour) },
+      { key: 'date-picker', label: 'Date Picker', component: DatePickerDemo, icon: icon(GridFour) },
+      { key: 'stepper', label: 'Stepper', component: StepperDemo, icon: icon(GridFour) },
+      { key: 'timeline', label: 'Timeline', component: TimelineDemo, icon: icon(GridFour) },
+      { key: 'file-upload', label: 'File Upload', component: FileUploadDemo, icon: icon(GridFour) },
+      { key: 'chart', label: 'Charts', icon: icon(ChartBar), children: [
+        { key: 'chart-overview', label: 'Overview', component: ChartDemo, icon: icon(ChartBar) },
+        { key: 'chart-line', label: 'Line Chart', component: LineChartDemo, icon: icon(ChartBar) },
+        { key: 'chart-area', label: 'Area Chart', component: AreaChartDemo, icon: icon(ChartBar) },
+        { key: 'chart-bar', label: 'Bar Chart', component: BarChartDemo, icon: icon(ChartBar) },
+        { key: 'chart-pie', label: 'Pie & Donut', component: PieChartDemo, icon: icon(ChartBar) },
+        { key: 'chart-radar', label: 'Radar Chart', component: RadarChartDemo, icon: icon(ChartBar) },
+        { key: 'chart-gauge', label: 'Gauge Chart', component: GaugeChartDemo, icon: icon(ChartBar) },
+        { key: 'chart-sparkline', label: 'Sparkline', component: SparklineDemo, icon: icon(ChartBar) },
       ]},
     ],
   },
@@ -220,14 +243,15 @@ const categories = [
     key: 'layout',
     label: 'Layout & Utility',
     type: 'group',
+    icon: icon(Wrench),
     children: [
-      { key: 'topbar', label: 'Topbar', component: TopbarDemo },
-      { key: 'sidebar-demo', label: 'Sidebar', component: SidebarDemo },
-      { key: 'scroll-area', label: 'Scroll Area', component: ScrollAreaDemo },
-      { key: 'resizable', label: 'Resizable Panels', component: ResizableDemo },
-      { key: 'aspect-ratio', label: 'Aspect Ratio', component: AspectRatioDemo },
-      { key: 'tour', label: 'Tour', component: TourDemo },
-      { key: 'flow-builder', label: 'Flow Builder', component: FlowBuilderDemo },
+      { key: 'topbar', label: 'Topbar', component: TopbarDemo, icon: icon(Wrench) },
+      { key: 'sidebar-demo', label: 'Sidebar', component: SidebarDemo, icon: icon(Wrench) },
+      { key: 'scroll-area', label: 'Scroll Area', component: ScrollAreaDemo, icon: icon(Wrench) },
+      { key: 'resizable', label: 'Resizable Panels', component: ResizableDemo, icon: icon(Wrench) },
+      { key: 'aspect-ratio', label: 'Aspect Ratio', component: AspectRatioDemo, icon: icon(Wrench) },
+      { key: 'tour', label: 'Tour', component: TourDemo, icon: icon(Wrench) },
+      { key: 'flow-builder', label: 'Flow Builder', component: FlowBuilderDemo, icon: icon(Wrench) },
     ],
   },
 ];
@@ -237,15 +261,16 @@ const allComponents = categories.flatMap(cat =>
   cat.children.flatMap(c => c.children ? c.children : [c])
 );
 
-// Build menu items for the Menu component
+// Build menu items for the Menu component (include icons for collapsed sidebar)
 const menuItems = categories.map(cat => ({
   key: cat.key,
   label: cat.label,
   type: 'group',
+  icon: cat.icon,
   children: cat.children.map(c =>
     c.children
-      ? { key: c.key, label: c.label, children: c.children.map(sc => ({ key: sc.key, label: sc.label })) }
-      : { key: c.key, label: c.label }
+      ? { key: c.key, label: c.label, icon: c.icon, children: c.children.map(sc => ({ key: sc.key, label: sc.label, icon: sc.icon })) }
+      : { key: c.key, label: c.label, icon: c.icon }
   ),
 }));
 
@@ -276,12 +301,15 @@ export default function DemoLayout() {
       <Sidebar
         collapsed={collapsed}
         onCollapsedChange={setCollapsed}
-        product="Playground"
+        logo={<img src={dark ? logoFullDarkMode : logoFullLightMode} alt="Invinsense" style={{ height: 26 }} />}
+        logoCollapsed={<img src={logoSmall} alt="Invinsense" style={{ height: 28, width: 22 }} />}
         footer={
           !collapsed ? (
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] text-[var(--muted-foreground-faint)]">Components</span>
-              <Badge variant="secondary" size="sm">{allComponents.length}</Badge>
+            <div className="space-y-1">
+              <Separator />
+              <p className="text-caption text-[var(--muted-foreground-faint)] px-2 pt-1">
+                {LIB_CONFIG.name} <Badge variant="outline" size="sm">v{LIB_CONFIG.version}</Badge>
+              </p>
             </div>
           ) : null
         }
