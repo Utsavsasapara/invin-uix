@@ -69,6 +69,24 @@ export default function ScrollAreaDemo() {
       <PlaygroundSection
         title="Vertical scroll"
         description="A fixed-height container with vertical scrollbar — ideal for lists, logs, and feeds."
+        code={`import { ScrollArea } from 'invin-uix/ui/scroll-area';
+
+<ScrollArea className="h-[280px] w-full">
+  <div className="p-4">
+    <p className="font-semibold mb-3">Audit Log</p>
+    <div className="space-y-2">
+      {auditLogs.map((log, i) => (
+        <div key={i} className="flex items-start gap-3 py-2 border-b border-[var(--border)]">
+          <span className="text-[10px] font-mono text-[var(--muted-foreground)]">{log.time}</span>
+          <div className="flex-1">
+            <p className="text-label">{log.action}</p>
+            <p className="text-caption text-[var(--muted-foreground)]">{log.user}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</ScrollArea>`}
       >
         <Card>
           <CardContent className="p-0">
@@ -96,6 +114,19 @@ export default function ScrollAreaDemo() {
       <PlaygroundSection
         title="Horizontal scroll"
         description="Horizontal overflow for tag lists, image galleries, or wide content."
+        code={`import { ScrollArea, ScrollBar } from 'invin-uix/ui/scroll-area';
+import { Badge } from 'invin-uix/ui/badge';
+
+<ScrollArea className="w-full whitespace-nowrap">
+  <div className="flex gap-2 p-4">
+    {tags.map((tag) => (
+      <Badge key={tag} variant="secondary" size="sm" className="shrink-0">
+        {tag}
+      </Badge>
+    ))}
+  </div>
+  <ScrollBar orientation="horizontal" />
+</ScrollArea>`}
       >
         <Card>
           <CardContent className="p-0">
@@ -115,6 +146,16 @@ export default function ScrollAreaDemo() {
       <PlaygroundSection
         title="Both directions"
         description="Scroll in both axes — useful for code blocks or data grids."
+        code={`import { ScrollArea, ScrollBar } from 'invin-uix/ui/scroll-area';
+
+<ScrollArea className="h-[200px] w-full">
+  <div className="p-4 w-[800px]">
+    <pre className="text-caption font-mono text-[var(--muted-foreground)] leading-relaxed">
+      {codeContent}
+    </pre>
+  </div>
+  <ScrollBar orientation="horizontal" />
+</ScrollArea>`}
       >
         <Card>
           <CardContent className="p-0">

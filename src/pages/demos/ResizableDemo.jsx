@@ -79,6 +79,17 @@ export default function ResizableDemo() {
       <PlaygroundSection
         title="Horizontal split"
         description="Two panels side by side. Drag the handle to resize."
+        code={`import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from 'invin-uix/ui/resizable';
+
+<ResizablePanelGroup direction="horizontal">
+  <ResizablePanel defaultSize={35} minSize={20}>
+    <div>Sidebar content (35%)</div>
+  </ResizablePanel>
+  <ResizableHandle withHandle />
+  <ResizablePanel defaultSize={65} minSize={30}>
+    <div>Main content (65%)</div>
+  </ResizablePanel>
+</ResizablePanelGroup>`}
       >
         <div className="border border-[var(--border)] rounded-xl overflow-hidden h-[200px]">
           <ResizablePanelGroup direction="horizontal">
@@ -97,6 +108,17 @@ export default function ResizableDemo() {
       <PlaygroundSection
         title="Vertical split"
         description="Stacked panels — drag the handle up/down."
+        code={`import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from 'invin-uix/ui/resizable';
+
+<ResizablePanelGroup direction="vertical">
+  <ResizablePanel defaultSize={40} minSize={15}>
+    <div>Top panel (40%)</div>
+  </ResizablePanel>
+  <ResizableHandle withHandle />
+  <ResizablePanel defaultSize={60} minSize={20}>
+    <div>Bottom panel (60%)</div>
+  </ResizablePanel>
+</ResizablePanelGroup>`}
       >
         <div className="border border-[var(--border)] rounded-xl overflow-hidden h-[300px]">
           <ResizablePanelGroup direction="vertical">
@@ -115,6 +137,19 @@ export default function ResizableDemo() {
       <PlaygroundSection
         title="Three panels"
         description="Multiple panels with independent resize handles."
+        code={`<ResizablePanelGroup direction="horizontal">
+  <ResizablePanel defaultSize={20} minSize={10} maxSize={40}>
+    <div>Nav</div>
+  </ResizablePanel>
+  <ResizableHandle />
+  <ResizablePanel defaultSize={55} minSize={25}>
+    <div>Main Content</div>
+  </ResizablePanel>
+  <ResizableHandle />
+  <ResizablePanel defaultSize={25} minSize={15} maxSize={40}>
+    <div>Details</div>
+  </ResizablePanel>
+</ResizablePanelGroup>`}
       >
         <div className="border border-[var(--border)] rounded-xl overflow-hidden h-[200px]">
           <ResizablePanelGroup direction="horizontal">
@@ -137,6 +172,24 @@ export default function ResizableDemo() {
       <PlaygroundSection
         title="Nested layout"
         description="Combine horizontal and vertical splits for complex layouts (e.g. IDE-style)."
+        code={`<ResizablePanelGroup direction="horizontal">
+  <ResizablePanel defaultSize={25} minSize={15}>
+    <div>Explorer</div>
+  </ResizablePanel>
+  <ResizableHandle />
+  <ResizablePanel defaultSize={75}>
+    {/* Nested vertical split */}
+    <ResizablePanelGroup direction="vertical">
+      <ResizablePanel defaultSize={70} minSize={30}>
+        <div>Editor</div>
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel defaultSize={30} minSize={15}>
+        <div>Terminal</div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
+  </ResizablePanel>
+</ResizablePanelGroup>`}
       >
         <div className="border border-[var(--border)] rounded-xl overflow-hidden h-[320px]">
           <ResizablePanelGroup direction="horizontal">
@@ -163,6 +216,33 @@ export default function ResizableDemo() {
       <PlaygroundSection
         title="Email client layout"
         description="A realistic use case — inbox list on the left, message preview on the right."
+        code={`<ResizablePanelGroup direction="horizontal">
+  <ResizablePanel defaultSize={35} minSize={25} maxSize={50}>
+    {/* Email list */}
+    <div className="h-full overflow-auto p-3 space-y-1">
+      {emails.map((email, i) => (
+        <div 
+          key={i} 
+          className={\`px-3 py-2 rounded-md cursor-pointer \${
+            selected === i ? 'bg-[var(--accent-soft)] text-[var(--accent)]' : 'hover:bg-[var(--secondary)]'
+          }\`}
+          onClick={() => setSelected(i)}
+        >
+          <p className="font-[500] truncate">{email.subject}</p>
+          <p className="text-[10px] text-[var(--muted-foreground)]">{email.date}</p>
+        </div>
+      ))}
+    </div>
+  </ResizablePanel>
+  <ResizableHandle withHandle />
+  <ResizablePanel defaultSize={65} minSize={35}>
+    {/* Email content */}
+    <div className="h-full p-4 space-y-3">
+      <h3 className="font-[600]">{emails[selected].subject}</h3>
+      <p className="text-[var(--muted-foreground)]">{emails[selected].body}</p>
+    </div>
+  </ResizablePanel>
+</ResizablePanelGroup>`}
       >
         <div className="border border-[var(--border)] rounded-xl overflow-hidden h-[280px]">
           <ResizablePanelGroup direction="horizontal">

@@ -108,6 +108,74 @@ import { Menu } from 'invin-uix/ui/menu';`}
       <PlaygroundSection
         title="Interactive sidebar"
         description="A contained preview of the Sidebar component. Toggle collapse and click nav items."
+        code={`import { useState } from 'react';
+import { Sidebar } from 'invin-uix/ui/sidebar';
+import { Menu } from 'invin-uix/ui/menu';
+import { Avatar, AvatarFallback } from 'invin-uix/ui/avatar';
+import { SquaresFour, Users, Gear, FileText, Shield, Pulse } from 'invin-uix/ui/icons';
+
+const icon = (Icon) => <Icon style={{ width: 16, height: 16 }} />;
+
+const menuItems = [
+  {
+    key: 'main', type: 'group', label: 'Main',
+    children: [
+      { key: 'dashboard', label: 'Dashboard', icon: icon(SquaresFour) },
+      { key: 'users', label: 'Users', icon: icon(Users) },
+      { key: 'reports', label: 'Reports', icon: icon(FileText) },
+    ],
+  },
+  {
+    key: 'admin', type: 'group', label: 'Administration',
+    children: [
+      { key: 'security', label: 'Security', icon: icon(Shield) },
+      { key: 'activity', label: 'Activity Log', icon: icon(Pulse) },
+      { key: 'settings', label: 'Settings', icon: icon(Gear) },
+    ],
+  },
+];
+
+function App() {
+  const [collapsed, setCollapsed] = useState(false);
+  const [selected, setSelected] = useState('dashboard');
+
+  return (
+    <Sidebar
+      collapsed={collapsed}
+      onCollapsedChange={setCollapsed}
+      logo={
+        <div className="flex items-center gap-2">
+          <div className="h-6 w-6 rounded-[6px] bg-[var(--accent)] flex items-center justify-center text-white text-[9px] font-[700]">IS</div>
+          <span className="text-label font-[600]">Invinsense</span>
+        </div>
+      }
+      logoCollapsed={
+        <div className="h-7 w-7 rounded-[8px] bg-[var(--accent)] flex items-center justify-center text-white text-[11px] font-[700]">S</div>
+      }
+      footer={
+        <div className="flex items-center gap-2">
+          <Avatar size="sm"><AvatarFallback>AD</AvatarFallback></Avatar>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] font-[500] truncate">Admin</p>
+              <p className="text-[10px] text-[var(--muted-foreground-faint)]">admin@invin.io</p>
+            </div>
+          )}
+        </div>
+      }
+    >
+      <Menu
+        mode="sidebar"
+        collapsed={collapsed}
+        collapsedTooltip
+        selectedKeys={[selected]}
+        defaultOpenKeys={['main', 'admin']}
+        onClick={({ key }) => setSelected(key)}
+        items={menuItems}
+      />
+    </Sidebar>
+  );
+}`}
       >
         <div className="border border-[var(--border)] rounded-xl overflow-hidden h-[420px] relative">
           <div className="absolute inset-0 flex">
@@ -173,6 +241,19 @@ import { Menu } from 'invin-uix/ui/menu';`}
       <PlaygroundSection
         title="Product icons (collapsed state)"
         description="The product prop maps to a built-in product icon shown when collapsed."
+        code={`// Use logoCollapsed prop for custom collapsed state icon
+<Sidebar
+  collapsed={collapsed}
+  onCollapsedChange={setCollapsed}
+  logo={<FullLogo />}
+  logoCollapsed={
+    <div className="h-7 w-7 rounded-[8px] bg-[var(--accent)] flex items-center justify-center text-white text-[11px] font-[700]">
+      S
+    </div>
+  }
+>
+  {/* Menu content */}
+</Sidebar>`}
       >
         <div className="flex flex-wrap gap-3">
           {['Soar', 'Siem', 'Ndr', 'Gsos', 'Asm', 'Bas'].map((name) => (
