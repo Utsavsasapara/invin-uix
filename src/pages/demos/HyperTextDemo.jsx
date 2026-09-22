@@ -25,7 +25,7 @@ export default function HyperTextDemo() {
         title="Hyper Text Playground"
         description="Experiment with different trigger modes and timing settings."
         controls={[
-          { name: 'trigger', label: 'Trigger', type: 'select', default: 'view', options: [
+          { name: 'trigger', label: 'Trigger', type: 'select', default: 'hover', options: [
             { value: 'view', label: 'On View' },
             { value: 'hover', label: 'On Hover' },
             { value: 'click', label: 'On Click' },
@@ -38,7 +38,7 @@ export default function HyperTextDemo() {
         {(props) => (
           <div className="space-y-4 w-full text-center">
             <HyperText
-              key={key}
+              key={`${key}-${props.trigger}`}
               trigger={props.trigger}
               duration={props.duration}
               stagger={props.stagger}
@@ -50,7 +50,7 @@ export default function HyperTextDemo() {
             <p className="text-sm text-[var(--muted-foreground)]">
               {props.trigger === 'hover' && 'Hover over the text to trigger'}
               {props.trigger === 'click' && 'Click the text to trigger'}
-              {props.trigger === 'view' && 'Triggered when visible'}
+              {props.trigger === 'view' && 'Scroll to make visible (triggered when in view)'}
             </p>
             <Button variant="outline" size="sm" onClick={resetAnimation}>
               <ArrowClockwise style={{ width: 14, height: 14 }} /> Reset
@@ -71,6 +71,8 @@ export default function HyperTextDemo() {
           { name: 'loop', type: 'boolean', default: 'false', description: 'Continuously loop the animation' },
           { name: 'isRunning', type: 'boolean', default: '—', description: 'Control animation externally (manual trigger)' },
           { name: 'characterSet', type: 'string', default: 'A-Z, 0-9, symbols', description: 'Characters to use for scrambling' },
+          { name: 'delay', type: 'number', default: '0', description: 'Delay before animation starts (ms)' },
+          { name: 'onStart', type: '() => void', default: '—', description: 'Callback when animation starts' },
           { name: 'onComplete', type: '() => void', default: '—', description: 'Callback when animation completes' },
           { name: 'className', type: 'string', default: '—', description: 'CSS classes for styling' },
         ]}
@@ -93,6 +95,7 @@ export default function HyperTextDemo() {
             <HyperText key={`view-${key}`} trigger="view" className="text-[24px] font-mono font-bold">
               LOADING...
             </HyperText>
+            <p className="text-xs text-[var(--muted-foreground)]">Animates when scrolled into view</p>
           </CardContent>
         </Card>
 
@@ -102,6 +105,7 @@ export default function HyperTextDemo() {
             <HyperText trigger="hover" className="text-[24px] font-mono font-bold cursor-pointer">
               HOVER ME
             </HyperText>
+            <p className="text-xs text-[var(--muted-foreground)]">Hover to trigger</p>
           </CardContent>
         </Card>
 
@@ -111,6 +115,7 @@ export default function HyperTextDemo() {
             <HyperText trigger="click" className="text-[24px] font-mono font-bold cursor-pointer">
               CLICK ME
             </HyperText>
+            <p className="text-xs text-[var(--muted-foreground)]">Click to trigger</p>
           </CardContent>
         </Card>
 
@@ -120,6 +125,7 @@ export default function HyperTextDemo() {
             <HyperText trigger="view" loop className="text-[24px] font-mono font-bold text-[var(--accent)]">
               SCANNING
             </HyperText>
+            <p className="text-xs text-[var(--muted-foreground)]">Continuous animation</p>
           </CardContent>
         </Card>
       </div>

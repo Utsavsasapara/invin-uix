@@ -21,7 +21,7 @@ export default function ShinyTextDemo() {
         description="Customize the shimmer effect with different colors and timing."
         controls={[
           { name: 'duration', label: 'Duration (s)', type: 'number', default: 3 },
-          { name: 'shimmerWidth', label: 'Shimmer Width', type: 'number', default: 100 },
+          { name: 'shimmerWidth', label: 'Shimmer Width (px)', type: 'number', default: 100 },
           { name: 'baseColor', label: 'Base Color', type: 'text', default: '#9CA3AF' },
           { name: 'shimmerColor', label: 'Shimmer Color', type: 'text', default: '#FFFFFF' },
           { name: 'disabled', label: 'Disabled', type: 'boolean', default: false },
@@ -137,15 +137,15 @@ export default function ShinyTextDemo() {
         description="Highlight important navigation elements."
         code={`<nav className="flex gap-6">
   <a href="#">Home</a>
-  <ShinyText as="a" href="#">
-    What's New
+  <ShinyText baseColor="#9CA3AF" shimmerColor="#FFFFFF">
+    What's New ✨
   </ShinyText>
   <a href="#">Docs</a>
 </nav>`}
       >
         <nav className="flex gap-6 items-center justify-center py-4">
           <span className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer">Home</span>
-          <ShinyText className="font-medium cursor-pointer">
+          <ShinyText className="font-medium cursor-pointer" baseColor="#9CA3AF" shimmerColor="#FFFFFF">
             What's New ✨
           </ShinyText>
           <span className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] cursor-pointer">Documentation</span>
@@ -156,12 +156,12 @@ export default function ShinyTextDemo() {
       <PlaygroundSection
         title="Disabled State"
         description="Static text when animation is disabled."
-        code={`<ShinyText disabled>
+        code={`<ShinyText disabled baseColor="#9CA3AF">
   Static Text (no shimmer)
 </ShinyText>`}
       >
         <div className="text-center py-4">
-          <ShinyText disabled className="text-[24px] font-semibold">
+          <ShinyText disabled baseColor="#9CA3AF" className="text-[24px] font-semibold">
             Static Text (shimmer disabled)
           </ShinyText>
         </div>

@@ -13,7 +13,7 @@ export default function WordRotateDemo() {
   return (
     <ComponentPage
       name="Word Rotate"
-      description="A word cycling animation that rotates through an array of words with smooth vertical transitions. Perfect for dynamic headlines, taglines, and status displays."
+      description="A word cycling animation that rotates through an array of words with smooth transitions. Supports slide, fade, and blur variants. Perfect for dynamic headlines and taglines."
       importCode={`import { WordRotate } from 'invin-uix/ui/word-rotate';`}
       badges={[{ label: 'Animation', variant: 'accent' }, { label: 'Motion', variant: 'secondary' }]}
     >
@@ -25,7 +25,8 @@ export default function WordRotateDemo() {
         controls={[
           { name: 'duration', label: 'Duration (s)', type: 'number', default: 2.5 },
           { name: 'variant', label: 'Variant', type: 'select', default: 'default', options: [
-            { value: 'default', label: 'Default (Slide)' },
+            { value: 'default', label: 'Default (Slide Up)' },
+            { value: 'slide-down', label: 'Slide Down' },
             { value: 'fade', label: 'Fade' },
             { value: 'blur', label: 'Blur' },
           ]},
@@ -36,7 +37,7 @@ export default function WordRotateDemo() {
             <span className="text-[32px] font-semibold text-[var(--foreground)]">
               We provide{' '}
               <WordRotate
-                key={key}
+                key={`${key}-${props.variant}`}
                 words={['Security', 'Protection', 'Monitoring', 'Intelligence']}
                 duration={props.duration}
                 variant={props.variant}
@@ -54,13 +55,14 @@ export default function WordRotateDemo() {
         props={[
           { name: 'words', type: 'string[]', required: true, default: '—', description: 'Array of words to cycle through' },
           { name: 'duration', type: 'number', default: '2.5', description: 'Time each word is displayed (seconds)' },
-          { name: 'variant', type: "'default' | 'fade' | 'blur'", default: "'default'", description: 'Animation transition style' },
-          { name: 'className', type: 'string', default: '—', description: 'CSS classes for styling' },
+          { name: 'variant', type: "'default' | 'slide-up' | 'slide-down' | 'fade' | 'blur'", default: "'default'", description: 'Animation transition style' },
+          { name: 'pauseOnHover', type: 'boolean', default: 'false', description: 'Pause rotation when hovered' },
           { name: 'animatePresenceMode', type: "'sync' | 'wait' | 'popLayout'", default: "'wait'", description: 'AnimatePresence mode for transition' },
-          { name: 'initial', type: 'TargetAndTransition', default: '—', description: 'Custom initial animation state' },
-          { name: 'animate', type: 'TargetAndTransition', default: '—', description: 'Custom animate state' },
-          { name: 'exit', type: 'TargetAndTransition', default: '—', description: 'Custom exit animation state' },
+          { name: 'initial', type: 'TargetAndTransition', default: '—', description: 'Custom initial animation state (overrides variant)' },
+          { name: 'animate', type: 'TargetAndTransition', default: '—', description: 'Custom animate state (overrides variant)' },
+          { name: 'exit', type: 'TargetAndTransition', default: '—', description: 'Custom exit animation state (overrides variant)' },
           { name: 'transition', type: 'Transition', default: '—', description: 'Custom transition configuration' },
+          { name: 'className', type: 'string', default: '—', description: 'CSS classes for styling' },
         ]}
       />
 
@@ -70,17 +72,29 @@ export default function WordRotateDemo() {
       <div className="space-y-4">
         <h3 className="text-[var(--foreground)] font-[700]">Animation Variants</h3>
         <p className="text-[var(--muted-foreground)]">
-          Three built-in transition styles.
+          Four built-in transition styles for different effects.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
-            <Badge variant="secondary">Default (Slide)</Badge>
+            <Badge variant="secondary">Default (Slide Up)</Badge>
             <WordRotate
-              words={['Slide', 'Up', 'Down']}
+              words={['Slide', 'Up', 'Effect']}
               variant="default"
+              duration={2}
+              className="text-[24px] font-bold"
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
+            <Badge variant="secondary">Slide Down</Badge>
+            <WordRotate
+              words={['Slide', 'Down', 'Effect']}
+              variant="slide-down"
               duration={2}
               className="text-[24px] font-bold"
             />
@@ -140,7 +154,7 @@ export default function WordRotateDemo() {
 
       <PlaygroundSection
         title="Status Indicator"
-        description="Cycling through system status messages."
+        description="Cycling through system status messages with fade effect."
         code={`<WordRotate 
   words={['Scanning...', 'Analyzing...', 'Monitoring...']}
   variant="fade"
@@ -162,10 +176,13 @@ export default function WordRotateDemo() {
 
       <PlaygroundSection
         title="Feature Highlights"
-        description="Showcasing product features dynamically."
+        description="Showcasing product features dynamically with blur effect."
         code={`<span>
   Invinsense offers{' '}
-  <WordRotate words={['Real-time Monitoring', 'AI-Powered Detection', 'Automated Response']} />
+  <WordRotate 
+    words={['Real-time Monitoring', 'AI-Powered Detection', 'Automated Response']} 
+    variant="blur"
+  />
 </span>`}
       >
         <div className="text-center py-4">
@@ -173,6 +190,7 @@ export default function WordRotateDemo() {
             Invinsense offers{' '}
             <WordRotate
               words={['Real-time Monitoring', 'AI-Powered Detection', 'Automated Response', '24/7 Support']}
+              variant="blur"
               className="font-semibold text-[var(--accent)]"
               duration={2}
             />

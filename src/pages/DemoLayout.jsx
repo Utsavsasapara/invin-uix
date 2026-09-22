@@ -124,6 +124,8 @@ const HyperTextDemo = lazy(() => import('./demos/HyperTextDemo.jsx'));
 const AuroraTextDemo = lazy(() => import('./demos/AuroraTextDemo.jsx'));
 const SpinningTextDemo = lazy(() => import('./demos/SpinningTextDemo.jsx'));
 const TextRevealDemo = lazy(() => import('./demos/TextRevealDemo.jsx'));
+const HighlighterDemo = lazy(() => import('./demos/HighlighterDemo.jsx'));
+const Text3DFlipDemo = lazy(() => import('./demos/Text3DFlipDemo.jsx'));
 
 // ─── Component Registry ─────────────────────────────────────────────────────
 
@@ -282,6 +284,8 @@ const categories = [
       { key: 'aurora-text', label: 'Aurora Text', component: AuroraTextDemo, badge: 'New', icon: icon(Palette) },
       { key: 'spinning-text', label: 'Spinning Text', component: SpinningTextDemo, badge: 'New', icon: icon(TextAa) },
       { key: 'text-reveal', label: 'Text Reveal', component: TextRevealDemo, badge: 'New', icon: icon(TextT) },
+      { key: 'highlighter', label: 'Highlighter', component: HighlighterDemo, badge: 'New', icon: icon(PaintBrush) },
+      { key: 'text-3d-flip', label: 'Text 3D Flip', component: Text3DFlipDemo, badge: 'New', icon: icon(TextAa) },
     ],
   },
 ];

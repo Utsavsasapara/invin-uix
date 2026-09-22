@@ -35,13 +35,11 @@ export default function TextRevealDemo() {
       <PropsTable
         props={[
           { name: 'children', type: 'string', required: true, default: '—', description: 'The text to reveal' },
-          { name: 'dimColor', type: 'string', default: "'rgba(0,0,0,0.2)'", description: 'Color of unrevealed text' },
+          { name: 'dimColor', type: 'string', default: "'rgba(0,0,0,0.15)'", description: 'Color of unrevealed text' },
           { name: 'revealColor', type: 'string', default: "'rgb(0,0,0)'", description: 'Color of revealed text' },
-          { name: 'scrollStart', type: 'number', default: '0', description: 'Scroll offset to start reveal (0-1)' },
-          { name: 'scrollEnd', type: 'number', default: '1', description: 'Scroll offset to end reveal (0-1)' },
           { name: 'as', type: "'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'span' | 'div'", default: "'p'", description: 'HTML element to render' },
           { name: 'className', type: 'string', default: '—', description: 'CSS classes for container' },
-          { name: 'wordClassName', type: 'string', default: '—', description: 'CSS classes for individual words' },
+          { name: 'style', type: 'CSSProperties', default: '—', description: 'Inline styles for container' },
         ]}
       />
 
