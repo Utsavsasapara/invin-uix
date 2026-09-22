@@ -115,6 +115,7 @@ const TagInputDemo = lazy(() => import('./demos/TagInputDemo.jsx'));
 
 // Tier 9: Animation components (v1.5.0)
 const TextAnimateDemo = lazy(() => import('./demos/TextAnimateDemo.jsx'));
+const TypingAnimationDemo = lazy(() => import('./demos/TypingAnimationDemo.jsx'));
 
 // ─── Component Registry ─────────────────────────────────────────────────────
 
@@ -264,6 +265,7 @@ const categories = [
     icon: icon(Palette),
     children: [
       { key: 'text-animate', label: 'Text Animate', component: TextAnimateDemo, badge: 'New', icon: icon(TextAa) },
+      { key: 'typing-animation', label: 'Typing Animation', component: TypingAnimationDemo, badge: 'New', icon: icon(TextT) },
     ],
   },
 ];
