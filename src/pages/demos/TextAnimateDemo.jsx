@@ -28,7 +28,7 @@ export default function TextAnimateDemo() {
       name="Text Animate"
       description="A text animation component that animates text using a variety of different animations. Split by text, word, character, or line. Supports 10 animation presets with viewport detection."
       importCode={`import { TextAnimate } from 'invin-uix/ui/text-animate';`}
-      badges={[{ label: 'Magic UI', variant: 'accent' }]}
+      badges={[{ label: 'Animation', variant: 'accent' }]}
     >
 
       {/* ─── Interactive Playground ─────────────────────────────── */}
