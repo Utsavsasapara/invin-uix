@@ -116,6 +116,14 @@ const TagInputDemo = lazy(() => import('./demos/TagInputDemo.jsx'));
 // Tier 9: Animation components (v1.5.0)
 const TextAnimateDemo = lazy(() => import('./demos/TextAnimateDemo.jsx'));
 const TypingAnimationDemo = lazy(() => import('./demos/TypingAnimationDemo.jsx'));
+const NumberTickerDemo = lazy(() => import('./demos/NumberTickerDemo.jsx'));
+const WordRotateDemo = lazy(() => import('./demos/WordRotateDemo.jsx'));
+const ShinyTextDemo = lazy(() => import('./demos/ShinyTextDemo.jsx'));
+const GradientTextDemo = lazy(() => import('./demos/GradientTextDemo.jsx'));
+const HyperTextDemo = lazy(() => import('./demos/HyperTextDemo.jsx'));
+const AuroraTextDemo = lazy(() => import('./demos/AuroraTextDemo.jsx'));
+const SpinningTextDemo = lazy(() => import('./demos/SpinningTextDemo.jsx'));
+const TextRevealDemo = lazy(() => import('./demos/TextRevealDemo.jsx'));
 
 // ─── Component Registry ─────────────────────────────────────────────────────
 
@@ -266,6 +274,14 @@ const categories = [
     children: [
       { key: 'text-animate', label: 'Text Animate', component: TextAnimateDemo, badge: 'New', icon: icon(TextAa) },
       { key: 'typing-animation', label: 'Typing Animation', component: TypingAnimationDemo, badge: 'New', icon: icon(TextT) },
+      { key: 'number-ticker', label: 'Number Ticker', component: NumberTickerDemo, badge: 'New', icon: icon(TextAa) },
+      { key: 'word-rotate', label: 'Word Rotate', component: WordRotateDemo, badge: 'New', icon: icon(TextT) },
+      { key: 'shiny-text', label: 'Shiny Text', component: ShinyTextDemo, badge: 'New', icon: icon(TextAa) },
+      { key: 'gradient-text', label: 'Gradient Text', component: GradientTextDemo, badge: 'New', icon: icon(Palette) },
+      { key: 'hyper-text', label: 'Hyper Text', component: HyperTextDemo, badge: 'New', icon: icon(TextT) },
+      { key: 'aurora-text', label: 'Aurora Text', component: AuroraTextDemo, badge: 'New', icon: icon(Palette) },
+      { key: 'spinning-text', label: 'Spinning Text', component: SpinningTextDemo, badge: 'New', icon: icon(TextAa) },
+      { key: 'text-reveal', label: 'Text Reveal', component: TextRevealDemo, badge: 'New', icon: icon(TextT) },
     ],
   },
 ];
