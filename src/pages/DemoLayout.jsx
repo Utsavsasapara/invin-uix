@@ -113,6 +113,9 @@ const FormDemo = lazy(() => import('./demos/FormDemo.jsx'));
 const SearchInputDemo = lazy(() => import('./demos/SearchInputDemo.jsx'));
 const TagInputDemo = lazy(() => import('./demos/TagInputDemo.jsx'));
 
+// Tier 9: Animation components (v1.5.0)
+const TextAnimateDemo = lazy(() => import('./demos/TextAnimateDemo.jsx'));
+
 // ─── Component Registry ─────────────────────────────────────────────────────
 
 // Helper to create icon element
@@ -254,6 +257,15 @@ const categories = [
       { key: 'flow-builder', label: 'Flow Builder', component: FlowBuilderDemo, icon: icon(Wrench) },
     ],
   },
+  {
+    key: 'animation',
+    label: 'Animation',
+    type: 'group',
+    icon: icon(Palette),
+    children: [
+      { key: 'text-animate', label: 'Text Animate', component: TextAnimateDemo, badge: 'New', icon: icon(TextAa) },
+    ],
+  },
 ];
 
 // Flatten for lookup (handles nested children like Charts sub-items)
@@ -306,7 +318,6 @@ export default function DemoLayout() {
         footer={
           !collapsed ? (
             <div className="space-y-1">
-              <Separator />
               <p className="text-caption text-[var(--muted-foreground-faint)] px-2 pt-1">
                 {LIB_CONFIG.name} <Badge variant="outline" size="sm">v{LIB_CONFIG.version}</Badge>
               </p>
