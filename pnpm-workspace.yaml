@@ -1,4 +1,3 @@
+packages: []
 minimumReleaseAgeExclude:
-  - invin-uix@1.3.0 || 1.4.1
-overrides:
-  invin-uix: link:../../Invin-ui/invin-ui-poc
+  - invin-uix@1.4.2
