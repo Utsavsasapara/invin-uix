@@ -1,34 +1,55 @@
 import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
 import { WordRotate } from 'invin-uix/ui/word-rotate';
-import { Button } from 'invin-uix/ui/button';
 import { Card, CardContent } from 'invin-uix/ui/card';
 import { Badge } from 'invin-uix/ui/badge';
 import { Separator } from 'invin-uix/ui/separator';
 
+// Custom animation configs for advanced users
+const customBounceConfig = {
+  initial: { opacity: 0, y: -50, scale: 0.5 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  exit: { opacity: 0, y: 50, scale: 0.5 },
+  transition: { type: 'spring', stiffness: 300, damping: 20 }
+};
+
+const customRotate3DConfig = {
+  initial: { opacity: 0, rotateX: -90 },
+  animate: { opacity: 1, rotateX: 0 },
+  exit: { opacity: 0, rotateX: 90 },
+  transition: { duration: 0.5, ease: 'easeInOut' }
+};
+
+const customSlideScaleConfig = {
+  initial: { opacity: 0, x: -100, scale: 0.8 },
+  animate: { opacity: 1, x: 0, scale: 1 },
+  exit: { opacity: 0, x: 100, scale: 0.8 },
+  transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
+};
+
 export default function WordRotateDemo() {
   const [key, setKey] = useState(0);
-  const resetAnimation = () => setKey(prev => prev + 1);
 
   return (
     <ComponentPage
       name="Word Rotate"
-      description="A word cycling animation that rotates through an array of words with smooth transitions. Supports slide, fade, and blur variants. Perfect for dynamic headlines and taglines."
+      description="A word cycling animation that rotates through an array of words with smooth transitions. Choose from built-in animation variants or create custom animations."
       importCode={`import { WordRotate } from 'invin-uix/ui/word-rotate';`}
       badges={[{ label: 'Animation', variant: 'accent' }, { label: 'Motion', variant: 'secondary' }]}
     >
 
-      {/* ─── Interactive Playground ─────────────────────────────── */}
+      {/* Interactive Playground */}
       <InteractiveDemo
         title="Word Rotate Playground"
-        description="Experiment with different word sets and timing options."
+        description="Experiment with different word sets, timing, and animation variants."
         controls={[
-          { name: 'duration', label: 'Duration (s)', type: 'number', default: 2.5 },
-          { name: 'variant', label: 'Variant', type: 'select', default: 'default', options: [
-            { value: 'default', label: 'Default (Slide Up)' },
+          { name: 'duration', label: 'Duration (ms)', type: 'number', default: 2500 },
+          { name: 'variant', label: 'Variant', type: 'select', default: 'slide-up', options: [
+            { value: 'slide-up', label: 'Slide Up' },
             { value: 'slide-down', label: 'Slide Down' },
             { value: 'fade', label: 'Fade' },
             { value: 'blur', label: 'Blur' },
+            { value: 'scale', label: 'Scale' },
           ]},
         ]}
       >
@@ -50,76 +71,83 @@ export default function WordRotateDemo() {
 
       <Separator variant="bold" />
 
-      {/* ─── Props Table ─────────────────────────────────────────── */}
+      {/* Props Table */}
       <PropsTable
         props={[
-          { name: 'words', type: 'string[]', required: true, default: '—', description: 'Array of words to cycle through' },
-          { name: 'duration', type: 'number', default: '2.5', description: 'Time each word is displayed (seconds)' },
-          { name: 'variant', type: "'default' | 'slide-up' | 'slide-down' | 'fade' | 'blur'", default: "'default'", description: 'Animation transition style' },
-          { name: 'pauseOnHover', type: 'boolean', default: 'false', description: 'Pause rotation when hovered' },
-          { name: 'animatePresenceMode', type: "'sync' | 'wait' | 'popLayout'", default: "'wait'", description: 'AnimatePresence mode for transition' },
-          { name: 'initial', type: 'TargetAndTransition', default: '—', description: 'Custom initial animation state (overrides variant)' },
-          { name: 'animate', type: 'TargetAndTransition', default: '—', description: 'Custom animate state (overrides variant)' },
-          { name: 'exit', type: 'TargetAndTransition', default: '—', description: 'Custom exit animation state (overrides variant)' },
-          { name: 'transition', type: 'Transition', default: '—', description: 'Custom transition configuration' },
-          { name: 'className', type: 'string', default: '—', description: 'CSS classes for styling' },
+          { name: 'words', type: 'string[]', required: true, default: '-', description: 'Array of words to cycle through' },
+          { name: 'duration', type: 'number', default: '2500', description: 'Time each word is displayed (milliseconds)' },
+          { name: 'variant', type: "'slide-up' | 'slide-down' | 'fade' | 'blur' | 'scale'", default: "'slide-up'", description: 'Animation variant preset' },
+          { name: 'animationConfig', type: 'WordRotateAnimationConfig', default: '-', description: 'Custom animation config with initial, animate, exit, and transition properties. Overrides variant when provided.' },
+          { name: 'className', type: 'string', default: '-', description: 'CSS classes for styling' },
         ]}
       />
 
       <Separator variant="bold" />
 
-      {/* ─── Variant Examples ──────────────────────────────────── */}
+      {/* Variant Examples */}
       <div className="space-y-4">
         <h3 className="text-[var(--foreground)] font-[700]">Animation Variants</h3>
         <p className="text-[var(--muted-foreground)]">
-          Four built-in transition styles for different effects.
+          Five built-in animation presets for common use cases.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Card className="border border-[var(--border)]">
           <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
-            <Badge variant="secondary">Default (Slide Up)</Badge>
+            <Badge variant="secondary">slide-up</Badge>
             <WordRotate
               words={['Slide', 'Up', 'Effect']}
-              variant="default"
-              duration={2}
+              variant="slide-up"
+              duration={2000}
               className="text-[24px] font-bold"
             />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border border-[var(--border)]">
           <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
-            <Badge variant="secondary">Slide Down</Badge>
+            <Badge variant="secondary">slide-down</Badge>
             <WordRotate
               words={['Slide', 'Down', 'Effect']}
               variant="slide-down"
-              duration={2}
+              duration={2000}
               className="text-[24px] font-bold"
             />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border border-[var(--border)]">
           <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
-            <Badge variant="secondary">Fade</Badge>
+            <Badge variant="secondary">fade</Badge>
             <WordRotate
               words={['Fade', 'In', 'Out']}
               variant="fade"
-              duration={2}
+              duration={2000}
               className="text-[24px] font-bold"
             />
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border border-[var(--border)]">
           <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
-            <Badge variant="secondary">Blur</Badge>
+            <Badge variant="secondary">blur</Badge>
             <WordRotate
               words={['Blur', 'Focus', 'Sharp']}
               variant="blur"
-              duration={2}
+              duration={2000}
+              className="text-[24px] font-bold"
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="border border-[var(--border)]">
+          <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
+            <Badge variant="secondary">scale</Badge>
+            <WordRotate
+              words={['Scale', 'Zoom', 'Grow']}
+              variant="scale"
+              duration={2000}
               className="text-[24px] font-bold"
             />
           </CardContent>
@@ -128,7 +156,91 @@ export default function WordRotateDemo() {
 
       <Separator variant="bold" />
 
-      {/* ─── Use Cases ─────────────────────────────────────────── */}
+      {/* Custom Animation Examples */}
+      <div className="space-y-4">
+        <h3 className="text-[var(--foreground)] font-[700]">Custom Animations (animationConfig)</h3>
+        <p className="text-[var(--muted-foreground)]">
+          For advanced users who want full control over animations. Use <code className="bg-[var(--muted)] px-1 rounded">animationConfig</code> to define custom initial, animate, exit, and transition properties.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border border-[var(--border)]">
+          <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
+            <Badge variant="secondary">Custom: Bounce</Badge>
+            <WordRotate
+              words={['Bouncy', 'Spring', 'Elastic']}
+              animationConfig={customBounceConfig}
+              duration={2000}
+              className="text-[24px] font-bold text-[var(--accent)]"
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="border border-[var(--border)]">
+          <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
+            <Badge variant="secondary">Custom: 3D Rotate</Badge>
+            <div style={{ perspective: '1000px' }}>
+              <WordRotate
+                words={['Rotate', 'Flip', 'Turn']}
+                animationConfig={customRotate3DConfig}
+                duration={2000}
+                className="text-[24px] font-bold text-[var(--accent)]"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border border-[var(--border)]">
+          <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
+            <Badge variant="secondary">Custom: Slide + Scale</Badge>
+            <WordRotate
+              words={['Slide', 'Scale', 'Combo']}
+              animationConfig={customSlideScaleConfig}
+              duration={2000}
+              className="text-[24px] font-bold text-[var(--accent)]"
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      <Separator variant="bold" />
+
+      {/* Code Example for Custom Config */}
+      <PlaygroundSection
+        title="Custom Animation Config"
+        description="Define your own animation with full control over Framer Motion properties."
+        code={`// Define custom animation config
+const customBounceConfig = {
+  initial: { opacity: 0, y: -50, scale: 0.5 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  exit: { opacity: 0, y: 50, scale: 0.5 },
+  transition: { type: 'spring', stiffness: 300, damping: 20 }
+};
+
+<WordRotate 
+  words={['Custom', 'Animation', 'Effect']}
+  animationConfig={customBounceConfig}
+  duration={2000}
+/>`}
+      >
+        <div className="text-center py-6">
+          <span className="text-[28px] font-bold text-[var(--foreground)]">
+            Create{' '}
+            <WordRotate
+              words={['unique', 'stunning', 'custom']}
+              animationConfig={customBounceConfig}
+              className="text-[var(--accent)]"
+              duration={2000}
+            />
+            {' '}animations
+          </span>
+        </div>
+      </PlaygroundSection>
+
+      <Separator variant="bold" />
+
+      {/* Use Cases */}
       <PlaygroundSection
         title="Hero Headline"
         description="Dynamic headline for landing pages."
@@ -146,7 +258,7 @@ export default function WordRotateDemo() {
             <WordRotate
               words={['cyber attacks', 'data breaches', 'malware', 'ransomware']}
               className="text-[var(--accent)]"
-              duration={2.5}
+              duration={2500}
             />
           </h1>
         </div>
@@ -154,11 +266,11 @@ export default function WordRotateDemo() {
 
       <PlaygroundSection
         title="Status Indicator"
-        description="Cycling through system status messages with fade effect."
+        description="Cycling through system status messages with fade variant."
         code={`<WordRotate 
   words={['Scanning...', 'Analyzing...', 'Monitoring...']}
   variant="fade"
-  duration={1.5}
+  duration={1500}
 />`}
       >
         <Card>
@@ -167,7 +279,7 @@ export default function WordRotateDemo() {
             <WordRotate
               words={['Scanning network...', 'Analyzing traffic...', 'Monitoring endpoints...']}
               variant="fade"
-              duration={1.5}
+              duration={1500}
               className="text-[var(--muted-foreground)]"
             />
           </CardContent>
@@ -176,7 +288,7 @@ export default function WordRotateDemo() {
 
       <PlaygroundSection
         title="Feature Highlights"
-        description="Showcasing product features dynamically with blur effect."
+        description="Showcasing product features dynamically with blur variant."
         code={`<span>
   Invinsense offers{' '}
   <WordRotate 
@@ -192,7 +304,7 @@ export default function WordRotateDemo() {
               words={['Real-time Monitoring', 'AI-Powered Detection', 'Automated Response', '24/7 Support']}
               variant="blur"
               className="font-semibold text-[var(--accent)]"
-              duration={2}
+              duration={2000}
             />
           </span>
         </div>

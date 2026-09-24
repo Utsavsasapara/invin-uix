@@ -7,7 +7,6 @@ import { Separator } from 'invin-uix/ui/separator';
 import { Sidebar } from 'invin-uix/ui/sidebar';
 import { Topbar } from 'invin-uix/ui/topbar';
 import { Menu } from 'invin-uix/ui/menu';
-import { LIB_CONFIG } from 'invin-uix/lib-config';
 import {
   Sun, Moon, House, BookOpen, Package, ArrowSquareOut,
 } from 'invin-uix/ui/icons';
@@ -15,9 +14,9 @@ import { useTheme } from '../useTheme.jsx';
 import { AppSwitcher } from '../components/AppSwitcher.jsx';
 
 // Import logos
-import logoFullDarkMode from '../assets/main-logo-invinsense-for-darkMode.svg';
+import logoFull from '../assets/main-logo-invinsense-for-darkMode.svg';
 import logoFullLightMode from '../assets/main-logo-invinsense-for-lightMode.svg';
-import logoSmall from '../assets/small-logo-invinsense.svg';
+import logoSmall from '../assets/small-logo-soar.svg';
 
 const icon = (Icon) => <Icon style={{ width: 16, height: 16 }} />;
 
@@ -59,7 +58,7 @@ export default function AppLayout() {
 
       {/* ── Sidebar ──────────────────────────────────────────────────────── */}
       <Sidebar
-        logo={<img src={dark ? logoFullDarkMode : logoFullLightMode} alt="Invinsense" style={{ height: 26 }} />}
+        logo={<img src={logoFull} alt="Invinsense" style={{ height: 26 }} />}
         logoCollapsed={<img src={logoSmall} alt="Invinsense" style={{ height: 28, width: 22 }} />}
         collapsed={collapsed}
         onCollapsedChange={setCollapsed}
@@ -68,7 +67,7 @@ export default function AppLayout() {
             <div className="space-y-1">
               <Separator />
               <p className="text-caption text-[var(--muted-foreground-faint)] px-2 pt-1">
-                {LIB_CONFIG.name} <Badge variant="outline" size="sm">v{LIB_CONFIG.version}</Badge>
+                invin-uix <Badge variant="outline" size="sm">v1.1.0</Badge>
               </p>
             </div>
           ) : null

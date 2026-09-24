@@ -5,52 +5,45 @@ import { Button } from 'invin-uix/ui/button';
 import { Card, CardContent } from 'invin-uix/ui/card';
 import { Badge } from 'invin-uix/ui/badge';
 import { Separator } from 'invin-uix/ui/separator';
-import { ArrowClockwise, Play } from 'invin-uix/ui/icons';
+import { ArrowClockwise } from 'invin-uix/ui/icons';
 
 export default function HyperTextDemo() {
   const [key, setKey] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
   const resetAnimation = () => setKey(prev => prev + 1);
 
   return (
     <ComponentPage
       name="Hyper Text"
-      description="Text scramble/decrypt reveal effect that cycles through random characters before revealing the actual text. Supports multiple trigger modes: view, hover, click, or manual control."
+      description="Text scramble/decrypt reveal effect that cycles through random characters before revealing the actual text. Animates on view or hover."
       importCode={`import { HyperText } from 'invin-uix/ui/hyper-text';`}
-      badges={[{ label: 'Animation', variant: 'accent' }, { label: 'Interactive', variant: 'secondary' }]}
+      badges={[{ label: 'Animation', variant: 'accent' }, { label: 'Motion', variant: 'secondary' }]}
     >
 
-      {/* ─── Interactive Playground ─────────────────────────────── */}
+      {/* Interactive Playground */}
       <InteractiveDemo
         title="Hyper Text Playground"
-        description="Experiment with different trigger modes and timing settings."
+        description="Experiment with different settings. Hover over the text to re-trigger the animation."
         controls={[
-          { name: 'trigger', label: 'Trigger', type: 'select', default: 'hover', options: [
-            { value: 'view', label: 'On View' },
-            { value: 'hover', label: 'On Hover' },
-            { value: 'click', label: 'On Click' },
-          ]},
           { name: 'duration', label: 'Duration (ms)', type: 'number', default: 800 },
-          { name: 'stagger', label: 'Stagger (ms)', type: 'number', default: 30 },
-          { name: 'loop', label: 'Loop', type: 'boolean', default: false },
+          { name: 'delay', label: 'Delay (ms)', type: 'number', default: 0 },
+          { name: 'startOnView', label: 'Start On View', type: 'boolean', default: false },
+          { name: 'animateOnHover', label: 'Animate On Hover', type: 'boolean', default: true },
         ]}
       >
         {(props) => (
           <div className="space-y-4 w-full text-center">
             <HyperText
-              key={`${key}-${props.trigger}`}
-              trigger={props.trigger}
+              key={key}
               duration={props.duration}
-              stagger={props.stagger}
-              loop={props.loop}
-              className="text-[36px] font-mono font-bold text-[var(--foreground)]"
+              delay={props.delay}
+              startOnView={props.startOnView}
+              animateOnHover={props.animateOnHover}
+              className="text-[36px] font-bold"
             >
-              SECURITY SYSTEM
+              HOVER ME
             </HyperText>
             <p className="text-sm text-[var(--muted-foreground)]">
-              {props.trigger === 'hover' && 'Hover over the text to trigger'}
-              {props.trigger === 'click' && 'Click the text to trigger'}
-              {props.trigger === 'view' && 'Scroll to make visible (triggered when in view)'}
+              {props.animateOnHover ? 'Hover over the text to trigger the scramble effect' : 'Animation plays automatically'}
             </p>
             <Button variant="outline" size="sm" onClick={resetAnimation}>
               <ArrowClockwise style={{ width: 14, height: 14 }} /> Reset
@@ -61,39 +54,43 @@ export default function HyperTextDemo() {
 
       <Separator variant="bold" />
 
-      {/* ─── Props Table ─────────────────────────────────────────── */}
+      {/* Props Table */}
       <PropsTable
         props={[
           { name: 'children', type: 'string', required: true, default: '—', description: 'The text to reveal' },
-          { name: 'trigger', type: "'view' | 'hover' | 'click' | 'manual'", default: "'view'", description: 'How to trigger the animation' },
-          { name: 'duration', type: 'number', default: '800', description: 'Total animation duration (ms)' },
-          { name: 'stagger', type: 'number', default: '30', description: 'Delay between character reveals (ms)' },
-          { name: 'loop', type: 'boolean', default: 'false', description: 'Continuously loop the animation' },
-          { name: 'isRunning', type: 'boolean', default: '—', description: 'Control animation externally (manual trigger)' },
-          { name: 'characterSet', type: 'string', default: 'A-Z, 0-9, symbols', description: 'Characters to use for scrambling' },
+          { name: 'duration', type: 'number', default: '800', description: 'Animation duration in milliseconds' },
           { name: 'delay', type: 'number', default: '0', description: 'Delay before animation starts (ms)' },
-          { name: 'onStart', type: '() => void', default: '—', description: 'Callback when animation starts' },
-          { name: 'onComplete', type: '() => void', default: '—', description: 'Callback when animation completes' },
+          { name: 'as', type: 'MotionElementType', default: "'div'", description: 'HTML element to render (div, span, h1-h6, p, etc.)' },
+          { name: 'startOnView', type: 'boolean', default: 'false', description: 'Start animation when element comes into view' },
+          { name: 'animateOnHover', type: 'boolean', default: 'true', description: 'Trigger animation on hover' },
+          { name: 'characterSet', type: 'string[]', default: 'A-Z', description: 'Characters to use for scrambling' },
           { name: 'className', type: 'string', default: '—', description: 'CSS classes for styling' },
         ]}
       />
 
       <Separator variant="bold" />
 
-      {/* ─── Trigger Modes ─────────────────────────────────────── */}
+      {/* Examples */}
       <div className="space-y-4">
-        <h3 className="text-[var(--foreground)] font-[700]">Trigger Modes</h3>
-        <p className="text-[var(--muted-foreground)]">
-          Four ways to trigger the scramble animation.
-        </p>
+        <h3 className="text-[var(--foreground)] font-[700]">Examples</h3>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
-            <Badge variant="secondary">On View</Badge>
-            <HyperText key={`view-${key}`} trigger="view" className="text-[24px] font-mono font-bold">
-              LOADING...
+            <Badge variant="secondary">Hover Trigger</Badge>
+            <HyperText animateOnHover className="text-[24px] font-bold cursor-pointer">
+              HOVER ME
+            </HyperText>
+            <p className="text-xs text-[var(--muted-foreground)]">Hover to trigger scramble</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
+            <Badge variant="secondary">Start On View</Badge>
+            <HyperText key={`view-${key}`} startOnView animateOnHover={false} className="text-[24px] font-bold">
+              LOADING
             </HyperText>
             <p className="text-xs text-[var(--muted-foreground)]">Animates when scrolled into view</p>
           </CardContent>
@@ -101,45 +98,35 @@ export default function HyperTextDemo() {
 
         <Card>
           <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
-            <Badge variant="secondary">On Hover</Badge>
-            <HyperText trigger="hover" className="text-[24px] font-mono font-bold cursor-pointer">
-              HOVER ME
+            <Badge variant="secondary">Fast Duration</Badge>
+            <HyperText duration={400} className="text-[24px] font-bold cursor-pointer">
+              QUICK
             </HyperText>
-            <p className="text-xs text-[var(--muted-foreground)]">Hover to trigger</p>
+            <p className="text-xs text-[var(--muted-foreground)]">400ms duration</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
-            <Badge variant="secondary">On Click</Badge>
-            <HyperText trigger="click" className="text-[24px] font-mono font-bold cursor-pointer">
-              CLICK ME
+            <Badge variant="secondary">Slow Duration</Badge>
+            <HyperText duration={1500} className="text-[24px] font-bold cursor-pointer">
+              SLOW
             </HyperText>
-            <p className="text-xs text-[var(--muted-foreground)]">Click to trigger</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-4 space-y-3 text-center min-h-[120px] flex flex-col justify-center">
-            <Badge variant="secondary">Loop</Badge>
-            <HyperText trigger="view" loop className="text-[24px] font-mono font-bold text-[var(--accent)]">
-              SCANNING
-            </HyperText>
-            <p className="text-xs text-[var(--muted-foreground)]">Continuous animation</p>
+            <p className="text-xs text-[var(--muted-foreground)]">1500ms duration</p>
           </CardContent>
         </Card>
       </div>
 
       <Separator variant="bold" />
 
-      {/* ─── Use Cases ─────────────────────────────────────────── */}
+      {/* Use Cases */}
       <PlaygroundSection
         title="Security Terminal"
         description="Cyberpunk-style terminal text reveal."
         code={`<HyperText 
-  trigger="view"
-  stagger={20}
-  className="text-2xl font-mono text-green-400"
+  startOnView
+  animateOnHover={false}
+  className="text-2xl font-bold text-green-400"
 >
   ACCESS GRANTED
 </HyperText>`}
@@ -147,9 +134,9 @@ export default function HyperTextDemo() {
         <div className="bg-black p-6 rounded-lg text-center">
           <HyperText
             key={`term-${key}`}
-            trigger="view"
-            stagger={20}
-            className="text-[28px] font-mono font-bold text-green-400"
+            startOnView
+            animateOnHover={false}
+            className="text-[28px] font-bold text-green-400"
           >
             ACCESS GRANTED
           </HyperText>
@@ -159,41 +146,42 @@ export default function HyperTextDemo() {
       <PlaygroundSection
         title="Status Messages"
         description="Animated status updates in a dashboard."
-        code={`<HyperText trigger="view" duration={600}>
-  THREAT DETECTED: HIGH SEVERITY
+        code={`<HyperText startOnView duration={600}>
+  THREAT DETECTED
 </HyperText>`}
       >
         <Card className="border-[var(--error)] bg-[var(--error)]/10">
           <CardContent className="py-4 text-center">
             <HyperText
               key={`alert-${key}`}
-              trigger="view"
+              startOnView
+              animateOnHover={false}
               duration={600}
-              className="text-[20px] font-mono font-bold text-[var(--error)]"
+              className="text-[20px] font-bold text-[var(--error)]"
             >
-              ⚠ THREAT DETECTED: HIGH SEVERITY
+              THREAT DETECTED: HIGH SEVERITY
             </HyperText>
           </CardContent>
         </Card>
       </PlaygroundSection>
 
       <PlaygroundSection
-        title="Interactive Button"
+        title="Interactive Buttons"
         description="Reveal text on hover for interactive elements."
         code={`<Button>
-  <HyperText trigger="hover">
+  <HyperText animateOnHover>
     DECRYPT
   </HyperText>
 </Button>`}
       >
         <div className="flex gap-4 justify-center py-4">
           <Button size="lg">
-            <HyperText trigger="hover" className="font-mono">
+            <HyperText animateOnHover as="span">
               DECRYPT FILE
             </HyperText>
           </Button>
           <Button variant="outline" size="lg">
-            <HyperText trigger="hover" className="font-mono">
+            <HyperText animateOnHover as="span">
               INITIALIZE
             </HyperText>
           </Button>
@@ -201,29 +189,23 @@ export default function HyperTextDemo() {
       </PlaygroundSection>
 
       <PlaygroundSection
-        title="Manual Control"
-        description="Programmatically control the animation."
-        code={`const [isRunning, setIsRunning] = useState(false);
-
-<HyperText trigger="manual" isRunning={isRunning}>
-  CONTROLLED TEXT
-</HyperText>
-<Button onClick={() => setIsRunning(true)}>Start</Button>`}
+        title="With Delay"
+        description="Add a delay before the animation starts."
+        code={`<HyperText startOnView delay={500}>
+  DELAYED START
+</HyperText>`}
       >
-        <div className="text-center space-y-4 py-4">
+        <div className="text-center py-6">
           <HyperText
-            trigger="manual"
-            isRunning={isRunning}
-            onComplete={() => setIsRunning(false)}
-            className="text-[28px] font-mono font-bold"
+            key={`delay-${key}`}
+            startOnView
+            animateOnHover={false}
+            delay={500}
+            className="text-[28px] font-bold"
           >
-            MANUAL CONTROL
+            DELAYED START
           </HyperText>
-          <div className="flex gap-2 justify-center">
-            <Button variant="outline" size="sm" onClick={() => setIsRunning(true)}>
-              <Play style={{ width: 14, height: 14 }} /> Start Animation
-            </Button>
-          </div>
+          <p className="text-sm text-[var(--muted-foreground)] mt-2">500ms delay before animation</p>
         </div>
       </PlaygroundSection>
 

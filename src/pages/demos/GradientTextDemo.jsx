@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
 import { GradientText } from 'invin-uix/ui/gradient-text';
-import { Button } from 'invin-uix/ui/button';
 import { Card, CardContent } from 'invin-uix/ui/card';
 import { Badge } from 'invin-uix/ui/badge';
 import { Separator } from 'invin-uix/ui/separator';
@@ -10,48 +8,30 @@ export default function GradientTextDemo() {
   return (
     <ComponentPage
       name="Gradient Text"
-      description="Text with animated flowing gradient colors. Choose from 8 presets or define custom gradients. Perfect for hero text, headings, and eye-catching elements."
+      description="Text with an animated flowing gradient effect. Customize the colors and animation speed for eye-catching headlines and highlights."
       importCode={`import { GradientText } from 'invin-uix/ui/gradient-text';`}
       badges={[{ label: 'Animation', variant: 'accent' }, { label: 'CSS', variant: 'secondary' }]}
     >
 
-      {/* ─── Interactive Playground ─────────────────────────────── */}
+      {/* Interactive Playground */}
       <InteractiveDemo
         title="Gradient Text Playground"
-        description="Experiment with different gradient presets and animation settings."
+        description="Customize the gradient colors and animation speed."
         controls={[
-          { name: 'preset', label: 'Preset', type: 'select', default: 'rainbow', options: [
-            { value: 'rainbow', label: 'Rainbow' },
-            { value: 'sunset', label: 'Sunset' },
-            { value: 'ocean', label: 'Ocean' },
-            { value: 'forest', label: 'Forest' },
-            { value: 'fire', label: 'Fire' },
-            { value: 'purple', label: 'Purple' },
-            { value: 'cyber', label: 'Cyber' },
-            { value: 'gold', label: 'Gold' },
-          ]},
-          { name: 'duration', label: 'Duration (s)', type: 'number', default: 5 },
-          { name: 'direction', label: 'Direction', type: 'select', default: 'to-r', options: [
-            { value: 'to-r', label: 'Left to Right' },
-            { value: 'to-l', label: 'Right to Left' },
-            { value: 'to-t', label: 'Bottom to Top' },
-            { value: 'to-b', label: 'Top to Bottom' },
-            { value: 'to-tr', label: 'Diagonal (TR)' },
-            { value: 'to-br', label: 'Diagonal (BR)' },
-          ]},
-          { name: 'animated', label: 'Animated', type: 'boolean', default: true },
+          { name: 'speed', label: 'Speed', type: 'number', default: 1 },
+          { name: 'colorFrom', label: 'Color From', type: 'text', default: '#ffaa40' },
+          { name: 'colorTo', label: 'Color To', type: 'text', default: '#9c40ff' },
         ]}
       >
         {(props) => (
           <div className="text-center py-8">
             <GradientText
-              preset={props.preset}
-              duration={props.duration}
-              direction={props.direction}
-              animated={props.animated}
+              speed={props.speed}
+              colorFrom={props.colorFrom}
+              colorTo={props.colorTo}
               className="text-[48px] font-bold"
             >
-              Invinsense Security
+              Animated Gradient
             </GradientText>
           </div>
         )}
@@ -59,74 +39,124 @@ export default function GradientTextDemo() {
 
       <Separator variant="bold" />
 
-      {/* ─── Props Table ─────────────────────────────────────────── */}
+      {/* Props Table */}
       <PropsTable
         props={[
           { name: 'children', type: 'ReactNode', required: true, default: '—', description: 'The text content to display' },
-          { name: 'preset', type: 'GradientPreset', default: "'rainbow'", description: 'Preset gradient: rainbow, sunset, ocean, forest, fire, purple, cyber, gold' },
-          { name: 'colors', type: 'string[]', default: '—', description: 'Custom gradient colors (overrides preset)' },
-          { name: 'direction', type: 'GradientDirection', default: "'to-r'", description: 'Gradient direction: to-r, to-l, to-t, to-b, to-tr, to-tl, to-br, to-bl' },
-          { name: 'animated', type: 'boolean', default: 'true', description: 'Enable gradient animation' },
-          { name: 'duration', type: 'number', default: '5', description: 'Animation cycle duration (seconds)' },
+          { name: 'speed', type: 'number', default: '1', description: 'Animation speed multiplier (higher = faster)' },
+          { name: 'colorFrom', type: 'string', default: "'#ffaa40'", description: 'Starting color of the gradient' },
+          { name: 'colorTo', type: 'string', default: "'#9c40ff'", description: 'Middle/ending color of the gradient' },
           { name: 'className', type: 'string', default: '—', description: 'CSS classes for styling' },
-          { name: 'as', type: 'ElementType', default: "'span'", description: 'HTML element to render' },
         ]}
       />
 
       <Separator variant="bold" />
 
-      {/* ─── Preset Gallery ─────────────────────────────────────── */}
+      {/* Speed Variations */}
       <div className="space-y-4">
-        <h3 className="text-[var(--foreground)] font-[700]">Gradient Presets</h3>
+        <h3 className="text-[var(--foreground)] font-[700]">Speed Variations</h3>
         <p className="text-[var(--muted-foreground)]">
-          8 built-in gradient presets for common use cases.
+          Adjust the animation speed for different effects.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {['rainbow', 'sunset', 'ocean', 'forest', 'fire', 'purple', 'cyber', 'gold'].map((preset) => (
-          <Card key={preset}>
-            <CardContent className="pt-4 text-center space-y-2">
-              <Badge variant="secondary" className="capitalize">{preset}</Badge>
-              <GradientText preset={preset} className="text-[24px] font-bold block">
-                {preset.charAt(0).toUpperCase() + preset.slice(1)}
-              </GradientText>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="pt-4 text-center space-y-2">
+            <Badge variant="secondary">Slow (0.5x)</Badge>
+            <GradientText speed={0.5} className="text-[24px] font-bold">
+              Slow Gradient
+            </GradientText>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center space-y-2">
+            <Badge variant="secondary">Normal (1x)</Badge>
+            <GradientText speed={1} className="text-[24px] font-bold">
+              Normal Gradient
+            </GradientText>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center space-y-2">
+            <Badge variant="secondary">Fast (2x)</Badge>
+            <GradientText speed={2} className="text-[24px] font-bold">
+              Fast Gradient
+            </GradientText>
+          </CardContent>
+        </Card>
       </div>
 
       <Separator variant="bold" />
 
-      {/* ─── Custom Gradient ─────────────────────────────────────── */}
-      <PlaygroundSection
-        title="Custom Gradient"
-        description="Define your own gradient colors."
-        code={`<GradientText 
-  colors={['#FF6B6B', '#4ECDC4', '#45B7D1', '#96E6A1']}
-  duration={4}
->
-  Custom Colors
-</GradientText>`}
-      >
-        <div className="text-center py-4">
-          <GradientText 
-            colors={['#FF6B6B', '#4ECDC4', '#45B7D1', '#96E6A1']}
-            duration={4}
-            className="text-[36px] font-bold"
-          >
-            Custom Gradient Colors
-          </GradientText>
-        </div>
-      </PlaygroundSection>
+      {/* Color Variations */}
+      <div className="space-y-4">
+        <h3 className="text-[var(--foreground)] font-[700]">Color Variations</h3>
+        <p className="text-[var(--muted-foreground)]">
+          Different color combinations for various use cases.
+        </p>
+      </div>
 
-      {/* ─── Use Cases ─────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="pt-4 text-center space-y-2">
+            <Badge variant="secondary">Orange to Purple</Badge>
+            <GradientText colorFrom="#ffaa40" colorTo="#9c40ff" className="text-[24px] font-bold">
+              Default
+            </GradientText>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center space-y-2">
+            <Badge variant="secondary">Cyan to Blue</Badge>
+            <GradientText colorFrom="#00f5a0" colorTo="#00d9f5" className="text-[24px] font-bold">
+              Cyber
+            </GradientText>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center space-y-2">
+            <Badge variant="secondary">Pink to Orange</Badge>
+            <GradientText colorFrom="#ff0080" colorTo="#ff8c00" className="text-[24px] font-bold">
+              Sunset
+            </GradientText>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center space-y-2">
+            <Badge variant="secondary">Green to Teal</Badge>
+            <GradientText colorFrom="#22c55e" colorTo="#14b8a6" className="text-[24px] font-bold">
+              Nature
+            </GradientText>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center space-y-2">
+            <Badge variant="secondary">Red to Yellow</Badge>
+            <GradientText colorFrom="#ef4444" colorTo="#eab308" className="text-[24px] font-bold">
+              Fire
+            </GradientText>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center space-y-2">
+            <Badge variant="secondary">Blue to Purple</Badge>
+            <GradientText colorFrom="#3b82f6" colorTo="#8b5cf6" className="text-[24px] font-bold">
+              Ocean
+            </GradientText>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Separator variant="bold" />
+
+      {/* Use Cases */}
       <PlaygroundSection
         title="Hero Headline"
         description="Eye-catching hero text for landing pages."
         code={`<GradientText 
-  preset="cyber" 
-  as="h1"
+  colorFrom="#00f5a0" 
+  colorTo="#00d9f5"
   className="text-6xl font-bold"
 >
   Next-Gen Security
@@ -134,8 +164,8 @@ export default function GradientTextDemo() {
       >
         <div className="text-center py-8 bg-gradient-to-b from-[var(--background)] to-[var(--secondary)] rounded-lg">
           <GradientText 
-            preset="cyber"
-            as="h1"
+            colorFrom="#00f5a0" 
+            colorTo="#00d9f5"
             className="text-[48px] md:text-[64px] font-bold"
           >
             Next-Gen Security
@@ -147,46 +177,35 @@ export default function GradientTextDemo() {
       </PlaygroundSection>
 
       <PlaygroundSection
-        title="Feature Badges"
-        description="Highlight feature names with gradient text."
-        code={`<GradientText preset="gold">
-  ★ Premium Feature
+        title="Feature Highlight"
+        description="Highlight important features or announcements."
+        code={`<GradientText colorFrom="#ffaa40" colorTo="#9c40ff">
+  Introducing v2.0
 </GradientText>`}
       >
-        <div className="flex flex-wrap gap-4 justify-center py-4">
+        <div className="text-center py-6">
           <Badge variant="outline" className="py-2 px-4">
-            <GradientText preset="gold" className="font-semibold">
-              ★ Premium
-            </GradientText>
-          </Badge>
-          <Badge variant="outline" className="py-2 px-4">
-            <GradientText preset="ocean" className="font-semibold">
-              ⚡ Fast
-            </GradientText>
-          </Badge>
-          <Badge variant="outline" className="py-2 px-4">
-            <GradientText preset="forest" className="font-semibold">
-              ✓ Secure
-            </GradientText>
-          </Badge>
-          <Badge variant="outline" className="py-2 px-4">
-            <GradientText preset="fire" className="font-semibold">
-              🔥 Hot
+            <GradientText colorFrom="#ffaa40" colorTo="#9c40ff" className="font-semibold">
+              Introducing v2.0
             </GradientText>
           </Badge>
         </div>
       </PlaygroundSection>
 
       <PlaygroundSection
-        title="Static Gradient"
-        description="Disable animation for a static gradient look."
-        code={`<GradientText preset="sunset" animated={false}>
-  Static Gradient Text
+        title="Brand Text"
+        description="Use for brand names or product titles."
+        code={`<GradientText colorFrom="#3b82f6" colorTo="#8b5cf6">
+  INVINSENSE
 </GradientText>`}
       >
-        <div className="text-center py-4">
-          <GradientText preset="sunset" animated={false} className="text-[32px] font-bold">
-            Static Gradient Text
+        <div className="text-center py-6">
+          <GradientText 
+            colorFrom="#3b82f6" 
+            colorTo="#8b5cf6" 
+            className="text-[36px] font-bold tracking-wider"
+          >
+            INVINSENSE
           </GradientText>
         </div>
       </PlaygroundSection>

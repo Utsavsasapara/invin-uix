@@ -15,7 +15,7 @@ export default function SpinnerDemo() {
   return (
     <ComponentPage
       name="Spinner"
-      description="Loading indicator with 4 animation variants, 3 sizes, tip text, delay, content wrapper overlay, fullscreen mode, and custom indicator support."
+      description="Loading indicator with 6 animation variants, 3 sizes, tip text, delay, content wrapper overlay, fullscreen mode, and custom indicator support."
       importCode={`import { Spinner } from 'invin-uix/ui/spinner';`}
     >
 
@@ -34,6 +34,8 @@ export default function SpinnerDemo() {
               { value: 'dots', label: 'Dots' },
               { value: 'ring', label: 'Ring' },
               { value: 'bars', label: 'Bars' },
+              { value: 'dashed', label: 'Dashed' },
+              { value: 'pulse', label: 'Pulse' },
             ],
           },
           {
@@ -44,7 +46,7 @@ export default function SpinnerDemo() {
             options: [
               { value: 'sm', label: 'Small (16px)' },
               { value: 'md', label: 'Medium (24px)' },
-              { value: 'lg', label: 'Large (32px)' },
+              { value: 'lg', label: 'Large (40px)' },
             ],
           },
           { name: 'tip', type: 'text', label: 'Tip Text', default: 'Loading...', placeholder: 'Enter tip text' },
@@ -67,8 +69,8 @@ export default function SpinnerDemo() {
       <PropsTable
         props={[
           { name: 'spinning', type: 'boolean', default: 'true', description: 'Controls visibility (useful for toggling)' },
-          { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Spinner dimensions (16px / 24px / 32px)' },
-          { name: 'variant', type: "'default' | 'dots' | 'ring' | 'bars'", default: "'default'", description: 'Animation style' },
+          { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Spinner dimensions (16px / 24px / 40px)' },
+          { name: 'variant', type: "'default' | 'dots' | 'ring' | 'bars' | 'dashed' | 'pulse'", default: "'default'", description: 'Animation style' },
           { name: 'tip', type: 'ReactNode', default: '—', description: 'Text shown below the spinner' },
           { name: 'delay', type: 'number (ms)', default: '0', description: 'Delay before showing — prevents flash for fast loads' },
           { name: 'indicator', type: 'ReactNode', default: '—', description: 'Custom spinner element (overrides variant)' },
@@ -83,17 +85,21 @@ export default function SpinnerDemo() {
       {/* ─── Variants ───────────────────────────────────────────── */}
       <PlaygroundSection
         title="Variants"
-        description="Four built-in animation styles. All use accent colour."
+        description="Six built-in animation styles. All use accent colour by default."
         code={`<Spinner variant="default" tip="Default" />
 <Spinner variant="dots" tip="Dots" />
 <Spinner variant="ring" tip="Ring" />
-<Spinner variant="bars" tip="Bars" />`}
+<Spinner variant="bars" tip="Bars" />
+<Spinner variant="dashed" tip="Dashed" />
+<Spinner variant="pulse" tip="Pulse" />`}
       >
         <div className="flex flex-wrap items-start gap-8">
           <Spinner variant="default" tip="Default" />
           <Spinner variant="dots" tip="Dots" />
           <Spinner variant="ring" tip="Ring" />
           <Spinner variant="bars" tip="Bars" />
+          <Spinner variant="dashed" tip="Dashed" />
+          <Spinner variant="pulse" tip="Pulse" />
         </div>
       </PlaygroundSection>
 
@@ -137,8 +143,8 @@ export default function SpinnerDemo() {
 <Spinner variant="ring" size="sm" />
 // ...all combos`}
       >
-        <div className="grid grid-cols-4 gap-6">
-          {['default', 'dots', 'ring', 'bars'].map(v => (
+        <div className="grid grid-cols-6 gap-6">
+          {['default', 'dots', 'ring', 'bars', 'dashed', 'pulse'].map(v => (
             <div key={v} className="flex flex-col items-center gap-4">
               <Spinner variant={v} size="sm" />
               <Spinner variant={v} size="md" />
