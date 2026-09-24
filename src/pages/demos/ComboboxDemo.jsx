@@ -63,6 +63,11 @@ export default function ComboboxDemo() {
   const [created, setCreated] = useState([]);
   const [asyncResults, setAsyncResults] = useState(frameworks);
   const [asyncLoading, setAsyncLoading] = useState(false);
+  // State for interactive playground
+  const [playgroundSingle, setPlaygroundSingle] = useState(null);
+  const [playgroundMulti, setPlaygroundMulti] = useState([]);
+  // State for "With icons" demo
+  const [country, setCountry] = useState(null);
 
   const handleAsyncSearch = (query) => {
     setAsyncLoading(true);
@@ -100,6 +105,12 @@ export default function ComboboxDemo() {
               error={props.error}
               placeholder="Select a framework..."
               fullWidth
+              // Single mode state
+              value={props.multiple ? undefined : playgroundSingle}
+              onChange={props.multiple ? undefined : (v) => setPlaygroundSingle(v)}
+              // Multi mode state
+              values={props.multiple ? playgroundMulti : undefined}
+              onValuesChange={props.multiple ? (v) => setPlaygroundMulti(v) : undefined}
             />
           </div>
         )}
@@ -155,7 +166,10 @@ export default function ComboboxDemo() {
             options={countries}
             placeholder="Select country..."
             fullWidth
+            value={country}
+            onChange={(v) => setCountry(v)}
           />
+          {country && <p className="text-caption text-[var(--muted-foreground)]">Selected: {country}</p>}
         </div>
       </PlaygroundSection>
 
