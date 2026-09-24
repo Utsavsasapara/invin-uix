@@ -61,13 +61,21 @@ export default function ComboboxDemo() {
   const [multi, setMulti] = useState([]);
   const [tags, setTags] = useState(['slack', 'github']);
   const [created, setCreated] = useState([]);
+  const [creatableValues, setCreatableValues] = useState([]);
   const [asyncResults, setAsyncResults] = useState(frameworks);
   const [asyncLoading, setAsyncLoading] = useState(false);
+  const [asyncValue, setAsyncValue] = useState(null);
   // State for interactive playground
   const [playgroundSingle, setPlaygroundSingle] = useState(null);
   const [playgroundMulti, setPlaygroundMulti] = useState([]);
   // State for "With icons" demo
   const [country, setCountry] = useState(null);
+  // State for "Sizes" demo
+  const [sizeSm, setSizeSm] = useState(null);
+  const [sizeMd, setSizeMd] = useState(null);
+  const [sizeLg, setSizeLg] = useState(null);
+  // State for "States" demo
+  const [errorValue, setErrorValue] = useState(null);
 
   const handleAsyncSearch = (query) => {
     setAsyncLoading(true);
@@ -227,11 +235,19 @@ export default function ComboboxDemo() {
               ...created.map(t => ({ value: t, label: t })),
             ]}
             multiple
+            values={creatableValues}
+            onValuesChange={setCreatableValues}
             creatable
-            onCreate={(val) => setCreated(prev => [...prev, val])}
+            onCreate={(val) => {
+              setCreated(prev => [...prev, val]);
+              setCreatableValues(prev => [...prev, val]);
+            }}
             placeholder="Add tags..."
             fullWidth
           />
+          {creatableValues.length > 0 && (
+            <p className="text-caption text-[var(--muted-foreground)]">{creatableValues.length} tags selected</p>
+          )}
           {created.length > 0 && (
             <div className="flex gap-1 flex-wrap">
               {created.map(t => <Badge key={t} variant="secondary" size="sm">+ {t}</Badge>)}
@@ -249,11 +265,14 @@ export default function ComboboxDemo() {
           <Label>Search frameworks (500ms delay)</Label>
           <Combobox
             options={asyncResults}
+            value={asyncValue}
+            onChange={(v) => setAsyncValue(v)}
             onSearch={handleAsyncSearch}
             loading={asyncLoading}
             placeholder="Type to search..."
             fullWidth
           />
+          {asyncValue && <p className="text-caption text-[var(--muted-foreground)]">Selected: {asyncValue}</p>}
         </div>
       </PlaygroundSection>
 
@@ -263,17 +282,39 @@ export default function ComboboxDemo() {
         description="Three size presets: sm, md, lg."
       >
         <div className="space-y-3 max-w-xs">
-          {(['sm', 'md', 'lg']).map((s) => (
-            <div key={s} className="space-y-1">
-              <Label className="text-[10px] uppercase text-[var(--muted-foreground-faint)]">{s}</Label>
-              <Combobox
-                options={frameworks.slice(0, 5)}
-                size={s}
-                placeholder={`Size: ${s}`}
-                fullWidth
-              />
-            </div>
-          ))}
+          <div className="space-y-1">
+            <Label className="text-[10px] uppercase text-[var(--muted-foreground-faint)]">sm</Label>
+            <Combobox
+              options={frameworks.slice(0, 5)}
+              size="sm"
+              placeholder="Size: sm"
+              fullWidth
+              value={sizeSm}
+              onChange={(v) => setSizeSm(v)}
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-[10px] uppercase text-[var(--muted-foreground-faint)]">md</Label>
+            <Combobox
+              options={frameworks.slice(0, 5)}
+              size="md"
+              placeholder="Size: md"
+              fullWidth
+              value={sizeMd}
+              onChange={(v) => setSizeMd(v)}
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-[10px] uppercase text-[var(--muted-foreground-faint)]">lg</Label>
+            <Combobox
+              options={frameworks.slice(0, 5)}
+              size="lg"
+              placeholder="Size: lg"
+              fullWidth
+              value={sizeLg}
+              onChange={(v) => setSizeLg(v)}
+            />
+          </div>
         </div>
       </PlaygroundSection>
 
@@ -289,7 +330,14 @@ export default function ComboboxDemo() {
           </div>
           <div className="space-y-1">
             <Label>Error</Label>
-            <Combobox options={frameworks} error placeholder="Selection required" fullWidth />
+            <Combobox 
+              options={frameworks} 
+              error 
+              placeholder="Selection required" 
+              fullWidth
+              value={errorValue}
+              onChange={(v) => setErrorValue(v)}
+            />
           </div>
         </div>
       </PlaygroundSection>
