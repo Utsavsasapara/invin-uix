@@ -6,10 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from 'invin-uix/ui/card';
 import { Separator } from 'invin-uix/ui/separator';
 import { Avatar, AvatarImage, AvatarFallback } from 'invin-uix/ui/avatar';
 import { Bell, Envelope, Star, Check, Lightning, User, Shield, Clock, Pulse, ArrowRight, Tag, X, Play, Pause, Warning, Trash, Gear, PaperPlaneTilt, XCircle } from 'invin-uix/ui/icons';
-import { LIB_CONFIG } from 'invin-uix/lib-config';
+import { useLibConfig } from '../../LibConfigContext.jsx';
 
 export default function BadgeDemo() {
   const [tags, setTags] = useState(['React', 'TypeScript', 'Tailwind', 'Radix']);
+  const libConfig = useLibConfig();
 
   const removeTag = (tagToRemove) => {
     setTags(tags.filter(t => t !== tagToRemove));
@@ -243,9 +244,9 @@ export default function BadgeDemo() {
           <Badge variant="info" size="lg">Large</Badge>
         </div>
         <div className="flex flex-wrap items-center gap-3 mt-3">
-          <Badge variant="success" size="sm">v{LIB_CONFIG.version}</Badge>
-          <Badge variant="outline" size="sm">React {LIB_CONFIG.reactVersion}</Badge>
-          <Badge variant="secondary" size="sm">Tailwind v{LIB_CONFIG.tailwindVersion}</Badge>
+          <Badge variant="success" size="sm">v{libConfig.version}</Badge>
+          <Badge variant="outline" size="sm">React {libConfig.reactVersion}</Badge>
+          <Badge variant="secondary" size="sm">Tailwind v{libConfig.tailwindVersion}</Badge>
         </div>
       </PlaygroundSection>
 

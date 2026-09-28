@@ -17,7 +17,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from 'invin-uix/ui/tabs';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'invin-uix/ui/accordion';
 import { Label } from 'invin-uix/ui/label';
 import { Tooltip } from 'invin-uix/ui/tooltip';
-import { LIB_CONFIG } from 'invin-uix/lib-config';
+import { useLibConfig } from '../../LibConfigContext.jsx';
 import { 
   Bell, Gear, User, MagnifyingGlass, Plus, Trash, Check, X, 
   Warning, Info, CaretRight, House, ChartLine, Folder,
@@ -27,6 +27,7 @@ import {
 } from 'invin-uix/ui/icons';
 
 export default function KitchenSinkDemo() {
+  const libConfig = useLibConfig();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -479,7 +480,7 @@ export default function KitchenSinkDemo() {
       <section className="pt-4 border-t border-[var(--border)]">
         <div className="flex items-center justify-between">
           <p className="text-[12px] text-[var(--muted-foreground)]">
-            {LIB_CONFIG.name} v{LIB_CONFIG.version} · {LIB_CONFIG.componentCountDisplay} components
+            {libConfig.name} v{libConfig.version} · {libConfig.componentCountDisplay} components
           </p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" leftIcon={<FileText style={{ width: 12, height: 12 }} />}>

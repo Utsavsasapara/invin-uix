@@ -2,7 +2,7 @@ import { Card, CardContent } from 'invin-uix/ui/card';
 import { Badge } from 'invin-uix/ui/badge';
 import { Separator } from 'invin-uix/ui/separator';
 import { CheckCircle, Package, Palette, Code, Stack, Sparkle } from 'invin-uix/ui/icons';
-import { LIB_CONFIG } from 'invin-uix/lib-config';
+import { useLibConfig } from '../../LibConfigContext.jsx';
 
 function Step({ num, title, children }) {
   return (
@@ -34,6 +34,8 @@ function CodeBlock({ title, code }) {
 }
 
 export default function GettingStartedDemo() {
+  const libConfig = useLibConfig();
+
   return (
     <div className="space-y-10">
 
@@ -41,7 +43,7 @@ export default function GettingStartedDemo() {
       <div>
         <div className="flex items-center gap-2 mb-3">
           <Badge variant="info" size="sm">Guide</Badge>
-          <Badge variant="outline" size="sm">v1.3</Badge>
+          <Badge variant="outline" size="sm">v{libConfig.version}</Badge>
         </div>
         <h2 className="text-display font-bold text-[var(--foreground)] tracking-[-0.02em]">Getting Started</h2>
         <p className="text-body text-[var(--muted-foreground)] mt-1 max-w-2xl leading-relaxed">
@@ -179,7 +181,7 @@ export default App`} />
       <section className="space-y-4">
         <h3 className="text-section font-semibold text-[var(--foreground)]">Theming</h3>
         <p className="text-body text-[var(--muted-foreground)] leading-relaxed">
-          The library supports <strong className="text-[var(--foreground)] font-semibold">dark/light themes</strong> via <code className="text-data font-mono text-[var(--accent)] bg-[var(--secondary)] px-1 py-0.5 rounded-[var(--radius-sm)]">html[data-theme]</code> and <strong className="text-[var(--foreground)] font-semibold">7 product accents</strong> via <code className="text-data font-mono text-[var(--accent)] bg-[var(--secondary)] px-1 py-0.5 rounded-[var(--radius-sm)]">html[data-accent]</code>. Set one accent per product; structure and spacing stay constant.
+          The library supports <strong className="text-[var(--foreground)] font-semibold">dark/light themes</strong> via <code className="text-data font-mono text-[var(--accent)] bg-[var(--secondary)] px-1 py-0.5 rounded-[var(--radius-sm)]">html[data-theme]</code> and <strong className="text-[var(--foreground)] font-semibold">{libConfig.accentCount} product accents</strong> via <code className="text-data font-mono text-[var(--accent)] bg-[var(--secondary)] px-1 py-0.5 rounded-[var(--radius-sm)]">html[data-accent]</code>. Set one accent per product; structure and spacing stay constant.
         </p>
         <CodeBlock title="Theme & accent switching" code={`// Theme: 'dark' (default) | 'light'
 document.documentElement.setAttribute('data-theme', 'dark')
@@ -233,10 +235,10 @@ import 'invin-uix/tokens.css'`} />
         <h3 className="text-section font-semibold text-[var(--foreground)]">What's included</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[
-            { icon: Stack, title: `${LIB_CONFIG.componentCountDisplay} Components`, desc: 'Button, Card, Dialog, DataTable, Sidebar, and more' },
+            { icon: Stack, title: `${libConfig.componentCountDisplay} Components`, desc: 'Button, Card, Dialog, DataTable, Sidebar, and more' },
             { icon: Palette, title: 'Design Tokens', desc: 'Colours, typography, spacing, borders, motion' },
-            { icon: Sparkle, title: `${LIB_CONFIG.accentCount} Product Accents`, desc: 'ISOC Core, UEMP, GRC, CPS Pulse, RegimentAI, Assentra' },
-            { icon: Code, title: 'Zero Config', desc: 'Tailwind v4 @theme utilities — no preset or config file' },
+            { icon: Sparkle, title: `${libConfig.accentCount} Product Accents`, desc: 'ISOC Core, UEMP, GRC, CPS Pulse, RegimentAI, Assentra' },
+            { icon: Code, title: 'Zero Config', desc: `Tailwind v${libConfig.tailwindVersion} @theme utilities — no preset or config file` },
             { icon: Package, title: 'Tree-shakeable', desc: 'Subpath imports, ESM only, Phosphor icons included' },
             { icon: CheckCircle, title: 'Dark + Light', desc: 'Full theme support — switch via data-theme' },
           ].map(f => (

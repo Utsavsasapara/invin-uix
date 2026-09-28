@@ -7,11 +7,21 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App.routes.jsx';
 import 'invin-uix/tokens.css';
+import { LibConfigProvider, DEFAULT_LIB_CONFIG } from './LibConfigContext.jsx';
+
+// ─── Library Configuration ───────────────────────────────────────────────────
+// Update version here when upgrading invin-uix - this is the SINGLE source of truth
+const LIB_CONFIG = {
+  ...DEFAULT_LIB_CONFIG,
+  version: '1.4.2', // <-- Update this when library version changes
+};
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <LibConfigProvider config={LIB_CONFIG}>
+        <App />
+      </LibConfigProvider>
     </BrowserRouter>
   </StrictMode>,
 );

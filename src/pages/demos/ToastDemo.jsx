@@ -72,6 +72,8 @@ function ProgrammaticDismissDemo() {
 }
 
 export default function ToastDemo() {
+  const [toasterPosition, setToasterPosition] = useState('bottom-right');
+  
   return (
     <ComponentPage
       name="Toast"
@@ -79,7 +81,7 @@ export default function ToastDemo() {
       importCode={`import { Toaster, toast } from 'invin-uix/ui/toast';
 // Place <Toaster /> once in your app root`}
     >
-      <Toaster position="bottom-right" />
+      <Toaster position={toasterPosition} />
 
       {/* ─── UI Guide v2.0 §13 Reference ────────────────────────── */}
       <Card className="border-[var(--accent)]/30 bg-[var(--accent)]/5">
@@ -121,6 +123,20 @@ export default function ToastDemo() {
         description="Experiment with different toast configurations. Severity determines duration automatically."
         controls={[
           {
+            name: 'position',
+            type: 'select',
+            label: 'Position',
+            default: 'bottom-right',
+            options: [
+              { value: 'top-right', label: 'Top Right' },
+              { value: 'top-left', label: 'Top Left' },
+              { value: 'top-center', label: 'Top Center' },
+              { value: 'bottom-right', label: 'Bottom Right' },
+              { value: 'bottom-left', label: 'Bottom Left' },
+              { value: 'bottom-center', label: 'Bottom Center' },
+            ],
+          },
+          {
             name: 'variant',
             type: 'select',
             label: 'Severity',
@@ -137,19 +153,30 @@ export default function ToastDemo() {
           { name: 'description', type: 'text', label: 'Description', default: 'Your preferences have been updated.', placeholder: 'Toast description' },
         ]}
       >
-        {(props) => (
-          <Button 
-            variant="outline" 
-            onClick={() => toast({ 
-              title: props.title, 
-              description: props.description, 
-              variant: props.variant
-              // Duration is automatically set by severity per UI Guide v2.0
-            })}
-          >
-            Show Toast
-          </Button>
-        )}
+        {(props) => {
+          // Update toaster position when changed
+          if (props.position !== toasterPosition) {
+            setToasterPosition(props.position);
+          }
+          return (
+            <div className="space-y-3">
+              <Button 
+                variant="outline" 
+                onClick={() => toast({ 
+                  title: props.title, 
+                  description: props.description, 
+                  variant: props.variant
+                  // Duration is automatically set by severity per UI Guide v2.0
+                })}
+              >
+                Show Toast
+              </Button>
+              <p className="text-xs text-[var(--muted-foreground)]">
+                Position: <strong>{props.position}</strong> (on mobile &lt;640px, always top-center)
+              </p>
+            </div>
+          );
+        }}
       </InteractiveDemo>
 
       <Separator variant="bold" />

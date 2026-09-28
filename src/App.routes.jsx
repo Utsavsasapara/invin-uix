@@ -10,6 +10,7 @@ const ValidateButton = lazy(() => import('./pages/ValidateButton.jsx'));
 const DemoLayout = lazy(() => import('./pages/DemoLayout.jsx'));
 const SoarApp = lazy(() => import('./pages/apps/SoarApp.jsx'));
 const SoarWorkflows = lazy(() => import('./pages/apps/SoarWorkflows.jsx'));
+const GsosApp = lazy(() => import('./pages/apps/gsos/GsosApp.jsx'));
 
 function PageLoader() {
   return (
@@ -37,6 +38,7 @@ export default function AppRoutes() {
 
         {/* Demo apps — each has its own full-page layout */}
         <Route path="apps/soar-dashboard/*" element={<SoarApp />} />
+        <Route path="apps/gsos-demo/*" element={<GsosApp />} />
 
         {/* Catch-all — redirect to home */}
         <Route path="*" element={<HomePage />} />

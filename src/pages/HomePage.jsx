@@ -3,7 +3,6 @@ import { Card, CardContent } from 'invin-uix/ui/card';
 import { Badge } from 'invin-uix/ui/badge';
 import { Button } from 'invin-uix/ui/button';
 import { Separator } from 'invin-uix/ui/separator';
-import { LIB_CONFIG } from 'invin-uix/lib-config';
 import {
   ArrowRight, BookOpen, Package, Shield, Lightning, Star,
   Cube, Palette, Code, Terminal, Sparkle, GridFour,
@@ -12,6 +11,7 @@ import {
 } from 'invin-uix/ui/icons';
 import { AppSwitcher, ACCENTS } from '../components/AppSwitcher.jsx';
 import { ComponentStats, QuickActions } from '../components/ComponentShowcase.jsx';
+import { useLibConfig } from '../LibConfigContext.jsx';
 
 // ─── Component previews for featured cards ────────────────────────────────────
 
@@ -198,12 +198,12 @@ import { Card } from 'invin-uix/ui/card';`,
   }
 ];
 
-// ─── Features list ────────────────────────────────────────────────────────────
+// ─── Features list (function to use config) ──────────────────────────────────
 
-const features = [
+const getFeatures = (libConfig) => [
   {
     icon: Palette,
-    title: '7 Product Accents',
+    title: `${libConfig.accentCount} Product Accents`,
     description: 'XDR, SOAR, GSOS, AI Firewall, OT, Decoys, ITSM — each with matching colors'
   },
   {
@@ -213,7 +213,7 @@ const features = [
   },
   {
     icon: Code,
-    title: 'Tailwind v4 Native',
+    title: `Tailwind v${libConfig.tailwindVersion} Native`,
     description: 'Zero config needed. Import tokens.css and you get all utilities.'
   },
   {
@@ -228,7 +228,7 @@ const features = [
   },
   {
     icon: GridFour,
-    title: `${LIB_CONFIG.componentCountDisplay} Components`,
+    title: `${libConfig.componentCountDisplay} Components`,
     description: 'From Button to Flow Builder. Everything you need for product UIs.'
   }
 ];
@@ -309,6 +309,9 @@ function MiniShellPreview() {
 // ─── Page component ───────────────────────────────────────────────────────────
 
 export default function HomePage() {
+  const libConfig = useLibConfig();
+  const features = getFeatures(libConfig);
+
   return (
     <div className="space-y-12 pb-12">
       {/* ── Hero Section ────────────────────────────────────────────────────── */}
@@ -317,10 +320,10 @@ export default function HomePage() {
           <div className="space-y-6">
             {/* Badges */}
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="secondary" size="sm">{LIB_CONFIG.name}</Badge>
-              <Badge variant="outline" size="sm">v{LIB_CONFIG.version}</Badge>
-              <Badge variant="info" size="sm">React {LIB_CONFIG.reactVersion}</Badge>
-              <Badge variant="info" size="sm">Tailwind v{LIB_CONFIG.tailwindVersion}</Badge>
+              <Badge variant="secondary" size="sm">{libConfig.name}</Badge>
+              <Badge variant="outline" size="sm">v{libConfig.version}</Badge>
+              <Badge variant="info" size="sm">React {libConfig.reactVersion}</Badge>
+              <Badge variant="info" size="sm">Tailwind v{libConfig.tailwindVersion}</Badge>
             </div>
 
             {/* Headline */}
@@ -355,9 +358,9 @@ export default function HomePage() {
             {/* Stats */}
             <div className="flex items-center gap-6 pt-2">
               {[
-                { value: LIB_CONFIG.componentCountDisplay, label: 'Components' },
-                { value: String(LIB_CONFIG.accentCount), label: 'Accents' },
-                { value: LIB_CONFIG.iconCountDisplay, label: 'Icons' }
+                { value: libConfig.componentCountDisplay, label: 'Components' },
+                { value: String(libConfig.accentCount), label: 'Accents' },
+                { value: libConfig.iconCountDisplay, label: 'Icons' }
               ].map(stat => (
                 <div key={stat.label}>
                   <p className="text-xl font-bold text-[var(--foreground)]">{stat.value}</p>
@@ -512,7 +515,7 @@ export default function HomePage() {
           Explore
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link to="/components?demo=ui-guide" className="no-underline">
             <Card hover className="h-full">
               <CardContent className="pt-5 pb-5">
@@ -550,6 +553,25 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </Link>
+
+          <Link to="/apps/gsos-demo" className="no-underline">
+            <Card hover className="h-full">
+              <CardContent className="pt-5 pb-5">
+                <div className="flex items-start gap-4">
+                  <div className="h-12 w-12 rounded-[var(--radius-md)] bg-[color-mix(in_srgb,#10b981_15%,transparent)] flex items-center justify-center shrink-0">
+                    <Shield style={{ width: 24, height: 24, color: '#10b981' }} />
+                  </div>
+                  <div>
+                    <p className="text-body font-semibold text-[var(--foreground)]">GSOS Demo App</p>
+                    <p className="text-caption text-[var(--muted-foreground)] mt-1">
+                      GRC platform: dashboard, evidence library, compliance frameworks, risk matrix.
+                    </p>
+                    <p className="text-caption text-[var(--accent)] mt-2 font-medium">Open demo →</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </section>
 
@@ -558,7 +580,7 @@ export default function HomePage() {
         <div className="max-w-md mx-auto space-y-4">
           <h2 className="text-xl font-bold text-[var(--foreground)]">Ready to build?</h2>
           <p className="text-caption text-[var(--muted-foreground)]">
-            Start building beautiful, consistent product interfaces with {LIB_CONFIG.name}.
+            Start building beautiful, consistent product interfaces with {libConfig.name}.
           </p>
           <div className="flex items-center justify-center gap-3">
             <Link to="/components">

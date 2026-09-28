@@ -3,7 +3,6 @@ import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button } from 'invin-uix/ui/button';
 import { Badge } from 'invin-uix/ui/badge';
 import { Tooltip } from 'invin-uix/ui/tooltip';
-import { Separator } from 'invin-uix/ui/separator';
 import { Sidebar } from 'invin-uix/ui/sidebar';
 import { Topbar } from 'invin-uix/ui/topbar';
 import { Menu } from 'invin-uix/ui/menu';
@@ -12,6 +11,7 @@ import {
 } from 'invin-uix/ui/icons';
 import { useTheme } from '../useTheme.jsx';
 import { AppSwitcher } from '../components/AppSwitcher.jsx';
+import { useLibConfig } from '../LibConfigContext.jsx';
 
 // Import logos
 import logoFull from '../assets/main-logo-invinsense-for-darkMode.svg';
@@ -49,6 +49,7 @@ export default function AppLayout() {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const libConfig = useLibConfig();
 
   const activeKey = location.pathname === '/' ? '/' : location.pathname;
   const pageTitle = PAGE_TITLE[activeKey] ?? 'invin-uix';
@@ -64,12 +65,9 @@ export default function AppLayout() {
         onCollapsedChange={setCollapsed}
         footer={
           !collapsed ? (
-            <div className="space-y-1">
-              <Separator />
-              <p className="text-caption text-[var(--muted-foreground-faint)] px-2 pt-1">
-                invin-uix <Badge variant="outline" size="sm">v1.1.0</Badge>
-              </p>
-            </div>
+            <p className="text-caption text-[var(--muted-foreground-faint)] px-2">
+              {libConfig.name} <Badge variant="outline" size="sm">v{libConfig.version}</Badge>
+            </p>
           ) : null
         }
       >

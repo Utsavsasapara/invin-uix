@@ -6,8 +6,6 @@ import { Spinner } from 'invin-uix/ui/spinner';
 import { Menu } from 'invin-uix/ui/menu';
 import { Topbar } from 'invin-uix/ui/topbar';
 import { Sidebar } from 'invin-uix/ui/sidebar';
-import { Separator } from 'invin-uix/ui/separator';
-import { LIB_CONFIG } from 'invin-uix/lib-config';
 import { 
   Sun, Moon, House, BookOpen, Palette, SquaresFour, TextAa, 
   TextT, PaintBrush, 
@@ -18,6 +16,7 @@ import {
 import { Tooltip } from 'invin-uix/ui/tooltip';
 import { useTheme } from '../useTheme.jsx';
 import { AppSwitcher } from '../components/AppSwitcher.jsx';
+import { useLibConfig } from '../LibConfigContext.jsx';
 
 // Import logos
 import logoFullDarkMode from '../assets/main-logo-invinsense-for-darkMode.svg';
@@ -324,6 +323,7 @@ export default function DemoLayout() {
   const { dark, toggleDark } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [activePage, setActivePage] = useState('getting-started');
+  const libConfig = useLibConfig();
 
   const activeEntry = allComponents.find(c => c.key === activePage);
   const ActiveComponent = activeEntry?.component || GettingStartedDemo;
@@ -339,11 +339,9 @@ export default function DemoLayout() {
         logoCollapsed={<img src={logoSmall} alt="Invinsense" style={{ height: 28, width: 22 }} />}
         footer={
           !collapsed ? (
-            <div className="space-y-1">
-              <p className="text-caption text-[var(--muted-foreground-faint)] px-2 pt-1">
-                {LIB_CONFIG.name} <Badge variant="outline" size="sm">v{LIB_CONFIG.version}</Badge>
-              </p>
-            </div>
+            <p className="text-caption text-[var(--muted-foreground-faint)] px-2">
+              {libConfig.name} <Badge variant="outline" size="sm">v{libConfig.version}</Badge>
+            </p>
           ) : null
         }
       >

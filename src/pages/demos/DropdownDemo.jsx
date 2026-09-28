@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable, InteractiveDemo } from '../../components/PlaygroundSection.jsx';
 import { Button } from 'invin-uix/ui/button';
+import { Avatar, AvatarFallback } from 'invin-uix/ui/avatar';
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
   DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem,
@@ -11,7 +12,8 @@ import {
 import {
   User, Gear, SignOut, Envelope, Plus, CreditCard,
   Cloud, Users, Keyboard, Smiley, Copy, Scissors,
-  Clipboard, PencilSimple, Trash, Archive, ShareNetwork
+  Clipboard, PencilSimple, Trash, Archive, ShareNetwork,
+  ChatCircle, Calendar, CheckSquare, Gift, Palette, CaretDown
 } from 'invin-uix/ui/icons';
 import { Separator } from 'invin-uix/ui/separator';
 
@@ -378,6 +380,51 @@ export default function DropdownDemo() {
       >
         <LoadingDropdownDemo />
       </PlaygroundSection>
+
+      <Separator variant="bold" />
+
+      {/* ─── Use Cases Section ──────────────────────────────────── */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold text-[var(--foreground)]">Use Cases</h3>
+        <p className="text-[var(--muted-foreground)]">Real-world examples showing common dropdown patterns.</p>
+      </div>
+
+      <PlaygroundSection
+        title="User Profile Dropdown"
+        description="Avatar trigger with user info header, navigation items, and logout. Common pattern for app headers."
+        code={`<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="ghost" className="gap-2 px-2">
+      <Avatar size="sm">
+        <AvatarFallback>JD</AvatarFallback>
+      </Avatar>
+      <span>Workspace...</span>
+      <CaretDown size={12} />
+    </Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent align="end" style={{ width: '280px' }}>
+    {/* User Header */}
+    <div className="flex items-center gap-3 p-3">
+      <Avatar size="lg">
+        <AvatarFallback>JD</AvatarFallback>
+      </Avatar>
+      <div>
+        <p className="font-semibold">John Doe</p>
+        <p className="text-sm text-muted">Admin (Workspace Name)</p>
+      </div>
+    </div>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem icon={<User />}>Profile</DropdownMenuItem>
+    <DropdownMenuItem icon={<Gear />}>Settings</DropdownMenuItem>
+    <DropdownMenuItem icon={<Palette />}>Theme</DropdownMenuItem>
+    ...
+    <DropdownMenuSeparator />
+    <DropdownMenuItem icon={<SignOut />}>Logout</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>`}
+      >
+        <UserProfileDropdown />
+      </PlaygroundSection>
     </ComponentPage>
   );
 }
@@ -407,5 +454,51 @@ function LoadingDropdownDemo() {
         <DropdownMenuItem icon={<SignOut style={{ width: 14, height: 14 }} />}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+// User Profile Dropdown - Real-world example for app headers
+function UserProfileDropdown() {
+  return (
+    <div className="flex items-center gap-4">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="gap-2 px-2 h-10">
+            <Avatar size="sm">
+              <AvatarFallback style={{ backgroundColor: 'var(--accent)', color: 'var(--primary-foreground)', fontSize: '12px', fontWeight: 600 }}>JD</AvatarFallback>
+            </Avatar>
+            <span className="text-sm max-w-[120px] truncate">Workspace...</span>
+            <CaretDown style={{ width: 12, height: 12, opacity: 0.6 }} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" style={{ width: '280px' }}>
+          {/* User Header */}
+          <div className="flex items-center gap-3 p-3">
+            <Avatar size="lg">
+              <AvatarFallback style={{ backgroundColor: 'var(--accent)', color: 'var(--primary-foreground)', fontSize: '16px', fontWeight: 600 }}>JD</AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-[var(--foreground)]">John Doe</p>
+              <p className="text-sm text-[var(--muted-foreground)] truncate">Admin (Workspace Name)</p>
+            </div>
+          </div>
+          
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem icon={<User style={{ width: 16, height: 16 }} />}>Profile</DropdownMenuItem>
+          <DropdownMenuItem icon={<Gear style={{ width: 16, height: 16 }} />}>Settings</DropdownMenuItem>
+          <DropdownMenuItem icon={<Palette style={{ width: 16, height: 16 }} />}>Theme</DropdownMenuItem>
+          <DropdownMenuItem icon={<ChatCircle style={{ width: 16, height: 16 }} />}>Share Your Feedback</DropdownMenuItem>
+          <DropdownMenuItem icon={<Calendar style={{ width: 16, height: 16 }} />}>My Calendar</DropdownMenuItem>
+          <DropdownMenuItem icon={<CheckSquare style={{ width: 16, height: 16 }} />}>Onboarding Checks</DropdownMenuItem>
+          <DropdownMenuItem icon={<Users style={{ width: 16, height: 16 }} />}>Digital Onboarding</DropdownMenuItem>
+          <DropdownMenuItem icon={<Gift style={{ width: 16, height: 16 }} />}>My Rewards</DropdownMenuItem>
+          
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem icon={<SignOut style={{ width: 16, height: 16 }} />}>Logout</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
