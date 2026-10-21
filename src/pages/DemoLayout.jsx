@@ -1,17 +1,18 @@
-import { useState, lazy, Suspense } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, lazy, Suspense, useMemo, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from 'invin-uix/ui/button';
 import { Badge } from 'invin-uix/ui/badge';
 import { Spinner } from 'invin-uix/ui/spinner';
 import { Menu } from 'invin-uix/ui/menu';
 import { Topbar } from 'invin-uix/ui/topbar';
 import { Sidebar } from 'invin-uix/ui/sidebar';
+import { CentralizedSearch, CentralizedSearchTrigger } from 'invin-uix/ui/centralized-search';
 import { 
   Sun, Moon, House, BookOpen, Palette, SquaresFour, TextAa, 
   TextT, PaintBrush, 
   Textbox, ListChecks, NavigationArrow, Bell, Stack, GridFour, Wrench,
   CursorClick, Tag, UserCircle, Cards, Equals, Warning, CircleNotch, 
-  CaretCircleRight, Table, ChartBar,
+  CaretCircleRight, Table, ChartBar, MagnifyingGlass, Copy, FunnelSimple, BracketsCurly,
 } from 'invin-uix/ui/icons';
 import { Tooltip } from 'invin-uix/ui/tooltip';
 import { useTheme } from '../useTheme.jsx';
@@ -101,6 +102,7 @@ const FileUploadDemo = lazy(() => import('./demos/FileUploadDemo.jsx'));
 const ResizableDemo = lazy(() => import('./demos/ResizableDemo.jsx'));
 const ComboboxDemo = lazy(() => import('./demos/ComboboxDemo.jsx'));
 const CommandDemo = lazy(() => import('./demos/CommandDemo.jsx'));
+const CentralizedSearchDemo = lazy(() => import('./demos/CentralizedSearchDemo.jsx'));
 const TreeViewDemo = lazy(() => import('./demos/TreeViewDemo.jsx'));
 
 // Tier 7: Latest additions (v1.1.0)
@@ -121,10 +123,18 @@ const ShinyTextDemo = lazy(() => import('./demos/ShinyTextDemo.jsx'));
 const GradientTextDemo = lazy(() => import('./demos/GradientTextDemo.jsx'));
 const HyperTextDemo = lazy(() => import('./demos/HyperTextDemo.jsx'));
 const AuroraTextDemo = lazy(() => import('./demos/AuroraTextDemo.jsx'));
+
+// Tier 10: Utility components
+const CopyButtonDemo = lazy(() => import('./demos/CopyButtonDemo.jsx'));
+const StatusPageDemo = lazy(() => import('./demos/StatusPageDemo.jsx'));
+const FilterBarDemo = lazy(() => import('./demos/FilterBarDemo.jsx'));
+const FilterBuilderDemo = lazy(() => import('./demos/FilterBuilderDemo.jsx'));
+const JSONViewerDemo = lazy(() => import('./demos/JSONViewerDemo.jsx'));
 const SpinningTextDemo = lazy(() => import('./demos/SpinningTextDemo.jsx'));
 const HighlighterDemo = lazy(() => import('./demos/HighlighterDemo.jsx'));
 const Text3DFlipDemo = lazy(() => import('./demos/Text3DFlipDemo.jsx'));
 const AnimatedThemeTogglerDemo = lazy(() => import('./demos/AnimatedThemeTogglerDemo.jsx'));
+const NotificationPanelDemo = lazy(() => import('./demos/NotificationPanelDemo.jsx'));
 
 // ─── Component Registry ─────────────────────────────────────────────────────
 
@@ -152,6 +162,7 @@ const categories = [
     icon: icon(Cards),
     children: [
       { key: 'button', label: 'Button', component: ButtonDemo, icon: icon(CursorClick) },
+      { key: 'copy-button', label: 'Copy Button', component: CopyButtonDemo, badge: 'New', icon: icon(Copy) },
       { key: 'badge', label: 'Badge', component: BadgeDemo, icon: icon(Tag) },
       { key: 'avatar', label: 'Avatar', component: AvatarDemo, icon: icon(UserCircle) },
       { key: 'card', label: 'Card', component: CardDemo, icon: icon(Cards) },
@@ -195,6 +206,7 @@ const categories = [
       { key: 'pagination', label: 'Pagination', component: PaginationDemo, icon: icon(NavigationArrow) },
       { key: 'menu', label: 'Menu', component: MenuDemo, icon: icon(NavigationArrow) },
       { key: 'command', label: 'Command Palette', component: CommandDemo, icon: icon(NavigationArrow) },
+      { key: 'centralized-search', label: 'Centralized Search', component: CentralizedSearchDemo, badge: 'New', icon: icon(NavigationArrow) },
     ],
   },
   {
@@ -207,6 +219,7 @@ const categories = [
       { key: 'toast', label: 'Toast', component: ToastDemo, icon: icon(Bell) },
       { key: 'tooltip', label: 'Tooltip', component: TooltipDemo, icon: icon(Bell) },
       { key: 'error-boundary', label: 'Error Boundary', component: ErrorBoundaryDemo, icon: icon(Warning) },
+      { key: 'status-page', label: 'Status Page', component: StatusPageDemo, badge: 'New', icon: icon(Warning) },
     ],
   },
   {
@@ -232,6 +245,10 @@ const categories = [
     children: [
       { key: 'table', label: 'Table', component: TableDemo, icon: icon(Table) },
       { key: 'data-table', label: 'Data Table', component: DataTableDemo, icon: icon(Table) },
+      { key: 'filter-bar', label: 'Filter Bar', component: FilterBarDemo, badge: 'New', icon: icon(FunnelSimple) },
+      { key: 'filter-builder', label: 'Filter Builder', component: FilterBuilderDemo, badge: 'New', icon: icon(FunnelSimple) },
+      { key: 'notification-panel', label: 'Notification Panel', component: NotificationPanelDemo, badge: 'New', icon: icon(Bell) },
+      { key: 'json-viewer', label: 'JSON Viewer', component: JSONViewerDemo, badge: 'New', icon: icon(BracketsCurly) },
       { key: 'accordion', label: 'Accordion', component: AccordionDemo, icon: icon(GridFour) },
       { key: 'collapsible', label: 'Collapsible', component: CollapsibleDemo, icon: icon(GridFour) },
       { key: 'tree-view', label: 'Tree View', component: TreeViewDemo, icon: icon(GridFour) },
@@ -322,14 +339,131 @@ function LoadingFallback() {
 export default function DemoLayout() {
   const { dark, toggleDark } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
-  const [activePage, setActivePage] = useState('getting-started');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [activeTagFilter, setActiveTagFilter] = useState(null); // Track selected tag for filtering
   const libConfig = useLibConfig();
+
+  // Read demo from URL, default to 'getting-started'
+  const activePage = searchParams.get('demo') || 'getting-started';
+  
+  // Update URL when changing page
+  const setActivePage = (key) => {
+    setSearchParams({ demo: key });
+  };
 
   const activeEntry = allComponents.find(c => c.key === activePage);
   const ActiveComponent = activeEntry?.component || GettingStartedDemo;
 
+  // Define tags for filtering
+  const searchTags = useMemo(() => [
+    { value: 'foundations', label: 'Foundations', color: 'var(--info)' },
+    { value: 'display', label: 'Display', color: 'var(--success)' },
+    { value: 'form', label: 'Form & Input', color: 'var(--warning)' },
+    { value: 'navigation', label: 'Navigation', color: 'var(--accent)' },
+    { value: 'feedback', label: 'Feedback', color: 'var(--error)' },
+    { value: 'overlay', label: 'Overlay', color: 'var(--info)' },
+    { value: 'data', label: 'Data & Disclosure', color: 'var(--success)' },
+    { value: 'layout', label: 'Layout & Utility', color: 'var(--muted-foreground)' },
+    { value: 'animation', label: 'Animation', color: 'var(--accent)' },
+    { value: 'new', label: 'New', color: 'var(--success)' },
+    { value: 'chart', label: 'Charts', color: 'var(--info)' },
+  ], []);
+
+  // Build search groups from categories for CentralizedSearch
+  const searchGroups = useMemo(() => {
+    return categories.map(cat => ({
+      id: cat.key,
+      heading: cat.label,
+      icon: cat.icon,
+      priority: categories.indexOf(cat),
+      items: cat.children.flatMap(c => {
+        // Handle nested children (like Charts sub-items)
+        if (c.children) {
+          return c.children.map(sc => ({
+            id: sc.key,
+            title: sc.label,
+            description: `${cat.label} › ${c.label}`,
+            icon: sc.icon,
+            keywords: [cat.label.toLowerCase(), c.label.toLowerCase(), sc.label.toLowerCase()],
+            tags: [cat.key, 'chart'], // Add category tag + chart tag for all chart items
+          }));
+        }
+        // Build tags array: category tag + 'new' if has badge
+        const itemTags = [cat.key];
+        if (c.badge === 'New') itemTags.push('new');
+        
+        return [{
+          id: c.key,
+          title: c.label,
+          description: cat.label,
+          icon: c.icon,
+          keywords: [cat.label.toLowerCase(), c.label.toLowerCase()],
+          tags: itemTags,
+        }];
+      }),
+    }));
+  }, []);
+
+  // Filter search groups based on active tag filter
+  const filteredSearchGroups = useMemo(() => {
+    if (!activeTagFilter) return searchGroups;
+    
+    // Filter each group to only include items with matching tag
+    return searchGroups
+      .map(group => ({
+        ...group,
+        items: group.items.filter(item => 
+          item.tags?.includes(activeTagFilter)
+        ),
+      }))
+      .filter(group => group.items.length > 0); // Remove empty groups
+  }, [searchGroups, activeTagFilter]);
+
+  // Handle search item selection - navigate to component
+  const handleSearchSelect = (item) => {
+    setActivePage(item.id);
+    setSearchOpen(false);
+    setActiveTagFilter(null); // Clear filter after selection
+  };
+
+  // Handle tag selection - filter components by tag
+  const handleTagSelect = (tag) => {
+    const tagValue = tag.value || tag.id;
+    setActiveTagFilter(tagValue);
+    // Keep search open to show filtered results
+  };
+
+  // Reset tag filter when search closes
+  const handleSearchOpenChange = (open) => {
+    setSearchOpen(open);
+    if (!open) {
+      setActiveTagFilter(null); // Clear filter when closing
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+
+      {/* ─── Global Search ─────────────────────────────────── */}
+      <CentralizedSearch
+        open={searchOpen}
+        onOpenChange={handleSearchOpenChange}
+        groups={filteredSearchGroups}
+        tags={searchTags}
+        placeholder={activeTagFilter 
+          ? `Showing ${searchTags.find(t => t.value === activeTagFilter)?.label || activeTagFilter} components...`
+          : "Search components..."
+        }
+        emptyMessage={activeTagFilter 
+          ? `No components found in "${searchTags.find(t => t.value === activeTagFilter)?.label || activeTagFilter}" category.`
+          : "No components found. Try a different search term."
+        }
+        onSelect={handleSearchSelect}
+        onTagSelect={handleTagSelect}
+        closeOnTagSelect={false}
+        shortcut="ctrl+k"
+      />
 
       {/* ─── Sidebar ─────────────────────────────────────────── */}
       <Sidebar
@@ -366,7 +500,25 @@ export default function DemoLayout() {
             <h1 className="text-page-title font-semibold text-[var(--foreground)] tracking-[-0.01em]">{activeEntry?.label || 'Component'}</h1>
           }
           right={
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
+              {/* Component Search Trigger */}
+              <CentralizedSearchTrigger
+                placeholder="Search components..."
+                shortcut="ctrl+k"
+                onClick={() => setSearchOpen(true)}
+                className="hidden sm:flex"
+              />
+              {/* Mobile search button */}
+              <Tooltip title="Search components (Ctrl+K)">
+                <Button 
+                  variant="ghost" 
+                  size="icon-sm" 
+                  onClick={() => setSearchOpen(true)}
+                  className="sm:hidden"
+                >
+                  <MagnifyingGlass style={{ width: 16, height: 16 }} />
+                </Button>
+              </Tooltip>
               <AppSwitcher />
               <Tooltip title={dark ? "Switch to light mode" : "Switch to dark mode"}>
                 <Button variant="ghost" size="icon-sm" onClick={() => toggleDark(!dark)}>
