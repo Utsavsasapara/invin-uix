@@ -3,7 +3,8 @@ import { ComponentPage, PlaygroundSection, PropsTable } from '../../components/P
 import { DataTable } from 'invin-uix/ui/data-table';
 import { Button } from 'invin-uix/ui/button';
 import { Toaster, toast } from 'invin-uix/ui/toast';
-import { PencilSimple, Trash, PushPin } from 'invin-uix/ui/icons';
+import { Badge } from 'invin-uix/ui/badge';
+import { PencilSimple, Trash, PushPin, CaretRight } from 'invin-uix/ui/icons';
 import { incidents, incidentColumns, assets, orgTree, StatusBadge } from './dataTableShared.jsx';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -177,30 +178,113 @@ const data = [
   columns={columns}
   data={data}
   rowKey="id"
-  groupBy="department" // or ['department', 'severity'] for multi-level grouping
-  defaultGroupExpanded
-  showGroupCount
+  groupBy="department"          // or ['department', 'severity'] for multi-level grouping
+  defaultGroupExpanded          // true by default — all groups start expanded
+  // defaultGroupExpanded={false}  // start collapsed
+  showGroupCount                // shows (8 items) in the group header
   paginated={false}
 />`;
 
 function RowGroupingExample() {
   const [multiLevel, setMultiLevel] = useState(false);
+  const [startCollapsed, setStartCollapsed] = useState(false);
 
   return (
     <div className="space-y-3">
-      <Button size="sm" variant={multiLevel ? 'secondary' : 'ghost'} onClick={() => setMultiLevel((v) => !v)}>
-        {multiLevel ? 'Multi-level grouping (department → severity)' : 'Single-level grouping (department)'}
-      </Button>
+      <div className="flex gap-2 flex-wrap">
+        <Button size="sm" variant={!multiLevel ? 'secondary' : 'ghost'} onClick={() => setMultiLevel(false)}>
+          Single-level (department)
+        </Button>
+        <Button size="sm" variant={multiLevel ? 'secondary' : 'ghost'} onClick={() => setMultiLevel(true)}>
+          Multi-level (department → severity)
+        </Button>
+        <Button size="sm" variant={startCollapsed ? 'secondary' : 'ghost'} onClick={() => setStartCollapsed((v) => !v)}>
+          {startCollapsed ? 'defaultGroupExpanded={false}' : 'defaultGroupExpanded (true)'}
+        </Button>
+      </div>
       <DataTable
         columns={incidentColumns()}
         data={incidents}
         rowKey="id"
         groupBy={multiLevel ? ['department', 'severity'] : 'department'}
-        defaultGroupExpanded
+        defaultGroupExpanded={!startCollapsed}
         showGroupCount
         paginated={false}
       />
     </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ROW GROUPING — CUSTOM HEADER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const ROW_GROUPING_CUSTOM_CODE = `import { DataTable } from 'invin-uix/ui/data-table';
+import { Badge } from 'invin-uix/ui/badge';
+import { CaretRight } from 'invin-uix/ui/icons';
+
+const columns = [
+  { id: 'id', header: 'ID', accessor: 'id' },
+  { id: 'title', header: 'Title', accessor: 'title' },
+  { id: 'department', header: 'Department', accessor: 'department' },
+];
+
+const data = [
+  { id: 'INC-1001', title: 'Unauthorized SSH login attempt', department: 'SOC' },
+  { id: 'INC-1003', title: 'Unusual outbound traffic volume', department: 'NetOps' },
+];
+
+<DataTable
+  columns={columns}
+  data={data}
+  rowKey="id"
+  groupBy="department"
+  groupRowRender={(props) => (
+    <div
+      className="flex items-center gap-3 cursor-pointer"
+      style={{ paddingLeft: \`\${props.level * 24}px\` }}
+      onClick={props.onToggle}
+    >
+      <CaretRight
+        size={14}
+        className={\`text-[var(--muted-foreground)] transition-transform \${props.isExpanded ? 'rotate-90' : ''}\`}
+      />
+      <span className="text-[var(--muted-foreground)] text-sm">Department:</span>
+      <Badge variant="outline">{props.groupLabel}</Badge>
+      <span className="text-xs text-[var(--muted-foreground)] ml-auto">
+        {props.count} incident{props.count !== 1 ? 's' : ''}
+      </span>
+    </div>
+  )}
+  paginated={false}
+/>`;
+
+function RowGroupingCustomExample() {
+  return (
+    <DataTable
+      columns={incidentColumns()}
+      data={incidents}
+      rowKey="id"
+      groupBy="department"
+      groupRowRender={(props) => (
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          style={{ paddingLeft: `${props.level * 24}px` }}
+          onClick={props.onToggle}
+        >
+          <CaretRight
+            size={14}
+            className={`text-[var(--muted-foreground)] transition-transform ${props.isExpanded ? 'rotate-90' : ''}`}
+          />
+          <span className="text-[var(--muted-foreground)] text-sm">Department:</span>
+          <Badge variant="outline">{props.groupLabel}</Badge>
+          <span className="text-xs text-[var(--muted-foreground)] ml-auto">
+            {props.count} incident{props.count !== 1 ? 's' : ''}
+          </span>
+        </div>
+      )}
+      paginated={false}
+    />
   );
 }
 
@@ -416,6 +500,14 @@ export default function DataTableRowsDemo() {
         <RowGroupingExample />
       </PlaygroundSection>
 
+      <PlaygroundSection
+        title="Row Grouping — Custom Header"
+        description="Use groupRowRender to replace the default group header entirely. Receives GroupRowProps with groupLabel, count, isExpanded, onToggle, level, and more. You own the layout — call props.onToggle to handle expand/collapse."
+        code={ROW_GROUPING_CUSTOM_CODE}
+      >
+        <RowGroupingCustomExample />
+      </PlaygroundSection>
+
       <PlaygroundSection title="Tree Data" description="Hierarchical rows via getSubRows — useful for org charts or nested assets." code={TREE_DATA_CODE}>
         <TreeDataExample />
       </PlaygroundSection>
@@ -467,12 +559,27 @@ export default function DataTableRowsDemo() {
         <PropsTable
           title="Row Grouping"
           props={[
-            { name: 'groupBy', type: 'string | string[]', default: '—', description: 'Column id(s) to group rows by' },
+            { name: 'groupBy', type: 'string | string[]', default: '—', description: "Column id to group rows by. Pass an array for multi-level grouping (e.g. ['department', 'severity']). Groups appear in the order their values are first encountered in the data array." },
             { name: 'groupExpanded', type: 'Record<string, boolean>', default: '—', description: 'Controlled expanded groups' },
             { name: 'onGroupExpandedChange', type: '(state) => void', default: '—', description: 'Group expansion change callback' },
             { name: 'defaultGroupExpanded', type: 'boolean', default: 'true', description: 'Initial expanded state for all groups' },
-            { name: 'groupRowRender', type: '(props: GroupRowProps<T>) => ReactNode', default: '—', description: 'Custom group header renderer' },
+            { name: 'groupRowRender', type: '(props: GroupRowProps<T>) => ReactNode', default: '—', description: 'Replace the default group header with custom content. Receives GroupRowProps: groupKey, groupValue, groupLabel, rows, count, isExpanded, onToggle, level, column. You must call props.onToggle to handle expand/collapse.' },
             { name: 'showGroupCount', type: 'boolean', default: 'true', description: 'Show row count in group headers' },
+          ]}
+        />
+
+        <PropsTable
+          title="GroupRowProps object"
+          props={[
+            { name: 'groupKey', type: 'string', description: 'The column ID being grouped by' },
+            { name: 'groupValue', type: 'unknown', description: 'The raw value this group represents' },
+            { name: 'groupLabel', type: 'string', description: 'Display string for the group value' },
+            { name: 'rows', type: 'T[]', description: 'All data rows belonging to this group' },
+            { name: 'count', type: 'number', description: 'Total row count in this group (same as rows.length)' },
+            { name: 'isExpanded', type: 'boolean', description: 'Whether this group is currently expanded' },
+            { name: 'onToggle', type: '() => void', description: 'Call this to expand/collapse the group' },
+            { name: 'level', type: 'number', description: 'Nesting depth (0 = top level, 1 = second level, etc.)' },
+            { name: 'column', type: 'ColumnDef', description: 'The full column definition for the grouped column' },
           ]}
         />
 
