@@ -4,7 +4,7 @@ import { DataTable } from 'invin-uix/ui/data-table';
 import { Button } from 'invin-uix/ui/button';
 import { Toaster, toast } from 'invin-uix/ui/toast';
 import { Badge } from 'invin-uix/ui/badge';
-import { PencilSimple, Trash, PushPin, CaretRight } from 'invin-uix/ui/icons';
+import { PencilSimple, Trash, CaretRight, Eye, X } from 'invin-uix/ui/icons';
 import { incidents, incidentColumns, assets, orgTree, StatusBadge } from './dataTableShared.jsx';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -427,8 +427,7 @@ function TreeDataCustomExample() {
 // ROW PINNING
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const ROW_PINNING_CODE = `import { useState } from 'react';
-import { DataTable } from 'invin-uix/ui/data-table';
+const ROW_PINNING_CODE = `import { DataTable } from 'invin-uix/ui/data-table';
 
 const columns = [
   { id: 'id', header: 'ID', accessor: 'id' },
@@ -437,42 +436,62 @@ const columns = [
 ];
 
 const data = [
-  { id: 'INC-1006', title: 'Privilege escalation on DB host', severity: 'critical' },
-  { id: 'INC-1002', title: 'Malware signature detected on endpoint', severity: 'high' },
+  { id: 'INC-1006', title: 'Privilege escalation on DB host', severity: 'critical', status: 'open' },
+  { id: 'INC-1002', title: 'Malware signature detected on endpoint', severity: 'high', status: 'investigating' },
+  { id: 'INC-1008', title: 'Ransomware behavior flagged by EDR', severity: 'critical', status: 'open' },
 ];
 
-function RowPinningTable() {
-  const [pinnedRows, setPinnedRows] = useState({ top: [data[0]], bottom: [] });
+// showPinRowAction automatically adds "Pin to Top / Bottom / Unpin" to the ⋮ menu
+// for rows where isRowPinnable returns true.
+// Pinned rows are excluded from sort and filter — they always stay at their position.
 
-  return (
-    <DataTable
-      columns={columns}
-      data={data}
-      rowKey="id"
-      pinnedRows={pinnedRows}
-      onPinnedRowsChange={setPinnedRows}
-      isRowPinnable={(row) => row.severity === 'critical'}
-      showPinRowAction
-      rowActions={() => [{ id: 'info', label: 'Pin / unpin from the row menu', onClick: () => {} }]}
-    />
-  );
-}`;
+<DataTable
+  columns={columns}
+  data={data}
+  rowKey="id"
+  // Uncontrolled — start with INC-1006 pinned to top, no useState needed
+  defaultPinnedRows={{ top: [data[0]], bottom: [] }}
+  isRowPinnable={(row) => row.severity === 'critical'}
+  showPinRowAction
+  rowActions={(row) => [
+    { id: 'view', label: 'View details', onClick: (r) => console.log('view', r.id) },
+    { id: 'close', label: 'Close incident', destructive: true,
+      disabled: row.status === 'closed',
+      onClick: (r) => console.log('close', r.id) },
+  ]}
+  paginated={false}
+/>`;
 
 function RowPinningExample() {
-  const [pinnedRows, setPinnedRows] = useState({ top: [incidents[5]], bottom: [] });
+  const [pinnedRows, setPinnedRows] = useState({ top: [incidents[5]], bottom: [incidents[7]] });
 
   return (
     <div className="space-y-3">
-      <p className="text-caption text-[var(--muted-foreground)]">The most critical incident is pinned to the top regardless of sort/filter.</p>
+      <p className="text-caption text-[var(--muted-foreground)]">
+        Critical incidents are pinnable — open the ⋮ menu on any critical row to see "Pin to Top" and "Pin to Bottom" added automatically by showPinRowAction. Pinned rows stay fixed regardless of sort or filter.
+      </p>
+      <p className="text-caption text-[var(--muted-foreground)]">
+        One critical incident is pinned to the top, another to the bottom. Enable sorting (click a column header) — pinned rows stay in place while the rest of the table sorts.
+      </p>
       <DataTable
         columns={incidentColumns()}
         data={incidents}
         rowKey="id"
+        sortable
         pinnedRows={pinnedRows}
         onPinnedRowsChange={setPinnedRows}
         isRowPinnable={(row) => row.severity === 'critical'}
         showPinRowAction
-        rowActions={() => [{ id: 'info', label: 'Pin / unpin from the ⋮ menu', icon: <PushPin size={14} weight="bold" />, onClick: () => {} }]}
+        rowActions={(row) => [
+          { id: 'view', label: 'View details',
+            icon: <Eye size={14} />,
+            onClick: (r) => toast({ title: `Viewing ${r.id}` }) },
+          { id: 'close', label: 'Close incident',
+            icon: <X size={14} />,
+            destructive: true,
+            disabled: row.status === 'closed',
+            onClick: (r) => toast({ title: `Closed ${r.id}`, variant: 'destructive' }) },
+        ]}
         paginated={false}
       />
     </div>
@@ -692,11 +711,19 @@ export default function DataTableRowsDemo() {
         <PropsTable
           title="Row Pinning"
           props={[
-            { name: 'pinnedRows', type: 'PinnedRows<T>', default: '—', description: 'Controlled { top, bottom } pinned rows' },
+            { name: 'pinnedRows', type: 'PinnedRows<T>', default: '—', description: 'Controlled pinned rows. Pinned rows are excluded from sort/filter/pagination and always render at their fixed position (top or bottom).' },
             { name: 'onPinnedRowsChange', type: '(pinned) => void', default: '—', description: 'Pinned rows change callback' },
-            { name: 'isRowPinnable', type: '(row, index) => boolean', default: '—', description: 'Conditionally allow pinning a row' },
-            { name: 'showPinRowAction', type: 'boolean', default: 'false', description: 'Show pin/unpin in the row actions menu' },
-            { name: 'defaultPinnedRows', type: 'PinnedRows<T>', default: '—', description: 'Uncontrolled initial pinned rows' },
+            { name: 'isRowPinnable', type: '(row, index) => boolean', default: '—', description: 'Return true to allow pinning this row. When omitted, ALL rows are pinnable by default. Return false to hide Pin actions from that row\'s menu.' },
+            { name: 'showPinRowAction', type: 'boolean', default: 'false', description: "Adds 'Pin to Top', 'Pin to Bottom', and 'Unpin' to the row actions ⋮ menu automatically for pinnable rows. Works standalone — rowActions is not required (the actions column will appear even without it)." },
+            { name: 'defaultPinnedRows', type: 'PinnedRows<T>', default: '—', description: 'Uncontrolled initial pinned rows — no useState needed. Use pinnedRows + onPinnedRowsChange for controlled mode.' },
+          ]}
+        />
+
+        <PropsTable
+          title="PinnedRows object"
+          props={[
+            { name: 'top', type: 'T[]', default: '—', description: 'Rows pinned above the main body. Always visible, immune to sort/filter.' },
+            { name: 'bottom', type: 'T[]', default: '—', description: 'Rows pinned below the main body. Always visible, immune to sort/filter.' },
           ]}
         />
 
