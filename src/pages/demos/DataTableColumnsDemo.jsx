@@ -533,6 +533,7 @@ function ColumnHeaderMenuTable() {
       columnHeaderMenu         // the ⋮ menu trigger on each header
       columnVisibility
       pinnableColumns
+      resizable                // adds "Reset width" once a column has been resized
       hiddenColumns={hiddenColumns}
       onHiddenColumnsChange={setHiddenColumns}
       columnFilters={columnFilters}
@@ -568,6 +569,7 @@ function ColumnHeaderMenuExample() {
         columnHeaderMenu
         columnVisibility
         pinnableColumns
+        resizable
         hiddenColumns={hiddenColumns}
         onHiddenColumnsChange={setHiddenColumns}
         columnFilters={columnFilters}
@@ -755,7 +757,7 @@ export default function DataTableColumnsDemo() {
 
       <PlaygroundSection
         title="Column Header Menu"
-        description="A ⋮ menu (or right-click) on each column header. Menu actions are automatically populated based on which features are enabled — sort, filter, pin, hide, reset width."
+        description="A ⋮ menu (or right-click) on each column header. Menu actions are populated from enabled table features — sort, filter, pin, hide, reset width. Each action also requires the matching ColumnDef prop: filterable, hideable, or resizable."
         code={COLUMN_HEADER_MENU_CODE}
       >
         <ColumnHeaderMenuExample />
@@ -835,8 +837,8 @@ export default function DataTableColumnsDemo() {
         <PropsTable
           title="Column Header Menu"
           props={[
-            { name: 'columnHeaderMenu', type: 'boolean', default: 'false', description: 'Show ⋮ menu and right-click menu on column headers. Menu actions are populated from enabled features (sort, filter, pin, hide, reset width).' },
-            { name: 'renderColumnHeaderMenuItems', type: '(column, ctx) => ReactNode', default: '—', description: 'Inject custom items after the default menu actions. A separator is inserted automatically before your items. ctx exposes: sortDirection, hasActiveFilter, pinnedPosition, onSort, onOpenFilter, onPin, onHide, onResetWidth.' },
+            { name: 'columnHeaderMenu', type: 'boolean', default: 'false', description: 'Show ⋮ menu and right-click menu on column headers. Menu actions are populated from enabled features: sort (sortable), filter (columnFilterable + ColumnDef.filterable), pin (pinnableColumns), hide (columnVisibility + ColumnDef.hideable), reset width (resizable + ColumnDef.resizable). Right-clicking any column header also opens the menu.' },
+            { name: 'renderColumnHeaderMenuItems', type: '(column, ctx) => ReactNode', default: '—', description: 'Inject custom items after the default menu actions. A separator is inserted automatically before your items. ctx exposes: sortDirection, hasActiveFilter, pinnedPosition, onSort, onOpenFilter, onClearFilter, onPin, onHide, onResetWidth.' },
           ]}
         />
 
