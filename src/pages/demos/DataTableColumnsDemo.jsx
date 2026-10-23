@@ -3,7 +3,7 @@ import { ComponentPage, PlaygroundSection, PropsTable } from '../../components/P
 import { DataTable } from 'invin-uix/ui/data-table';
 import { DropdownMenuItem } from 'invin-uix/ui/dropdown-menu';
 import { Button } from 'invin-uix/ui/button';
-import { Star, Copy, ArrowsOutCardinal } from '@phosphor-icons/react';
+import { Star, Copy, Funnel, ArrowsOutCardinal } from '@phosphor-icons/react';
 import { incidents, incidentColumns, SeverityBadge, StatusBadge, SEVERITIES } from './dataTableShared.jsx';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -589,21 +589,41 @@ function ColumnHeaderMenuExample() {
 const COLUMN_HEADER_MENU_CUSTOM_CODE = `import { useState } from 'react';
 import { DataTable } from 'invin-uix/ui/data-table';
 import { DropdownMenuItem } from 'invin-uix/ui/dropdown-menu';
-import { Star, Copy } from '@phosphor-icons/react';
+import { Star, Funnel } from '@phosphor-icons/react';
 
 // renderColumnHeaderMenuItems injects extra items into every column's header menu.
+// A separator is automatically inserted before your items when default items are present.
 //
 // Arguments:
-//   column  — the ColumnDef for this column (id, header, accessor, …)
-//   ctx     — live context with current state + action handlers:
-//             { sortDirection, hasActiveFilter, pinnedPosition,
-//               onSort, onOpenFilter, onPin, onHide, onResetWidth }
-//
-// Returns: ReactNode (one or more <DropdownMenuItem>) — or null for no extras.
-// A separator is automatically inserted before your items when defaults are present.
+//   col — the ColumnDef for this column (id, header, accessor, …) — static, independent of live state
+//   ctx — live context:
+//     sortDirection    — current sort direction for this column ('asc'|'desc'|null)
+//     hasActiveFilter  — true when this column has an active filter
+//     pinnedPosition   — 'left' | 'right' | false
+//     onSort(dir)      — sort this column
+//     onOpenFilter()   — open the filter popover
+//     onClearFilter()  — clear this column's filter directly
+//     onPin(side)      — pin to 'left', 'right', or null to unpin
+//     onHide()         — hide this column
+//     onResetWidth()   — reset this column's width
+
+const columns = [
+  { id: 'id',       header: 'ID',       accessor: 'id' },
+  { id: 'title',    header: 'Title',    accessor: 'title',    sortable: true },
+  { id: 'severity', header: 'Severity', accessor: 'severity', sortable: true,
+    filterable: true,
+    filterConfig: { type: 'select', options: ['critical', 'high', 'medium', 'low'] } },
+];
+
+const data = [
+  { id: 'INC-1001', title: 'Unauthorized SSH login attempt', severity: 'critical' },
+  { id: 'INC-1002', title: 'Malware signature detected on endpoint', severity: 'high' },
+  { id: 'INC-1003', title: 'Unusual outbound traffic volume', severity: 'medium' },
+];
 
 function CustomMenuTable() {
   const [starred, setStarred] = useState([]);
+  const [columnFilters, setColumnFilters] = useState([]);
 
   return (
     <DataTable
@@ -611,11 +631,26 @@ function CustomMenuTable() {
       data={data}
       rowKey="id"
       sortable
+      columnFilterable
+      columnFilters={columnFilters}
+      onColumnFiltersChange={setColumnFilters}
       columnHeaderMenu
       renderColumnHeaderMenuItems={(col, ctx) => (
         <>
+          {/* ctx.hasActiveFilter — show Clear Filter only when a filter is active */}
+          {ctx.hasActiveFilter && (
+            <DropdownMenuItem
+              icon={<Funnel size={16} weight="fill" />}
+              onClick={ctx.onClearFilter}
+              className="text-[var(--accent)]"
+            >
+              Clear Filter
+            </DropdownMenuItem>
+          )}
+
+          {/* col — per-column data, independent of live state */}
           <DropdownMenuItem
-            icon={<Star weight={starred.includes(col.id) ? 'fill' : 'regular'} />}
+            icon={<Star size={16} weight={starred.includes(col.id) ? 'fill' : 'regular'} />}
             onClick={() =>
               setStarred(prev =>
                 prev.includes(col.id)
@@ -626,12 +661,6 @@ function CustomMenuTable() {
           >
             {starred.includes(col.id) ? 'Unstar Column' : 'Star Column'}
           </DropdownMenuItem>
-          <DropdownMenuItem
-            icon={<Copy />}
-            onClick={() => navigator.clipboard.writeText(col.id)}
-          >
-            Copy Column ID
-          </DropdownMenuItem>
         </>
       )}
       paginated={false}
@@ -641,10 +670,10 @@ function CustomMenuTable() {
 
 function ColumnHeaderMenuCustomExample() {
   const [starred, setStarred] = useState([]);
-  const [headerBadges, setHeaderBadges] = useState({});
+  const [columnFilters, setColumnFilters] = useState([]);
 
   const columns = useMemo(() => incidentColumns({
-    severity: { sortable: true },
+    severity: { sortable: true, filterable: true, filterConfig: { type: 'select', options: SEVERITIES } },
     status:   { sortable: true },
     assignee: { sortable: true },
   }), []);
@@ -662,17 +691,30 @@ function ColumnHeaderMenuCustomExample() {
   return (
     <div className="space-y-3">
       <p className="text-caption text-[var(--muted-foreground)]">
-        Hover a column header to see the ⋮ menu. A custom "Star Column" and "Copy Column ID" action appears below the defaults — added via <code>renderColumnHeaderMenuItems</code>.
-        Starred columns get a ⭐ in their header.
+        Custom items injected via <code>renderColumnHeaderMenuItems</code>. The callback receives <code>(col, ctx)</code> — col is the column definition, ctx gives live state and action handlers.
+        Here: "Clear Filter" appears via <code>ctx.hasActiveFilter</code> + <code>ctx.onClearFilter</code> when a filter is active; "Star Column" uses <code>col.id</code> for per-column state.
+        Add a column filter (open ⋮ menu → Filter...) to see "Clear Filter" appear.
       </p>
       <DataTable
         columns={columnsWithBadges}
         data={incidents}
         rowKey="id"
         sortable
+        columnFilterable
+        columnFilters={columnFilters}
+        onColumnFiltersChange={setColumnFilters}
         columnHeaderMenu
-        renderColumnHeaderMenuItems={(col) => (
+        renderColumnHeaderMenuItems={(col, ctx) => (
           <>
+            {ctx.hasActiveFilter && (
+              <DropdownMenuItem
+                icon={<Funnel size={16} weight="fill" />}
+                onClick={ctx.onClearFilter}
+                className="text-[var(--accent)]"
+              >
+                Clear Filter
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               icon={<Star size={16} weight={starred.includes(col.id) ? 'fill' : 'regular'} className={starred.includes(col.id) ? 'text-[var(--accent)]' : ''} />}
               onClick={() =>
