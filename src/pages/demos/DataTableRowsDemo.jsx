@@ -292,8 +292,7 @@ function RowGroupingCustomExample() {
 // TREE DATA
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const TREE_DATA_CODE = `import { useState } from 'react';
-import { DataTable } from 'invin-uix/ui/data-table';
+const TREE_DATA_CODE = `import { DataTable } from 'invin-uix/ui/data-table';
 
 const columns = [
   { id: 'name', header: 'Team', accessor: 'name' },
@@ -310,42 +309,115 @@ const data = [
   },
 ];
 
-function TreeDataTable() {
-  const [treeExpandedKeys, setTreeExpandedKeys] = useState(['dept-soc']);
+// defaultTreeExpanded={false} — all nodes start collapsed (the default)
+// defaultTreeExpanded         — all nodes start expanded
 
-  return (
-    <DataTable
-      columns={columns}
-      data={data}
-      rowKey="id"
-      treeData
-      getSubRows={(row) => row.children}
-      treeExpandedKeys={treeExpandedKeys}
-      onTreeExpandedChange={setTreeExpandedKeys}
-      treeIndent={20}
-      showTreeLines
-    />
-  );
-}`;
+<DataTable
+  columns={columns}
+  data={data}
+  rowKey="id"
+  treeData
+  getSubRows={(row) => row.children}   // returning undefined = leaf node
+  defaultTreeExpanded                   // start all expanded
+  treeIndent={20}                       // px per level (default: 24)
+  showTreeLines                         // draw connecting lines
+  paginated={false}
+/>`;
 
 function TreeDataExample() {
   const [treeExpandedKeys, setTreeExpandedKeys] = useState(['dept-soc']);
+  const [showLines, setShowLines] = useState(true);
 
+  return (
+    <div className="space-y-3">
+      <Button size="sm" variant={showLines ? 'secondary' : 'ghost'} onClick={() => setShowLines((v) => !v)}>
+        {showLines ? 'showTreeLines' : 'showTreeLines={false}'}
+      </Button>
+      <DataTable
+        columns={[
+          { id: 'name', header: 'Team', accessor: 'name' },
+          { id: 'role', header: 'Role', accessor: 'role' },
+          { id: 'headcount', header: 'Headcount', accessor: 'headcount', align: 'right' },
+        ]}
+        data={orgTree}
+        rowKey="id"
+        treeData
+        getSubRows={(row) => row.children}
+        treeExpandedKeys={treeExpandedKeys}
+        onTreeExpandedChange={setTreeExpandedKeys}
+        treeIndent={20}
+        showTreeLines={showLines}
+        paginated={false}
+      />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TREE DATA — CUSTOM ROW RENDER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const TREE_DATA_CUSTOM_CODE = `import { DataTable } from 'invin-uix/ui/data-table';
+
+const columns = [
+  { id: 'name', header: 'Team', accessor: 'name' },
+  { id: 'role', header: 'Role', accessor: 'role' },
+];
+
+const data = [
+  {
+    id: 'dept-soc', name: 'Security Operations', role: 'Department',
+    children: [
+      { id: 'team-triage', name: 'Triage Team', role: 'Team' },
+      { id: 'team-ir', name: 'Incident Response', role: 'Team' },
+    ],
+  },
+];
+
+<DataTable
+  columns={columns}
+  data={data}
+  rowKey="id"
+  treeData
+  getSubRows={(row) => row.children}
+  defaultTreeExpanded
+  treeRowRender={(props, defaultContent) => (
+    <div className="flex items-center gap-2 flex-1">
+      {defaultContent}
+      {props.hasChildren && (
+        <span className="ml-auto text-xs text-[var(--muted-foreground)]">
+          {props.childCount} {props.childCount === 1 ? 'team' : 'teams'}
+        </span>
+      )}
+    </div>
+  )}
+  paginated={false}
+/>`;
+
+function TreeDataCustomExample() {
   return (
     <DataTable
       columns={[
         { id: 'name', header: 'Team', accessor: 'name' },
         { id: 'role', header: 'Role', accessor: 'role' },
-        { id: 'headcount', header: 'Headcount', accessor: 'headcount', align: 'right' },
       ]}
       data={orgTree}
       rowKey="id"
       treeData
       getSubRows={(row) => row.children}
-      treeExpandedKeys={treeExpandedKeys}
-      onTreeExpandedChange={setTreeExpandedKeys}
-      treeIndent={20}
-      showTreeLines
+      defaultTreeExpanded
+      treeRowRender={(props, defaultContent) => (
+        <div className="flex items-center gap-2 flex-1">
+          {defaultContent}
+          {props.hasChildren && (
+            <span className="ml-auto text-xs text-[var(--muted-foreground)]">
+              {props.childCount} {props.depth === 0
+                ? (props.childCount === 1 ? 'team' : 'teams')
+                : (props.childCount === 1 ? 'member' : 'members')}
+            </span>
+          )}
+        </div>
+      )}
       paginated={false}
     />
   );
@@ -512,6 +584,14 @@ export default function DataTableRowsDemo() {
         <TreeDataExample />
       </PlaygroundSection>
 
+      <PlaygroundSection
+        title="Tree Data — Custom Row"
+        description="Use treeRowRender to augment the first cell of tree rows. Receives (props, defaultContent) — defaultContent is the pre-built chevron + value layout, so you can wrap it rather than rebuild it. Use props.hasChildren, props.depth, props.childCount, and props.isExpanded for conditional rendering."
+        code={TREE_DATA_CUSTOM_CODE}
+      >
+        <TreeDataCustomExample />
+      </PlaygroundSection>
+
       <PlaygroundSection title="Row Pinning" description="Pin specific rows to the top or bottom, independent of sort/filter." code={ROW_PINNING_CODE}>
         <RowPinningExample />
       </PlaygroundSection>
@@ -587,12 +667,25 @@ export default function DataTableRowsDemo() {
           title="Tree Data"
           props={[
             { name: 'treeData', type: 'boolean', default: 'false', description: 'Enable hierarchical tree rows' },
-            { name: 'getSubRows', type: '(row) => T[] | undefined', default: '—', description: 'Returns child rows for a parent row' },
+            { name: 'getSubRows', type: '(row) => T[] | undefined', default: '—', description: 'Returns child rows for a row. Return undefined or an empty array for leaf nodes — they get an alignment spacer instead of a toggle button.' },
             { name: 'treeExpandedKeys', type: 'string[]', default: '—', description: 'Controlled expanded tree node keys' },
             { name: 'onTreeExpandedChange', type: '(keys) => void', default: '—', description: 'Tree expansion change callback' },
-            { name: 'defaultTreeExpanded', type: 'boolean', default: 'false', description: 'Initial expanded state for all nodes' },
+            { name: 'defaultTreeExpanded', type: 'boolean', default: 'false', description: 'Start all nodes expanded on first render. Default false (all collapsed). Use treeExpandedKeys + onTreeExpandedChange for controlled mode.' },
             { name: 'treeIndent', type: 'number', default: '24', description: 'Indentation per tree level, in px' },
             { name: 'showTreeLines', type: 'boolean', default: 'false', description: 'Draw connecting lines between tree rows' },
+            { name: 'treeRowRender', type: '(props: TreeRowProps, defaultContent: ReactNode) => ReactNode', default: '—', description: "Customize the first cell of tree rows. Receives the row's tree state (depth, hasChildren, isExpanded, childCount, onToggle) plus the pre-built default content to wrap or replace." },
+          ]}
+        />
+
+        <PropsTable
+          title="TreeRowProps object"
+          props={[
+            { name: 'row', type: 'T', description: 'The row data object' },
+            { name: 'depth', type: 'number', description: 'Nesting depth — 0 for root nodes, 1 for first level children, etc.' },
+            { name: 'hasChildren', type: 'boolean', description: 'True if this row has child rows via getSubRows' },
+            { name: 'isExpanded', type: 'boolean', description: 'Whether this node is currently expanded' },
+            { name: 'onToggle', type: '() => void', description: 'Call to expand or collapse this node' },
+            { name: 'childCount', type: 'number', description: 'Number of direct children (0 for leaf nodes)' },
           ]}
         />
 
