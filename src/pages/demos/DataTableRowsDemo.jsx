@@ -53,8 +53,7 @@ function RowActionsExample() {
 // EXPANDABLE ROWS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const EXPANDABLE_ROWS_CODE = `import { useState } from 'react';
-import { DataTable } from 'invin-uix/ui/data-table';
+const EXPANDABLE_ROWS_CODE = `import { DataTable } from 'invin-uix/ui/data-table';
 
 const columns = [
   { id: 'id', header: 'ID', accessor: 'id' },
@@ -62,50 +61,97 @@ const columns = [
 ];
 
 const data = [
-  { id: 'INC-1001', title: 'Unauthorized SSH login attempt', affectedAssets: 3, riskScore: 92 },
-  { id: 'INC-1002', title: 'Malware signature detected on endpoint', affectedAssets: 1, riskScore: 78 },
+  { id: 'INC-1001', title: 'Unauthorized SSH login attempt', department: 'SOC', affectedAssets: 3, riskScore: 92, assignee: 'Aditi Rao' },
+  { id: 'INC-1002', title: 'Malware signature detected on endpoint', department: 'SOC', affectedAssets: 1, riskScore: 78, assignee: 'Marcus Webb' },
 ];
 
-function ExpandableTable() {
-  const [expandedKeys, setExpandedKeys] = useState(['INC-1001']);
+// expandedRowRender receives (row, index) — index is the row's position in data[]
+// defaultExpandedKeys opens rows on first render without state management
 
-  return (
-    <DataTable
-      columns={columns}
-      data={data}
-      rowKey="id"
-      expandable
-      expandedKeys={expandedKeys}
-      onExpandedKeysChange={setExpandedKeys}
-      expandMultiple
-      expandedRowRender={(row) => (
-        <div className="p-4 text-caption text-[var(--muted-foreground)]">
-          Affected assets: {row.affectedAssets} · Risk score: {row.riskScore}
-        </div>
-      )}
-    />
-  );
-}`;
+<DataTable
+  columns={columns}
+  data={data}
+  rowKey="id"
+  expandable
+  defaultExpandedKeys={['INC-1001']}   // uncontrolled — no useState needed
+  // expandMultiple                    // default: false (one open at a time)
+  expandedRowRender={(row) => (
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-caption">
+      <div>
+        <p className="text-[var(--muted-foreground)] mb-1">Department</p>
+        <p className="font-medium">{row.department}</p>
+      </div>
+      <div>
+        <p className="text-[var(--muted-foreground)] mb-1">Affected Assets</p>
+        <p className="font-medium">{row.affectedAssets}</p>
+      </div>
+      <div>
+        <p className="text-[var(--muted-foreground)] mb-1">Risk Score</p>
+        <p className="font-medium">{row.riskScore}</p>
+      </div>
+      <div>
+        <p className="text-[var(--muted-foreground)] mb-1">Assignee</p>
+        <p className="font-medium">{row.assignee}</p>
+      </div>
+    </div>
+  )}
+  paginated={false}
+/>`;
 
 function ExpandableRowsExample() {
   const [expandedKeys, setExpandedKeys] = useState(['INC-1001']);
+  const [multi, setMulti] = useState(true);
 
   return (
-    <DataTable
-      columns={incidentColumns()}
-      data={incidents}
-      rowKey="id"
-      expandable
-      expandedKeys={expandedKeys}
-      onExpandedKeysChange={setExpandedKeys}
-      expandMultiple
-      expandedRowRender={(row) => (
-        <div className="p-4 text-caption text-[var(--muted-foreground)]">
-          Affected assets: {row.affectedAssets} · Risk score: {row.riskScore}
-        </div>
-      )}
-      paginated={false}
-    />
+    <div className="space-y-3">
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          variant={!multi ? 'secondary' : 'ghost'}
+          onClick={() => { setMulti(false); setExpandedKeys((k) => k.slice(0, 1)); }}
+        >
+          Single expand (default)
+        </Button>
+        <Button size="sm" variant={multi ? 'secondary' : 'ghost'} onClick={() => setMulti(true)}>
+          expandMultiple
+        </Button>
+      </div>
+      <p className="text-caption text-[var(--muted-foreground)]">
+        {multi
+          ? 'Multiple rows can be open simultaneously.'
+          : 'Expanding a row collapses the previously open one (expandMultiple defaults to false).'}
+      </p>
+      <DataTable
+        columns={incidentColumns()}
+        data={incidents}
+        rowKey="id"
+        expandable
+        expandMultiple={multi}
+        expandedKeys={expandedKeys}
+        onExpandedKeysChange={setExpandedKeys}
+        expandedRowRender={(row) => (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-caption">
+            <div>
+              <p className="text-[var(--muted-foreground)] mb-1">Department</p>
+              <p className="font-medium">{row.department}</p>
+            </div>
+            <div>
+              <p className="text-[var(--muted-foreground)] mb-1">Affected Assets</p>
+              <p className="font-medium">{row.affectedAssets}</p>
+            </div>
+            <div>
+              <p className="text-[var(--muted-foreground)] mb-1">Risk Score</p>
+              <p className="font-medium">{row.riskScore}</p>
+            </div>
+            <div>
+              <p className="text-[var(--muted-foreground)] mb-1">Assignee</p>
+              <p className="font-medium">{row.assignee}</p>
+            </div>
+          </div>
+        )}
+        paginated={false}
+      />
+    </div>
   );
 }
 
@@ -410,10 +456,11 @@ export default function DataTableRowsDemo() {
           title="Expandable Rows"
           props={[
             { name: 'expandable', type: 'boolean', default: 'false', description: 'Enable row expansion' },
-            { name: 'expandedRowRender', type: '(row, index) => ReactNode', default: '—', description: 'Expanded content renderer' },
+            { name: 'expandedRowRender', type: '(row, index) => ReactNode', default: '—', description: "Renders below the row when expanded. index is the row's 0-based position in the data array." },
             { name: 'expandedKeys', type: 'string[]', default: '—', description: 'Controlled expanded row keys' },
             { name: 'onExpandedKeysChange', type: '(keys) => void', default: '—', description: 'Expansion change callback' },
-            { name: 'expandMultiple', type: 'boolean', default: 'false', description: 'Allow more than one expanded row' },
+            { name: 'defaultExpandedKeys', type: 'string[]', default: '—', description: 'Uncontrolled initial expanded row keys — no useState needed. Use expandedKeys + onExpandedKeysChange for controlled mode.' },
+            { name: 'expandMultiple', type: 'boolean', default: 'false', description: 'Allow multiple rows to be open simultaneously. Default false — expanding a new row collapses the previous one.' },
           ]}
         />
 
