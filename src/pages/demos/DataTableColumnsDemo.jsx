@@ -3,7 +3,7 @@ import { ComponentPage, PlaygroundSection, PropsTable } from '../../components/P
 import { DataTable } from 'invin-uix/ui/data-table';
 import { DropdownMenuItem } from 'invin-uix/ui/dropdown-menu';
 import { Button } from 'invin-uix/ui/button';
-import { Star, Copy, Funnel, ArrowsOutCardinal } from '@phosphor-icons/react';
+import { Star, Copy, SortAscending, SortDescending, ArrowsOutCardinal } from '@phosphor-icons/react';
 import { incidents, incidentColumns, SeverityBadge, StatusBadge, SEVERITIES } from './dataTableShared.jsx';
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -589,7 +589,7 @@ function ColumnHeaderMenuExample() {
 const COLUMN_HEADER_MENU_CUSTOM_CODE = `import { useState } from 'react';
 import { DataTable } from 'invin-uix/ui/data-table';
 import { DropdownMenuItem } from 'invin-uix/ui/dropdown-menu';
-import { Star, Funnel } from '@phosphor-icons/react';
+import { Star, SortAscending, SortDescending } from '@phosphor-icons/react';
 
 // renderColumnHeaderMenuItems injects extra items into every column's header menu.
 // A separator is automatically inserted before your items when default items are present.
@@ -637,14 +637,17 @@ function CustomMenuTable() {
       columnHeaderMenu
       renderColumnHeaderMenuItems={(col, ctx) => (
         <>
-          {/* ctx.hasActiveFilter — show Clear Filter only when a filter is active */}
-          {ctx.hasActiveFilter && (
+          {/* ctx.sortDirection — a read-only badge, not an action (the default menu already has
+              Sort Ascending/Descending + Clear Sort, so this isn't a duplicate "do it" button) */}
+          {ctx.sortDirection && (
             <DropdownMenuItem
-              icon={<Funnel size={16} weight="fill" />}
-              onClick={ctx.onClearFilter}
-              className="text-[var(--accent)]"
+              icon={ctx.sortDirection === 'asc'
+                ? <SortAscending size={16} className="text-[var(--accent)]" />
+                : <SortDescending size={16} className="text-[var(--accent)]" />
+              }
+              disabled
             >
-              Clear Filter
+              {ctx.sortDirection === 'asc' ? 'Sorted: Ascending ↑' : 'Sorted: Descending ↓'}
             </DropdownMenuItem>
           )}
 
@@ -692,8 +695,8 @@ function ColumnHeaderMenuCustomExample() {
     <div className="space-y-3">
       <p className="text-caption text-[var(--muted-foreground)]">
         Custom items injected via <code>renderColumnHeaderMenuItems</code>. The callback receives <code>(col, ctx)</code> — col is the column definition, ctx gives live state and action handlers.
-        Here: "Clear Filter" appears via <code>ctx.hasActiveFilter</code> + <code>ctx.onClearFilter</code> when a filter is active; "Star Column" uses <code>col.id</code> for per-column state.
-        Add a column filter (open ⋮ menu → Filter...) to see "Clear Filter" appear.
+        Here: a "Sorted: Ascending/Descending" badge appears via <code>ctx.sortDirection</code> whenever the column is sorted; "Star Column" uses <code>col.id</code> for per-column state.
+        Sort a column (click its header or use the ⋮ menu) to see the badge appear.
       </p>
       <DataTable
         columns={columnsWithBadges}
@@ -706,13 +709,15 @@ function ColumnHeaderMenuCustomExample() {
         columnHeaderMenu
         renderColumnHeaderMenuItems={(col, ctx) => (
           <>
-            {ctx.hasActiveFilter && (
+            {ctx.sortDirection && (
               <DropdownMenuItem
-                icon={<Funnel size={16} weight="fill" />}
-                onClick={ctx.onClearFilter}
-                className="text-[var(--accent)]"
+                icon={ctx.sortDirection === 'asc'
+                  ? <SortAscending size={16} className="text-[var(--accent)]" />
+                  : <SortDescending size={16} className="text-[var(--accent)]" />
+                }
+                disabled
               >
-                Clear Filter
+                {ctx.sortDirection === 'asc' ? 'Sorted: Ascending ↑' : 'Sorted: Descending ↓'}
               </DropdownMenuItem>
             )}
             <DropdownMenuItem
