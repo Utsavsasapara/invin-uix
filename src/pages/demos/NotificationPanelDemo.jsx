@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable } from '../../components/PlaygroundSection.jsx';
 import { NotificationPanel } from 'invin-uix/ui/notification-panel';
-import { Badge } from 'invin-uix/ui/badge';
 import { Button } from 'invin-uix/ui/button';
 
 /* ─── Shared timestamps ──────────────────────────────────────────────────── */
@@ -112,12 +111,48 @@ const ACTION_ITEMS = [
    Sections
    ═══════════════════════════════════════════════════════════════════════════ */
 
+const BASIC_CODE = `import { useState } from 'react';
+import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+
+const items = [
+  { id: '1', title: 'Critical: Ransomware Activity',
+    body: 'File encryption detected on endpoint DESKTOP-22.',
+    timestamp: new Date(Date.now() - 3 * 60000).toISOString(),
+    read: false, type: 'error', priority: 'high' },
+  { id: '2', title: 'Threat Intelligence Updated',
+    body: 'IOC feed refreshed with 1,240 new indicators.',
+    timestamp: new Date(Date.now() - 3600000).toISOString(),
+    read: false, type: 'info' },
+  { id: '3', title: 'Weekly Scan Completed',
+    body: '0 critical, 3 medium severity findings.',
+    timestamp: new Date(Date.now() - 7200000).toISOString(),
+    read: true, type: 'success' },
+];
+
+function App() {
+  const [notifs, setNotifs] = useState(items);
+
+  return (
+    <NotificationPanel
+      items={notifs}
+      onMarkRead={(id) =>
+        setNotifs(prev => prev.map(i => i.id === id ? { ...i, read: true } : i))}
+      onMarkAllRead={() =>
+        setNotifs(prev => prev.map(i => ({ ...i, read: true })))}
+      onDismiss={(id) =>
+        setNotifs(prev => prev.filter(i => i.id !== id))}
+      onViewAll={() => console.log('navigate to /notifications')}
+    />
+  );
+}`;
+
 function BasicExample() {
   const [items, setItems] = useState(BASIC_ITEMS);
   return (
     <PlaygroundSection
       title="Basic usage"
       description="Mixed read and unread items across multiple date groups. Click an item to mark it read, use the header action to mark all read, or click the × to dismiss."
+      code={BASIC_CODE}
     >
       <NotificationPanel
         items={items}
@@ -136,11 +171,25 @@ function BasicExample() {
   );
 }
 
+const TYPES_CODE = `import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+
+// type controls the icon and accent colour shown on the left
+const items = [
+  { id: '1', title: 'System message (default)', timestamp: new Date().toISOString(), type: 'default' },
+  { id: '2', title: 'User logged in from new device (info)', timestamp: new Date().toISOString(), type: 'info' },
+  { id: '3', title: 'Incident resolved (success)', timestamp: new Date().toISOString(), type: 'success' },
+  { id: '4', title: 'License expires in 14 days (warning)', timestamp: new Date().toISOString(), type: 'warning' },
+  { id: '5', title: 'Zero-day exploit detected (error)', timestamp: new Date().toISOString(), type: 'error' },
+];
+
+<NotificationPanel items={items} groupByDate={false} />`;
+
 function TypesExample() {
   return (
     <PlaygroundSection
       title="Notification types"
       description="Each type renders a distinct icon and colour: default (bell/muted), info (blue), success (green), warning (amber), error (red)."
+      code={TYPES_CODE}
     >
       <NotificationPanel
         items={TYPE_ITEMS}
@@ -150,16 +199,31 @@ function TypesExample() {
   );
 }
 
+const LOADING_CODE = `import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+
+// Show 4 skeleton rows while fetching
+<NotificationPanel items={[]} loading={true} />`;
+
 function LoadingExample() {
   return (
     <PlaygroundSection
       title="Loading state"
       description="Pass loading={true} to show 4 skeleton rows while notifications are being fetched."
+      code={LOADING_CODE}
     >
       <NotificationPanel items={[]} loading={true} />
     </PlaygroundSection>
   );
 }
+
+const ERROR_CODE = `import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+
+// error={true} shows an error state with optional Retry button
+<NotificationPanel
+  items={[]}
+  error={true}
+  onRetry={() => refetchNotifications()}
+/>`;
 
 function ErrorExample() {
   const [error, setError] = useState(true);
@@ -167,6 +231,7 @@ function ErrorExample() {
     <PlaygroundSection
       title="Error state"
       description="Pass error={true} to show an error message. Supply onRetry to render a Retry button."
+      code={ERROR_CODE}
     >
       <NotificationPanel
         items={[]}
@@ -180,11 +245,20 @@ function ErrorExample() {
   );
 }
 
+const EMPTY_CODE = `import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+
+// Default empty message — "You're all caught up"
+<NotificationPanel items={[]} />
+
+// Custom empty message
+<NotificationPanel items={[]} emptyMessage="No active alerts right now" />`;
+
 function EmptyExample() {
   return (
     <PlaygroundSection
       title="Empty state"
       description="When items is empty (and not loading or erroring) the empty state is shown. Override the message with emptyMessage."
+      code={EMPTY_CODE}
     >
       <div className="flex flex-wrap gap-4">
         <div className="flex flex-col items-center gap-2">
@@ -200,11 +274,30 @@ function EmptyExample() {
   );
 }
 
+const FILTER_CODE = `import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+
+// All / Unread tabs appear automatically when items exist
+// defaultFilter sets the initial active tab
+
+<NotificationPanel
+  items={items}    // mix of read: true and read: false
+  groupByDate={false}
+  defaultFilter="all"   // or "unread" to start on the Unread tab
+/>
+
+// Controlled filter:
+// <NotificationPanel
+//   filter={activeFilter}
+//   onFilterChange={setActiveFilter}
+//   items={items}
+// />`;
+
 function FilterExample() {
   return (
     <PlaygroundSection
       title="Unread filter"
       description="The panel shows All and Unread tabs when items exist. The Unread tab count updates in real time."
+      code={FILTER_CODE}
     >
       <NotificationPanel
         items={FILTER_ITEMS}
@@ -215,11 +308,25 @@ function FilterExample() {
   );
 }
 
+const TRIGGER_CODE = `import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+import { Button } from 'invin-uix/ui/button';
+
+// Replace the default bell button with any element
+<NotificationPanel
+  items={items}
+  trigger={
+    <Button variant="outline" size="sm">
+      Alerts ({unreadCount} new)
+    </Button>
+  }
+/>`;
+
 function CustomTriggerExample() {
   return (
     <PlaygroundSection
       title="Custom trigger"
       description="Replace the default bell button with any element using the trigger prop."
+      code={TRIGGER_CODE}
     >
       <NotificationPanel
         items={BASIC_ITEMS.slice(0, 3)}
@@ -234,11 +341,17 @@ function CustomTriggerExample() {
   );
 }
 
+const NO_GROUP_CODE = `import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+
+// groupByDate={false} renders a flat list — no Today/Yesterday headers
+<NotificationPanel items={items} groupByDate={false} />`;
+
 function NoGroupingExample() {
   return (
     <PlaygroundSection
       title="No date grouping"
       description="Pass groupByDate={false} to render a flat list without Today / Yesterday / This week headers."
+      code={NO_GROUP_CODE}
     >
       <NotificationPanel
         items={BASIC_ITEMS}
@@ -247,6 +360,40 @@ function NoGroupingExample() {
     </PlaygroundSection>
   );
 }
+
+const INTERACTIVE_CODE = `import { useState } from 'react';
+import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+
+const items = [
+  { id: 'a1', title: 'New integration approval request',
+    body: 'Splunk SIEM integration submitted by analyst@corp.com.',
+    timestamp: new Date(Date.now() - 600000).toISOString(),
+    read: false, type: 'info',
+    action: { label: 'Review', onClick: () => console.log('review') } },
+  { id: 'a2', title: 'Scheduled report ready',
+    body: 'Monthly executive threat summary is ready for download.',
+    timestamp: new Date(Date.now() - 7200000).toISOString(),
+    read: false, type: 'success',
+    action: { label: 'Download', onClick: () => console.log('download') } },
+];
+
+function App() {
+  const [notifs, setNotifs] = useState(items);
+
+  return (
+    <NotificationPanel
+      items={notifs}
+      onMarkRead={(id) =>
+        setNotifs(prev => prev.map(i => i.id === id ? { ...i, read: true } : i))}
+      onMarkAllRead={() =>
+        setNotifs(prev => prev.map(i => ({ ...i, read: true })))}
+      onDismiss={(id) =>
+        setNotifs(prev => prev.filter(i => i.id !== id))}
+      onViewAll={() => console.log('view all')}
+      groupByDate={false}
+    />
+  );
+}`;
 
 function InteractiveExample() {
   const [items, setItems] = useState(ACTION_ITEMS);
@@ -258,6 +405,7 @@ function InteractiveExample() {
     <PlaygroundSection
       title="Mark read & dismiss — interactive"
       description="Click an item to mark it read, click the × to dismiss, or use the Mark all read header action. Events are logged below."
+      code={INTERACTIVE_CODE}
     >
       <div className="flex flex-col gap-4">
         <NotificationPanel
@@ -309,7 +457,9 @@ const PROPS = [
   { name: 'emptyMessage', type: 'string', default: "'You\\'re all caught up'", description: 'Message shown when items is empty.' },
   { name: 'groupByDate', type: 'boolean', default: 'true', description: 'Group items by date (Today / Yesterday / This week / Earlier).' },
   { name: 'defaultFilter', type: "'all' | 'unread'", default: "'all'", description: 'Initial active filter tab.' },
-  { name: 'maxHeight', type: 'number', default: '480', description: 'Max height (px) of the scrollable content area.' },
+  { name: 'filter', type: "'all' | 'unread'", required: false, description: 'Controlled active filter tab. Use with onFilterChange for controlled mode.' },
+  { name: 'onFilterChange', type: "(filter: 'all' | 'unread') => void", required: false, description: 'Called when the user switches filter tabs.' },
+  { name: 'maxHeight', type: 'number | string', default: '480', description: "Max height for scrollable content. Number = px (e.g. 480). String = any CSS value (e.g. '50vh', 'calc(100vh - 200px)'). Default: 480." },
   { name: 'side', type: "'bottom' | 'top' | 'left' | 'right'", default: "'bottom'", description: 'Popover side.' },
   { name: 'align', type: "'start' | 'center' | 'end'", default: "'end'", description: 'Popover alignment.' },
   { name: 'open', type: 'boolean', required: false, description: 'Controlled open state.' },
@@ -337,9 +487,10 @@ const ITEM_PROPS = [
 export default function NotificationPanelDemo() {
   return (
     <ComponentPage
-      title="Notification Panel"
-      badge={<Badge variant="accent">New</Badge>}
+      name="Notification Panel"
       description="Bell-triggered popover panel for in-app notifications. Supports date grouping, All/Unread filtering, type icons, priority dots, avatars, action buttons, dismiss, mark read, loading skeleton, error state, and controlled open."
+      importCode={`import { NotificationPanel } from 'invin-uix/ui/notification-panel';`}
+      badges={[{ label: 'New', variant: 'accent' }]}
     >
       <BasicExample />
       <TypesExample />
