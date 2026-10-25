@@ -515,6 +515,8 @@ function DraggableTable({ initialData }) {
   const [rows, setRows] = useState(initialData);
 
   const handleDragEnd = useCallback((from, to) => {
+    // IMPORTANT: from/to are page-relative indices (0 = first row on current page)
+    // Use paginated={false} to keep them aligned with your data array indices
     setRows((prev) => {
       const next = [...prev];
       const [moved] = next.splice(from, 1);
@@ -531,11 +533,98 @@ function DraggableTable({ initialData }) {
       rowDraggable
       dragHandleColumn
       onRowDragEnd={handleDragEnd}
+      paginated={false}   // ← required: keeps indices aligned with your data array
     />
   );
 }`;
 
 function RowDragExample() {
+  const [rows, setRows] = useState(assets.slice(0, 6));
+  const [useHandle, setUseHandle] = useState(true);
+
+  const handleDragEnd = useCallback((from, to) => {
+    setRows((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
+    toast({ title: 'Asset priority order updated', variant: 'success' });
+  }, []);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-2">
+        <Button size="sm" variant={useHandle ? 'secondary' : 'ghost'} onClick={() => setUseHandle(true)}>
+          dragHandleColumn (handle only)
+        </Button>
+        <Button size="sm" variant={!useHandle ? 'secondary' : 'ghost'} onClick={() => setUseHandle(false)}>
+          Whole-row drag
+        </Button>
+      </div>
+      <p className="text-caption text-[var(--muted-foreground)]">
+        {useHandle
+          ? 'Drag the ⠿ handle on the left to reorder. The rest of the row is not draggable.'
+          : 'Click and drag anywhere on a row to reorder. No dedicated handle column.'}
+      </p>
+      <DataTable
+        columns={[
+          { id: 'name', header: 'Asset', accessor: 'name' },
+          { id: 'type', header: 'Type', accessor: 'type' },
+          { id: 'owner', header: 'Owner', accessor: 'owner' },
+          { id: 'status', header: 'Status', accessor: 'status', cell: ({ value }) => <StatusBadge value={value} /> },
+        ]}
+        data={rows}
+        rowKey="id"
+        rowDraggable
+        dragHandleColumn={useHandle}
+        onRowDragEnd={handleDragEnd}
+        paginated={false}
+      />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ROW DRAG & DROP — LOCKED ROWS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const ROW_DRAG_LOCKED_CODE = `import { useState, useCallback } from 'react';
+import { DataTable } from 'invin-uix/ui/data-table';
+
+const columns = [
+  { id: 'name', header: 'Asset', accessor: 'name' },
+  { id: 'type', header: 'Type', accessor: 'type' },
+  { id: 'owner', header: 'Owner', accessor: 'owner' },
+];
+
+function LockedDragTable({ initialData }) {
+  const [rows, setRows] = useState(initialData);
+
+  const handleDragEnd = useCallback((from, to) => {
+    setRows((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
+  }, []);
+
+  return (
+    <DataTable
+      columns={columns}
+      data={rows}
+      rowKey="id"
+      rowDraggable
+      dragHandleColumn
+      isRowDraggable={(row) => row.type !== 'Server'} // Servers are locked
+      onRowDragEnd={handleDragEnd}
+      paginated={false}
+    />
+  );
+}`;
+
+function RowDragLockedExample() {
   const [rows, setRows] = useState(assets.slice(0, 6));
 
   const handleDragEnd = useCallback((from, to) => {
@@ -549,20 +638,26 @@ function RowDragExample() {
   }, []);
 
   return (
-    <DataTable
-      columns={[
-        { id: 'name', header: 'Asset', accessor: 'name' },
-        { id: 'type', header: 'Type', accessor: 'type' },
-        { id: 'owner', header: 'Owner', accessor: 'owner' },
-        { id: 'status', header: 'Status', accessor: 'status', cell: ({ value }) => <StatusBadge value={value} /> },
-      ]}
-      data={rows}
-      rowKey="id"
-      rowDraggable
-      dragHandleColumn
-      onRowDragEnd={handleDragEnd}
-      paginated={false}
-    />
+    <div className="space-y-3">
+      <p className="text-caption text-[var(--muted-foreground)]">
+        Servers are locked in position — only Endpoints and Workstations can be reordered.
+      </p>
+      <DataTable
+        columns={[
+          { id: 'name', header: 'Asset', accessor: 'name' },
+          { id: 'type', header: 'Type', accessor: 'type' },
+          { id: 'owner', header: 'Owner', accessor: 'owner' },
+          { id: 'status', header: 'Status', accessor: 'status', cell: ({ value }) => <StatusBadge value={value} /> },
+        ]}
+        data={rows}
+        rowKey="id"
+        rowDraggable
+        dragHandleColumn
+        isRowDraggable={(row) => row.type !== 'Server'}
+        onRowDragEnd={handleDragEnd}
+        paginated={false}
+      />
+    </div>
   );
 }
 
@@ -617,6 +712,14 @@ export default function DataTableRowsDemo() {
 
       <PlaygroundSection title="Row Drag & Drop" description="Reorder rows by dragging a dedicated handle." code={ROW_DRAG_CODE}>
         <RowDragExample />
+      </PlaygroundSection>
+
+      <PlaygroundSection
+        title="Row Drag & Drop — Locked Rows"
+        description="Use isRowDraggable to lock specific rows in place. Locked rows show no drag handle and cannot be dragged or used as a drop target — useful when some rows (e.g. pinned infrastructure) shouldn't be reorderable."
+        code={ROW_DRAG_LOCKED_CODE}
+      >
+        <RowDragLockedExample />
       </PlaygroundSection>
 
       <div className="space-y-8">
@@ -730,10 +833,10 @@ export default function DataTableRowsDemo() {
         <PropsTable
           title="Row Drag & Drop"
           props={[
-            { name: 'rowDraggable', type: 'boolean', default: 'false', description: 'Enable row drag-and-drop' },
-            { name: 'onRowDragEnd', type: '(from, to, row) => void', default: '—', description: 'Fires after a row is dropped' },
-            { name: 'dragHandleColumn', type: 'boolean', default: 'false', description: 'Use a dedicated drag handle instead of the whole row' },
-            { name: 'isRowDraggable', type: '(row, index) => boolean', default: '—', description: 'Conditionally allow dragging a row' },
+            { name: 'rowDraggable', type: 'boolean', default: 'false', description: 'Enable row drag-and-drop reordering. Automatically disabled when treeData or groupBy is active — a console.warn fires in development when these are combined.' },
+            { name: 'onRowDragEnd', type: '(from, to, row) => void', default: '—', description: 'Fires after a row is dropped. sourceIndex and destinationIndex are page-relative (0 = first row on the current page). Use paginated={false} to keep them aligned with your full data array.' },
+            { name: 'dragHandleColumn', type: 'boolean', default: 'false', description: 'Show a dedicated ⠿ drag handle column at the left edge instead of making the entire row draggable. Recommended — prevents accidental row drags when clicking cells.' },
+            { name: 'isRowDraggable', type: '(row, index) => boolean', default: '—', description: 'Return false to lock a specific row in place. Locked rows show no drag handle and cannot be dragged or used as a drop target.' },
           ]}
         />
       </div>
