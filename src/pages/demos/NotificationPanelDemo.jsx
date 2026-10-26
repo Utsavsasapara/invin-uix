@@ -3,6 +3,31 @@ import { ComponentPage, PlaygroundSection, PropsTable } from '../../components/P
 import { NotificationPanel } from 'invin-uix/ui/notification-panel';
 import { Button } from 'invin-uix/ui/button';
 
+/**
+ * DemoFrame — wraps each demo so the floating panel renders visibly
+ * inside the PlaygroundSection preview area.
+ */
+function DemoFrame({ children, height = 480 }) {
+  return (
+    <div
+      className="relative w-full rounded-[var(--radius-lg)] border border-[var(--border)] overflow-visible bg-[var(--secondary)]/10"
+      style={{ minHeight: height }}
+    >
+      {/* Mock app topbar */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--background)]">
+        <span className="text-caption text-[var(--muted-foreground)]">
+          Application
+        </span>
+        <div>{children}</div>
+      </div>
+      {/* Mock content hint */}
+      <div className="flex items-center justify-center h-32 text-caption text-[var(--muted-foreground)]/50 select-none">
+        ↑ notification panel
+      </div>
+    </div>
+  );
+}
+
 /* ─── Shared timestamps ──────────────────────────────────────────────────── */
 
 const NOW = Date.now();
@@ -154,19 +179,23 @@ function BasicExample() {
       description="Mixed read and unread items across multiple date groups. Click an item to mark it read, use the header action to mark all read, or click the × to dismiss."
       code={BASIC_CODE}
     >
-      <NotificationPanel
-        items={items}
-        onMarkRead={(id) =>
-          setItems((prev) => prev.map((i) => (i.id === id ? { ...i, read: true } : i)))
-        }
-        onMarkAllRead={() =>
-          setItems((prev) => prev.map((i) => ({ ...i, read: true })))
-        }
-        onDismiss={(id) =>
-          setItems((prev) => prev.filter((i) => i.id !== id))
-        }
-        onViewAll={() => alert('Navigate to all notifications')}
-      />
+      <DemoFrame>
+        <NotificationPanel
+          items={items}
+          open={true}
+          onOpenChange={() => {}}
+          onMarkRead={(id) =>
+            setItems((prev) => prev.map((i) => (i.id === id ? { ...i, read: true } : i)))
+          }
+          onMarkAllRead={() =>
+            setItems((prev) => prev.map((i) => ({ ...i, read: true })))
+          }
+          onDismiss={(id) =>
+            setItems((prev) => prev.filter((i) => i.id !== id))
+          }
+          onViewAll={() => alert('Navigate to all notifications')}
+        />
+      </DemoFrame>
     </PlaygroundSection>
   );
 }
@@ -191,10 +220,14 @@ function TypesExample() {
       description="Each type renders a distinct icon and colour: default (bell/muted), info (blue), success (green), warning (amber), error (red)."
       code={TYPES_CODE}
     >
-      <NotificationPanel
-        items={TYPE_ITEMS}
-        groupByDate={false}
-      />
+      <DemoFrame>
+        <NotificationPanel
+          items={TYPE_ITEMS}
+          groupByDate={false}
+          open={true}
+          onOpenChange={() => {}}
+        />
+      </DemoFrame>
     </PlaygroundSection>
   );
 }
@@ -211,7 +244,9 @@ function LoadingExample() {
       description="Pass loading={true} to show 4 skeleton rows while notifications are being fetched."
       code={LOADING_CODE}
     >
-      <NotificationPanel items={[]} loading={true} />
+      <DemoFrame>
+        <NotificationPanel items={[]} loading={true} open={true} onOpenChange={() => {}} />
+      </DemoFrame>
     </PlaygroundSection>
   );
 }
@@ -233,14 +268,18 @@ function ErrorExample() {
       description="Pass error={true} to show an error message. Supply onRetry to render a Retry button."
       code={ERROR_CODE}
     >
-      <NotificationPanel
-        items={[]}
-        error={error}
-        onRetry={() => {
-          setError(false);
-          alert('Retry triggered — error cleared');
-        }}
-      />
+      <DemoFrame>
+        <NotificationPanel
+          items={[]}
+          error={error}
+          open={true}
+          onOpenChange={() => {}}
+          onRetry={() => {
+            setError(false);
+            alert('Retry triggered — error cleared');
+          }}
+        />
+      </DemoFrame>
     </PlaygroundSection>
   );
 }
@@ -260,14 +299,23 @@ function EmptyExample() {
       description="When items is empty (and not loading or erroring) the empty state is shown. Override the message with emptyMessage."
       code={EMPTY_CODE}
     >
-      <div className="flex flex-wrap gap-4">
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-[var(--muted-foreground)]">Default message</p>
-          <NotificationPanel items={[]} />
+      <div className="flex gap-4 flex-wrap">
+        <div className="flex-1 min-w-[300px]">
+          <p className="text-caption text-[var(--muted-foreground)] mb-2">Default message</p>
+          <DemoFrame height={240}>
+            <NotificationPanel items={[]} open={true} onOpenChange={() => {}} />
+          </DemoFrame>
         </div>
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-[var(--muted-foreground)]">Custom message</p>
-          <NotificationPanel items={[]} emptyMessage="No active alerts right now" />
+        <div className="flex-1 min-w-[300px]">
+          <p className="text-caption text-[var(--muted-foreground)] mb-2">Custom message</p>
+          <DemoFrame height={240}>
+            <NotificationPanel
+              items={[]}
+              emptyMessage="No active alerts right now"
+              open={true}
+              onOpenChange={() => {}}
+            />
+          </DemoFrame>
         </div>
       </div>
     </PlaygroundSection>
@@ -299,11 +347,15 @@ function FilterExample() {
       description="The panel shows All and Unread tabs when items exist. The Unread tab count updates in real time."
       code={FILTER_CODE}
     >
-      <NotificationPanel
-        items={FILTER_ITEMS}
-        groupByDate={false}
-        defaultFilter="all"
-      />
+      <DemoFrame>
+        <NotificationPanel
+          items={FILTER_ITEMS}
+          groupByDate={false}
+          defaultFilter="all"
+          open={true}
+          onOpenChange={() => {}}
+        />
+      </DemoFrame>
     </PlaygroundSection>
   );
 }
@@ -328,15 +380,19 @@ function CustomTriggerExample() {
       description="Replace the default bell button with any element using the trigger prop."
       code={TRIGGER_CODE}
     >
-      <NotificationPanel
-        items={BASIC_ITEMS.slice(0, 3)}
-        trigger={
-          <Button variant="outline" size="sm">
-            Alerts ({BASIC_ITEMS.slice(0, 3).filter((i) => !i.read).length} new)
-          </Button>
-        }
-        groupByDate={false}
-      />
+      <DemoFrame>
+        <NotificationPanel
+          items={BASIC_ITEMS.slice(0, 3)}
+          trigger={
+            <Button variant="outline" size="sm">
+              Alerts ({BASIC_ITEMS.slice(0, 3).filter((i) => !i.read).length} new)
+            </Button>
+          }
+          groupByDate={false}
+          open={true}
+          onOpenChange={() => {}}
+        />
+      </DemoFrame>
     </PlaygroundSection>
   );
 }
@@ -353,10 +409,14 @@ function NoGroupingExample() {
       description="Pass groupByDate={false} to render a flat list without Today / Yesterday / This week headers."
       code={NO_GROUP_CODE}
     >
-      <NotificationPanel
-        items={BASIC_ITEMS}
-        groupByDate={false}
-      />
+      <DemoFrame>
+        <NotificationPanel
+          items={BASIC_ITEMS}
+          groupByDate={false}
+          open={true}
+          onOpenChange={() => {}}
+        />
+      </DemoFrame>
     </PlaygroundSection>
   );
 }
@@ -407,24 +467,30 @@ function InteractiveExample() {
       description="Click an item to mark it read, click the × to dismiss, or use the Mark all read header action. Events are logged below."
       code={INTERACTIVE_CODE}
     >
-      <div className="flex flex-col gap-4">
-        <NotificationPanel
-          items={items}
-          onMarkRead={(id) => {
-            addLog(`onMarkRead("${id}")`);
-            setItems((prev) => prev.map((i) => (i.id === id ? { ...i, read: true } : i)));
-          }}
-          onMarkAllRead={() => {
-            addLog('onMarkAllRead()');
-            setItems((prev) => prev.map((i) => ({ ...i, read: true })));
-          }}
-          onDismiss={(id) => {
-            addLog(`onDismiss("${id}")`);
-            setItems((prev) => prev.filter((i) => i.id !== id));
-          }}
-          onViewAll={() => addLog('onViewAll()')}
-          groupByDate={false}
-        />
+      <div className="space-y-4">
+        <DemoFrame>
+          {/* No open={true} — user clicks to open */}
+          <NotificationPanel
+            items={items}
+            onMarkRead={(id) => {
+              addLog(`onMarkRead("${id}")`);
+              setItems((prev) => prev.map((i) => (i.id === id ? { ...i, read: true } : i)));
+            }}
+            onMarkAllRead={() => {
+              addLog('onMarkAllRead()');
+              setItems((prev) => prev.map((i) => ({ ...i, read: true })));
+            }}
+            onDismiss={(id) => {
+              addLog(`onDismiss("${id}")`);
+              setItems((prev) => prev.filter((i) => i.id !== id));
+            }}
+            onViewAll={() => addLog('onViewAll()')}
+            groupByDate={false}
+          />
+        </DemoFrame>
+        <p className="text-caption text-[var(--muted-foreground)]">
+          Click the bell icon above → interact with items → events log below.
+        </p>
         {log.length > 0 && (
           <div className="space-y-1 rounded-[var(--radius-md)] bg-[var(--muted)] p-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">Event log</p>
