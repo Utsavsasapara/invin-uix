@@ -122,16 +122,19 @@ export default function CopyButtonDemo() {
       {/* ─── Props Table ────────────────────────────────────────── */}
       <PropsTable
         props={[
-          { name: 'value', type: 'string', default: '—', description: 'Text to copy to the clipboard (required)' },
+          { name: 'value', type: 'string', default: '—', description: 'Text to copy to the clipboard. Required unless getValue is provided; omitting both is a silent no-op.' },
+          { name: 'getValue', type: '() => string | Promise<string>', default: '—', description: 'Async getter called on click to resolve the text to copy. Takes precedence over value when both are provided. Shows a loading spinner and disables the button while pending.' },
           { name: 'label', type: 'string', default: "'Copy'", description: 'Label shown while idle. Also the accessible name while idle' },
           { name: 'copiedLabel', type: 'string', default: "'Copied!'", description: 'Label shown after a successful copy' },
           { name: 'errorLabel', type: 'string', default: "'Failed'", description: 'Label shown when the copy fails' },
           { name: 'timeout', type: 'number', default: '2000', description: 'How long the copied / failed feedback stays visible (ms)' },
           { name: 'showLabel', type: 'boolean', default: 'true', description: 'Show the text label next to the icon' },
-          { name: 'variant', type: "'default' | 'outline' | 'ghost' | 'secondary'", default: "'outline'", description: "Visual variant. 'default' is the filled primary style" },
+          { name: 'variant', type: "'default' | 'primary' | 'outline' | 'ghost' | 'secondary'", default: "'outline'", description: "Visual variant. 'default' and 'primary' both produce the filled primary style." },
           { name: 'size', type: "'sm' | 'md' | 'lg' | 'icon-sm' | 'icon'", default: "'md'", description: 'Button size' },
           { name: 'onCopy', type: '(value: string) => void', default: '—', description: 'Called when the copy succeeds' },
           { name: 'onCopyError', type: '(error: Error) => void', default: '—', description: 'Called when the copy fails' },
+          { name: 'announcement', type: 'CopyButtonAnnouncement', default: '—', description: "Override screen reader text for i18n. Fields: copied (live region on success), error (live region on failure), copiedName (aria-label on success), errorName (aria-label on failure)." },
+          { name: 'icons', type: 'CopyButtonIcons', default: '—', description: "Override the icon for one or more states: idle, copied, error, loading. Custom icons control their own sizing; default Phosphor icons are used for unspecified states." },
           { name: 'disabled', type: 'boolean', default: 'false', description: 'Disable the button' },
           { name: 'className', type: 'string', default: '—', description: 'CSS class(es) applied to the button element. The aria-live region is a sibling, not a child, so className does not affect it.' },
           { name: 'aria-label', type: 'string', default: 'current action', description: "Overrides the accessible name in every state (default: the label, then 'Copied', then 'Copy failed')" },
@@ -226,16 +229,27 @@ export default function CopyButtonDemo() {
       <PlaygroundSection
         title="Custom icons"
         description="Replace the default Phosphor icons with any icon set. Pass ReactNode for each state. Useful when the host project uses a different icon library."
-        code={`<CopyButton
-  value={code}
-  icons={{idle: <ClipboardIcon />,
-    copied: <CheckIcon />,
-    error: <XCircleIcon />,}}
+        code={`// Define your own icons — any ReactNode works (Lucide, HeroIcons, inline SVG…)
+const ClipboardSvg = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <rect x="9" y="2" width="6" height="4" rx="1"/>
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+  </svg>
+);
+const CheckSvg = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+<CopyButton
+  value="custom icons example"
+  icons={{ idle: <ClipboardSvg />, copied: <CheckSvg /> }}
 />`}
       >
         <CopyButton
           value="custom icons example"
-          icons={{idle: <ClipboardSvg />, copied: <CheckSvg />}}
+          icons={{ idle: <ClipboardSvg />, copied: <CheckSvg /> }}
         />
       </PlaygroundSection>
 
