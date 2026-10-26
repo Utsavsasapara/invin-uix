@@ -1,11 +1,11 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable } from '../../components/PlaygroundSection.jsx';
 import { NotificationPanel, NotificationPanelContent } from 'invin-uix/ui/notification-panel';
 import { Button } from 'invin-uix/ui/button';
 
 /**
  * Wraps NotificationPanelContent in a card frame for demo display.
- * This renders the panel body inline — no popover, no open/close.
+ * This renders the panel body inline â€” no popover, no open/close.
  */
 function DemoFrame({ children }) {
   return (
@@ -15,14 +15,14 @@ function DemoFrame({ children }) {
   );
 }
 
-/* ─── Shared timestamps ──────────────────────────────────────────────────── */
+/* â”€â”€â”€ Shared timestamps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const NOW = Date.now();
 const mins = (n) => new Date(NOW - n * 60 * 1000).toISOString();
 const hours = (n) => new Date(NOW - n * 3600 * 1000).toISOString();
 const days = (n) => new Date(NOW - n * 86400 * 1000).toISOString();
 
-/* ─── Base cybersecurity items ───────────────────────────────────────────── */
+/* â”€â”€â”€ Base cybersecurity items â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const BASIC_ITEMS = [
   {
@@ -53,7 +53,7 @@ const BASIC_ITEMS = [
   {
     id: 'b4',
     title: 'Weekly Scan Completed',
-    body: 'Vulnerability scan finished — 0 critical, 3 medium severity findings.',
+    body: 'Vulnerability scan finished â€” 0 critical, 3 medium severity findings.',
     timestamp: hours(2),
     read: true,
     type: 'success',
@@ -76,7 +76,7 @@ const BASIC_ITEMS = [
   },
 ];
 
-/* ─── All five notification types ───────────────────────────────────────── */
+/* â”€â”€â”€ All five notification types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const TYPE_ITEMS = [
   { id: 't1', title: 'System Message (default)', timestamp: mins(1), read: false, type: 'default' },
@@ -86,17 +86,17 @@ const TYPE_ITEMS = [
   { id: 't5', title: 'Zero-day exploit in OpenSSL detected (error)', timestamp: mins(5), read: false, type: 'error' },
 ];
 
-/* ─── Mixed read/unread for filter demo ─────────────────────────────────── */
+/* â”€â”€â”€ Mixed read/unread for filter demo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const FILTER_ITEMS = [
   { id: 'f1', title: 'New SIEM correlation rule deployed', timestamp: mins(5),  read: false, type: 'info' },
   { id: 'f2', title: 'Alert escalated to Tier 2',          timestamp: mins(20), read: false, type: 'warning' },
   { id: 'f3', title: 'EDR agent updated on all endpoints', timestamp: hours(1), read: true,  type: 'success' },
-  { id: 'f4', title: 'Threat hunt completed — no findings', timestamp: hours(3), read: true, type: 'default' },
+  { id: 'f4', title: 'Threat hunt completed â€” no findings', timestamp: hours(3), read: true, type: 'default' },
   { id: 'f5', title: 'Suspicious PowerShell detected',      timestamp: hours(4), read: false, type: 'error' },
 ];
 
-/* ─── Items with action buttons ─────────────────────────────────────────── */
+/* â”€â”€â”€ Items with action buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const ACTION_ITEMS = [
   {
@@ -119,9 +119,9 @@ const ACTION_ITEMS = [
   },
 ];
 
-/* ═══════════════════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    Sections
-   ═══════════════════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 const BASIC_CODE = `import { useState } from 'react';
 import { NotificationPanel } from 'invin-uix/ui/notification-panel';
@@ -147,7 +147,7 @@ function App() {
   return (
     <NotificationPanel
       items={notifs}
-      maxHeight={320}   // shorter than default 480 — scrollbar appears when content overflows
+      maxHeight={320}   // shorter than default 480 â€” scrollbar appears when content overflows
       onMarkRead={(id) =>
         setNotifs(prev => prev.map(i => i.id === id ? { ...i, read: true } : i))}
       onMarkAllRead={() =>
@@ -164,7 +164,7 @@ function BasicExample() {
   return (
     <PlaygroundSection
       title="Basic usage"
-      description="Mixed read and unread items across multiple date groups. Click an item to mark it read, use the header action to mark all read, or hover an item to reveal the dismiss button. Scroll within the panel — try scrolling to see remaining date groups."
+      description="Mixed read and unread items across multiple date groups. Click an item to mark it read, use the header action to mark all read, or hover an item to reveal the dismiss button. Scroll within the panel â€” try scrolling to see remaining date groups."
       code={BASIC_CODE}
     >
       <DemoFrame>
@@ -259,7 +259,7 @@ function ErrorExample() {
           error={error}
           onRetry={() => {
             setError(false);
-            alert('Retry triggered — error cleared');
+            alert('Retry triggered â€” error cleared');
           }}
         />
       </DemoFrame>
@@ -269,7 +269,7 @@ function ErrorExample() {
 
 const EMPTY_CODE = `import { NotificationPanel } from 'invin-uix/ui/notification-panel';
 
-// Default empty message — "You're all caught up"
+// Default empty message â€” "You're all caught up"
 <NotificationPanel items={[]} />
 
 // Custom empty message
@@ -358,7 +358,7 @@ function CustomTriggerExample() {
     >
       <div className="flex items-center gap-4 flex-wrap">
         <div>
-          <p className="text-caption text-[var(--muted-foreground)] mb-2">Click to open ↓</p>
+          <p className="text-caption text-[var(--muted-foreground)] mb-2">Click to open â†“</p>
           <NotificationPanel
             items={BASIC_ITEMS.slice(0, 3)}
             trigger={
@@ -380,7 +380,7 @@ function CustomTriggerExample() {
 
 const NO_GROUP_CODE = `import { NotificationPanel } from 'invin-uix/ui/notification-panel';
 
-// groupByDate={false} renders a flat list — no Today/Yesterday headers
+// groupByDate={false} renders a flat list â€” no Today/Yesterday headers
 <NotificationPanel items={items} groupByDate={false} />`;
 
 function NoGroupingExample() {
@@ -438,12 +438,12 @@ function InteractiveExample() {
   const [items, setItems] = useState(ACTION_ITEMS);
   const [log, setLog] = useState([]);
 
-  const addLog = (msg) => setLog((prev) => [`${new Date().toLocaleTimeString()} — ${msg}`, ...prev.slice(0, 4)]);
+  const addLog = (msg) => setLog((prev) => [`${new Date().toLocaleTimeString()} â€” ${msg}`, ...prev.slice(0, 4)]);
 
   return (
     <PlaygroundSection
-      title="Mark read & dismiss — interactive"
-      description="Click an item to mark it read, click the × to dismiss, or use the Mark all read header action. Events are logged below."
+      title="Mark read & dismiss â€” interactive"
+      description="Click an item to mark it read, click the Ã— to dismiss, or use the Mark all read header action. Events are logged below."
       code={INTERACTIVE_CODE}
     >
       <div className="flex flex-col gap-4">
@@ -466,7 +466,7 @@ function InteractiveExample() {
             groupByDate={false}
           />
           <p className="text-caption text-[var(--muted-foreground)]">
-            ← Click the bell to open. Interact with items to see events.
+            â† Click the bell to open. Interact with items to see events.
           </p>
         </div>
         {log.length > 0 && (
@@ -531,7 +531,7 @@ function LoadMoreExample() {
 
   return (
     <PlaygroundSection
-      title="Large datasets — load more"
+      title="Large datasets â€” load more"
       description="Use hasMore + onLoadMore + totalCount for server-driven notification feeds. The badge shows the totalCount while only the first page is in items."
       code={LOAD_MORE_CODE}
     >
@@ -551,7 +551,7 @@ function LoadMoreExample() {
 const VISIBLE_COUNT_CODE = `import { NotificationPanelContent } from 'invin-uix/ui/notification-panel';
 
 // visibleCount shows only N items initially (client-side truncation)
-// No server call — items are already in memory
+// No server call â€” items are already in memory
 // Click "Show X more" to expand
 
 <NotificationPanelContent
@@ -562,7 +562,7 @@ const VISIBLE_COUNT_CODE = `import { NotificationPanelContent } from 'invin-uix/
 function VisibleCountExample() {
   return (
     <PlaygroundSection
-      title="Client-side truncation — visibleCount"
+      title="Client-side truncation â€” visibleCount"
       description="Show only N items initially with a 'Show X more' button. Use when all items are already loaded but you want to keep the panel compact."
       code={VISIBLE_COUNT_CODE}
     >
@@ -577,7 +577,7 @@ function VisibleCountExample() {
   );
 }
 
-/* ─── Props table ────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Props table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 const PROPS = [
   { name: 'items', type: 'NotificationItem[]', required: true, description: 'Notification items to display.' },
@@ -586,8 +586,8 @@ const PROPS = [
   { name: 'onRetry', type: '() => void', required: false, description: 'Adds a Retry button in the error state.' },
   { name: 'onMarkAllRead', type: '() => void', required: false, description: 'Adds "Mark all read" to header when unread items exist.' },
   { name: 'onMarkRead', type: '(id: string) => void', required: false, description: 'Item row becomes a button; called with item id on click.' },
-  { name: 'onDismiss', type: '(id: string) => void', required: false, description: 'Adds a dismiss × button per item; called with item id.' },
-  { name: 'onViewAll', type: '() => void', required: false, description: 'Adds a "View all notifications →" footer button.' },
+  { name: 'onDismiss', type: '(id: string) => void', required: false, description: 'Adds a dismiss Ã— button per item; called with item id.' },
+  { name: 'onViewAll', type: '() => void', required: false, description: 'Adds a "View all notifications â†’" footer button.' },
   { name: 'emptyMessage', type: 'string', default: "'You\\'re all caught up'", description: 'Message shown when items is empty.' },
   { name: 'groupByDate', type: 'boolean', default: 'true', description: 'Group items by date (Today / Yesterday / This week / Earlier).' },
   { name: 'defaultFilter', type: "'all' | 'unread'", default: "'all'", description: 'Initial active filter tab.' },
@@ -601,19 +601,20 @@ const PROPS = [
   { name: 'trigger', type: 'React.ReactNode', required: false, description: 'Custom trigger element. Omit to use the default bell button.' },
   { name: 'title', type: 'string', default: "'Notifications'", description: 'Panel header title.' },
   { name: 'className', type: 'string', required: false, description: 'Extra class forwarded to the PopoverContent root.' },
-  { name: 'totalCount', type: 'number', required: false, description: 'Total notification count including unloaded items. Overrides items.length for the unread badge — useful when only the first page is loaded.' },
+  { name: 'totalCount', type: 'number', required: false, description: 'Total notification count including unloaded items. Overrides items.length for the unread badge â€” useful when only the first page is loaded.' },
   { name: 'hasMore', type: 'boolean', default: 'false', description: 'Whether more notifications can be loaded. Shows a "Load more" button at the bottom.' },
   { name: 'onLoadMore', type: '() => void', required: false, description: 'Called when user clicks "Load more notifications". Wire to your data-fetching layer.' },
   { name: 'loadingMore', type: 'boolean', default: 'false', description: 'Shows a loading indicator instead of the "Load more" button while fetching.' },
   { name: 'renderItem', type: '(item, renderDefault) => ReactNode', required: false, description: 'Custom item renderer. Call renderDefault() to wrap the built-in layout, or return your own JSX entirely.' },
-  { name: 'visibleCount', type: 'number', required: false, description: 'Show only N items initially with a "Show X more" button. No server call — items must already be in memory. Use with onLoadMore/hasMore for server-driven pagination instead.' },
+  { name: 'visibleCount', type: 'number', required: false, description: 'Show only N items initially with a "Show X more" button. No server call â€” items must already be in memory. Use with onLoadMore/hasMore for server-driven pagination instead.' },
+  { name: 'labels', type: 'NotificationLabels', required: false, description: 'Override any UI string for i18n or custom copy. See NotificationLabels for all available fields. All fields optional — unset fields use English defaults.' },
 ];
 
 const ITEM_PROPS = [
   { name: 'id', type: 'string', required: true, description: 'Unique identifier.' },
   { name: 'title', type: 'string', required: true, description: 'Notification title text.' },
   { name: 'body', type: 'string', required: false, description: 'Optional body / description text.' },
-  { name: 'timestamp', type: 'string | Date', required: true, description: 'ISO string or Date object — used for relative time display and date grouping.' },
+  { name: 'timestamp', type: 'string | Date', required: true, description: 'ISO string or Date object â€” used for relative time display and date grouping.' },
   { name: 'read', type: 'boolean', required: false, description: 'Whether the item has been read. Treated as unread if omitted.' },
   { name: 'type', type: "'default' | 'info' | 'success' | 'warning' | 'error'", required: false, description: 'Controls the icon and accent colour.' },
   { name: 'priority', type: "'normal' | 'high'", required: false, description: 'Controls the unread priority dot style.' },
@@ -622,7 +623,7 @@ const ITEM_PROPS = [
   { name: 'action', type: '{ label: string; onClick: () => void }', required: false, description: 'Optional inline action button rendered below the body text.' },
 ];
 
-/* ─── Page ──────────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 export default function NotificationPanelDemo() {
   return (
@@ -643,6 +644,7 @@ export default function NotificationPanelDemo() {
       <InteractiveExample />
       <LoadMoreExample />
       <VisibleCountExample />
+      <LabelsExample />
 
       <PlaygroundSection title="Props">
         <PropsTable props={PROPS} />
