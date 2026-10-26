@@ -1,29 +1,16 @@
 import { useState } from 'react';
 import { ComponentPage, PlaygroundSection, PropsTable } from '../../components/PlaygroundSection.jsx';
-import { NotificationPanel } from 'invin-uix/ui/notification-panel';
+import { NotificationPanel, NotificationPanelContent } from 'invin-uix/ui/notification-panel';
 import { Button } from 'invin-uix/ui/button';
 
 /**
- * DemoFrame — wraps each demo so the floating panel renders visibly
- * inside the PlaygroundSection preview area.
+ * Wraps NotificationPanelContent in a card frame for demo display.
+ * This renders the panel body inline — no popover, no open/close.
  */
-function DemoFrame({ children, height = 480 }) {
+function DemoFrame({ children }) {
   return (
-    <div
-      className="relative w-full rounded-[var(--radius-lg)] border border-[var(--border)] overflow-visible bg-[var(--secondary)]/10"
-      style={{ minHeight: height }}
-    >
-      {/* Mock app topbar */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--background)]">
-        <span className="text-caption text-[var(--muted-foreground)]">
-          Application
-        </span>
-        <div>{children}</div>
-      </div>
-      {/* Mock content hint */}
-      <div className="flex items-center justify-center h-32 text-caption text-[var(--muted-foreground)]/50 select-none">
-        ↑ notification panel
-      </div>
+    <div className="w-[380px] max-w-full rounded-[var(--radius-lg)] border border-[var(--border)] overflow-hidden shadow-lg">
+      {children}
     </div>
   );
 }
@@ -180,10 +167,8 @@ function BasicExample() {
       code={BASIC_CODE}
     >
       <DemoFrame>
-        <NotificationPanel
+        <NotificationPanelContent
           items={items}
-          open={true}
-          onOpenChange={() => {}}
           onMarkRead={(id) =>
             setItems((prev) => prev.map((i) => (i.id === id ? { ...i, read: true } : i)))
           }
@@ -221,11 +206,9 @@ function TypesExample() {
       code={TYPES_CODE}
     >
       <DemoFrame>
-        <NotificationPanel
+        <NotificationPanelContent
           items={TYPE_ITEMS}
           groupByDate={false}
-          open={true}
-          onOpenChange={() => {}}
         />
       </DemoFrame>
     </PlaygroundSection>
@@ -245,7 +228,7 @@ function LoadingExample() {
       code={LOADING_CODE}
     >
       <DemoFrame>
-        <NotificationPanel items={[]} loading={true} open={true} onOpenChange={() => {}} />
+        <NotificationPanelContent items={[]} loading={true} />
       </DemoFrame>
     </PlaygroundSection>
   );
@@ -269,11 +252,9 @@ function ErrorExample() {
       code={ERROR_CODE}
     >
       <DemoFrame>
-        <NotificationPanel
+        <NotificationPanelContent
           items={[]}
           error={error}
-          open={true}
-          onOpenChange={() => {}}
           onRetry={() => {
             setError(false);
             alert('Retry triggered — error cleared');
@@ -300,21 +281,16 @@ function EmptyExample() {
       code={EMPTY_CODE}
     >
       <div className="flex gap-4 flex-wrap">
-        <div className="flex-1 min-w-[300px]">
-          <p className="text-caption text-[var(--muted-foreground)] mb-2">Default message</p>
-          <DemoFrame height={240}>
-            <NotificationPanel items={[]} open={true} onOpenChange={() => {}} />
+        <div>
+          <p className="text-caption text-[var(--muted-foreground)] mb-2">Default</p>
+          <DemoFrame>
+            <NotificationPanelContent items={[]} />
           </DemoFrame>
         </div>
-        <div className="flex-1 min-w-[300px]">
+        <div>
           <p className="text-caption text-[var(--muted-foreground)] mb-2">Custom message</p>
-          <DemoFrame height={240}>
-            <NotificationPanel
-              items={[]}
-              emptyMessage="No active alerts right now"
-              open={true}
-              onOpenChange={() => {}}
-            />
+          <DemoFrame>
+            <NotificationPanelContent items={[]} emptyMessage="No active alerts right now" />
           </DemoFrame>
         </div>
       </div>
@@ -348,12 +324,10 @@ function FilterExample() {
       code={FILTER_CODE}
     >
       <DemoFrame>
-        <NotificationPanel
+        <NotificationPanelContent
           items={FILTER_ITEMS}
           groupByDate={false}
           defaultFilter="all"
-          open={true}
-          onOpenChange={() => {}}
         />
       </DemoFrame>
     </PlaygroundSection>
@@ -380,19 +354,24 @@ function CustomTriggerExample() {
       description="Replace the default bell button with any element using the trigger prop."
       code={TRIGGER_CODE}
     >
-      <DemoFrame>
-        <NotificationPanel
-          items={BASIC_ITEMS.slice(0, 3)}
-          trigger={
-            <Button variant="outline" size="sm">
-              Alerts ({BASIC_ITEMS.slice(0, 3).filter((i) => !i.read).length} new)
-            </Button>
-          }
-          groupByDate={false}
-          open={true}
-          onOpenChange={() => {}}
-        />
-      </DemoFrame>
+      <div className="flex items-center gap-4 flex-wrap">
+        <div>
+          <p className="text-caption text-[var(--muted-foreground)] mb-2">Click to open ↓</p>
+          <NotificationPanel
+            items={BASIC_ITEMS.slice(0, 3)}
+            trigger={
+              <Button variant="outline" size="sm">
+                Alerts ({BASIC_ITEMS.slice(0, 3).filter((i) => !i.read).length} new)
+              </Button>
+            }
+            groupByDate={false}
+          />
+        </div>
+        <div className="text-caption text-[var(--muted-foreground)] max-w-xs">
+          Replace the default bell button with any element using the{' '}
+          <code className="text-[var(--foreground)]">trigger</code> prop.
+        </div>
+      </div>
     </PlaygroundSection>
   );
 }
@@ -410,11 +389,9 @@ function NoGroupingExample() {
       code={NO_GROUP_CODE}
     >
       <DemoFrame>
-        <NotificationPanel
+        <NotificationPanelContent
           items={BASIC_ITEMS}
           groupByDate={false}
-          open={true}
-          onOpenChange={() => {}}
         />
       </DemoFrame>
     </PlaygroundSection>
@@ -467,9 +444,8 @@ function InteractiveExample() {
       description="Click an item to mark it read, click the × to dismiss, or use the Mark all read header action. Events are logged below."
       code={INTERACTIVE_CODE}
     >
-      <div className="space-y-4">
-        <DemoFrame>
-          {/* No open={true} — user clicks to open */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
           <NotificationPanel
             items={items}
             onMarkRead={(id) => {
@@ -487,10 +463,10 @@ function InteractiveExample() {
             onViewAll={() => addLog('onViewAll()')}
             groupByDate={false}
           />
-        </DemoFrame>
-        <p className="text-caption text-[var(--muted-foreground)]">
-          Click the bell icon above → interact with items → events log below.
-        </p>
+          <p className="text-caption text-[var(--muted-foreground)]">
+            ← Click the bell to open. Interact with items to see events.
+          </p>
+        </div>
         {log.length > 0 && (
           <div className="space-y-1 rounded-[var(--radius-md)] bg-[var(--muted)] p-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-foreground)]">Event log</p>
@@ -505,6 +481,67 @@ function InteractiveExample() {
           </Button>
         )}
       </div>
+    </PlaygroundSection>
+  );
+}
+
+const LOAD_MORE_CODE = `import { useState } from 'react';
+import { NotificationPanelContent } from 'invin-uix/ui/notification-panel';
+
+function NotificationFeed() {
+  const [items, setItems] = useState(firstPage);     // only the first page is loaded
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const handleLoadMore = async () => {
+    setLoadingMore(true);
+    const nextPage = await fetchNextPage();
+    setItems((prev) => [...prev, ...nextPage.items]);
+    setHasMore(nextPage.hasMore);
+    setLoadingMore(false);
+  };
+
+  return (
+    <NotificationPanelContent
+      items={items}
+      hasMore={hasMore}
+      onLoadMore={handleLoadMore}
+      loadingMore={loadingMore}
+      totalCount={247}   // badge shows 247 even though only items.length rows are loaded
+    />
+  );
+}`;
+
+function LoadMoreExample() {
+  const [items, setItems] = useState(BASIC_ITEMS.slice(0, 3));
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [totalCount] = useState(247);
+
+  const handleLoadMore = () => {
+    setLoadingMore(true);
+    setTimeout(() => {
+      setItems((prev) => [...prev, ...BASIC_ITEMS.slice(3)]);
+      setHasMore(false);
+      setLoadingMore(false);
+    }, 1200);
+  };
+
+  return (
+    <PlaygroundSection
+      title="Large datasets — load more"
+      description="Use hasMore + onLoadMore + totalCount for server-driven notification feeds. The badge shows the totalCount while only the first page is in items."
+      code={LOAD_MORE_CODE}
+    >
+      <DemoFrame>
+        <NotificationPanelContent
+          items={items}
+          hasMore={hasMore}
+          onLoadMore={handleLoadMore}
+          loadingMore={loadingMore}
+          totalCount={totalCount}
+        />
+      </DemoFrame>
     </PlaygroundSection>
   );
 }
@@ -533,6 +570,11 @@ const PROPS = [
   { name: 'trigger', type: 'React.ReactNode', required: false, description: 'Custom trigger element. Omit to use the default bell button.' },
   { name: 'title', type: 'string', default: "'Notifications'", description: 'Panel header title.' },
   { name: 'className', type: 'string', required: false, description: 'Extra class forwarded to the PopoverContent root.' },
+  { name: 'totalCount', type: 'number', required: false, description: 'Total notification count including unloaded items. Overrides items.length for the unread badge — useful when only the first page is loaded.' },
+  { name: 'hasMore', type: 'boolean', default: 'false', description: 'Whether more notifications can be loaded. Shows a "Load more" button at the bottom.' },
+  { name: 'onLoadMore', type: '() => void', required: false, description: 'Called when user clicks "Load more notifications". Wire to your data-fetching layer.' },
+  { name: 'loadingMore', type: 'boolean', default: 'false', description: 'Shows a loading indicator instead of the "Load more" button while fetching.' },
+  { name: 'renderItem', type: '(item, renderDefault) => ReactNode', required: false, description: 'Custom item renderer. Call renderDefault() to wrap the built-in layout, or return your own JSX entirely.' },
 ];
 
 const ITEM_PROPS = [
@@ -567,6 +609,7 @@ export default function NotificationPanelDemo() {
       <CustomTriggerExample />
       <NoGroupingExample />
       <InteractiveExample />
+      <LoadMoreExample />
 
       <PlaygroundSection title="Props">
         <PropsTable props={PROPS} />
