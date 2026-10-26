@@ -147,6 +147,7 @@ function App() {
   return (
     <NotificationPanel
       items={notifs}
+      maxHeight={320}   // shorter than default 480 — scrollbar appears when content overflows
       onMarkRead={(id) =>
         setNotifs(prev => prev.map(i => i.id === id ? { ...i, read: true } : i))}
       onMarkAllRead={() =>
@@ -163,12 +164,13 @@ function BasicExample() {
   return (
     <PlaygroundSection
       title="Basic usage"
-      description="Mixed read and unread items across multiple date groups. Click an item to mark it read, use the header action to mark all read, or click the × to dismiss."
+      description="Mixed read and unread items across multiple date groups. Click an item to mark it read, use the header action to mark all read, or hover an item to reveal the dismiss button. Scroll within the panel — try scrolling to see remaining date groups."
       code={BASIC_CODE}
     >
       <DemoFrame>
         <NotificationPanelContent
           items={items}
+          maxHeight={320}
           onMarkRead={(id) =>
             setItems((prev) => prev.map((i) => (i.id === id ? { ...i, read: true } : i)))
           }
@@ -546,6 +548,35 @@ function LoadMoreExample() {
   );
 }
 
+const VISIBLE_COUNT_CODE = `import { NotificationPanelContent } from 'invin-uix/ui/notification-panel';
+
+// visibleCount shows only N items initially (client-side truncation)
+// No server call — items are already in memory
+// Click "Show X more" to expand
+
+<NotificationPanelContent
+  items={items}          // 6 items loaded
+  visibleCount={3}       // show only 3 initially
+/>`;
+
+function VisibleCountExample() {
+  return (
+    <PlaygroundSection
+      title="Client-side truncation — visibleCount"
+      description="Show only N items initially with a 'Show X more' button. Use when all items are already loaded but you want to keep the panel compact."
+      code={VISIBLE_COUNT_CODE}
+    >
+      <DemoFrame>
+        <NotificationPanelContent
+          items={BASIC_ITEMS}
+          visibleCount={3}
+          groupByDate={false}
+        />
+      </DemoFrame>
+    </PlaygroundSection>
+  );
+}
+
 /* ─── Props table ────────────────────────────────────────────────────────── */
 
 const PROPS = [
@@ -562,7 +593,7 @@ const PROPS = [
   { name: 'defaultFilter', type: "'all' | 'unread'", default: "'all'", description: 'Initial active filter tab.' },
   { name: 'filter', type: "'all' | 'unread'", required: false, description: 'Controlled active filter tab. Use with onFilterChange for controlled mode.' },
   { name: 'onFilterChange', type: "(filter: 'all' | 'unread') => void", required: false, description: 'Called when the user switches filter tabs.' },
-  { name: 'maxHeight', type: 'number | string', default: '480', description: "Max height for scrollable content. Number = px (e.g. 480). String = any CSS value (e.g. '50vh', 'calc(100vh - 200px)'). Default: 480." },
+  { name: 'maxHeight', type: 'number | string', default: '480', description: 'Max height for the scrollable content area. Number = px (e.g. 320). String = any CSS value. When content exceeds this, a scrollbar appears (type="scroll" shows it while scrolling).' },
   { name: 'side', type: "'bottom' | 'top' | 'left' | 'right'", default: "'bottom'", description: 'Popover side.' },
   { name: 'align', type: "'start' | 'center' | 'end'", default: "'end'", description: 'Popover alignment.' },
   { name: 'open', type: 'boolean', required: false, description: 'Controlled open state.' },
@@ -575,6 +606,7 @@ const PROPS = [
   { name: 'onLoadMore', type: '() => void', required: false, description: 'Called when user clicks "Load more notifications". Wire to your data-fetching layer.' },
   { name: 'loadingMore', type: 'boolean', default: 'false', description: 'Shows a loading indicator instead of the "Load more" button while fetching.' },
   { name: 'renderItem', type: '(item, renderDefault) => ReactNode', required: false, description: 'Custom item renderer. Call renderDefault() to wrap the built-in layout, or return your own JSX entirely.' },
+  { name: 'visibleCount', type: 'number', required: false, description: 'Show only N items initially with a "Show X more" button. No server call — items must already be in memory. Use with onLoadMore/hasMore for server-driven pagination instead.' },
 ];
 
 const ITEM_PROPS = [
@@ -610,6 +642,7 @@ export default function NotificationPanelDemo() {
       <NoGroupingExample />
       <InteractiveExample />
       <LoadMoreExample />
+      <VisibleCountExample />
 
       <PlaygroundSection title="Props">
         <PropsTable props={PROPS} />
