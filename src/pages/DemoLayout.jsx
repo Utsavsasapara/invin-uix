@@ -12,7 +12,7 @@ import {
   TextT, PaintBrush, 
   Textbox, ListChecks, NavigationArrow, Bell, Stack, GridFour, Wrench,
   CursorClick, Tag, UserCircle, Cards, Equals, Warning, CircleNotch, 
-  CaretCircleRight, Table, ChartBar, MagnifyingGlass, Copy, FunnelSimple, BracketsCurly,
+  CaretCircleRight, Table, ChartBar, MagnifyingGlass, Copy, BracketsCurly,
 } from 'invin-uix/ui/icons';
 import { Tooltip } from 'invin-uix/ui/tooltip';
 import { useTheme } from '../useTheme.jsx';
