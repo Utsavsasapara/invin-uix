@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useMemo, useEffect } from 'react';
+﻿import { useState, lazy, Suspense, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from 'invin-uix/ui/button';
 import { Badge } from 'invin-uix/ui/badge';
@@ -137,8 +137,8 @@ const AuroraTextDemo = lazy(() => import('./demos/AuroraTextDemo.jsx'));
 // Tier 10: Utility components
 const CopyButtonDemo = lazy(() => import('./demos/CopyButtonDemo.jsx'));
 const StatusPageDemo = lazy(() => import('./demos/StatusPageDemo.jsx'));
-const FilterBarDemo = lazy(() => import('./demos/FilterBarDemo.jsx'));
-const FilterBuilderDemo = lazy(() => import('./demos/FilterBuilderDemo.jsx'));
+// const FilterBarDemo = lazy(() => import('./demos/FilterBarDemo.jsx'));
+// const FilterBuilderDemo = lazy(() => import('./demos/FilterBuilderDemo.jsx'));
 const JSONViewerDemo = lazy(() => import('./demos/JSONViewerDemo.jsx'));
 const SpinningTextDemo = lazy(() => import('./demos/SpinningTextDemo.jsx'));
 const HighlighterDemo = lazy(() => import('./demos/HighlighterDemo.jsx'));
@@ -266,8 +266,8 @@ const categories = [
         { key: 'data-table-export',      label: 'Export',             component: DataTableExportDemo,     icon: icon(Table) },
         { key: 'data-table-advanced',    label: 'Advanced',           component: DataTableAdvancedDemo,   icon: icon(Table) },
       ]},
-      { key: 'filter-bar', label: 'Filter Bar', component: FilterBarDemo, badge: 'New', icon: icon(FunnelSimple) },
-      { key: 'filter-builder', label: 'Filter Builder', component: FilterBuilderDemo, badge: 'New', icon: icon(FunnelSimple) },
+      // { key: 'filter-bar', label: 'Filter Bar', component: FilterBarDemo, badge: 'New', icon: icon(FunnelSimple) },
+      // { key: 'filter-builder', label: 'Filter Builder', component: FilterBuilderDemo, badge: 'New', icon: icon(FunnelSimple) },
       { key: 'notification-panel', label: 'Notification Panel', component: NotificationPanelDemo, badge: 'New', icon: icon(Bell) },
       { key: 'json-viewer', label: 'JSON Viewer', component: JSONViewerDemo, badge: 'New', icon: icon(BracketsCurly) },
       { key: 'accordion', label: 'Accordion', component: AccordionDemo, icon: icon(GridFour) },
