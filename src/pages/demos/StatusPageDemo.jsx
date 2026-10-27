@@ -267,8 +267,8 @@ export default function StatusPageDemo() {
       title="Insufficient permissions"
       description="This report is restricted to Admin users."
       actions={[
-        { label: 'Request access', onClick: handleRequest, variant: 'default' },
-        { label: 'Cancel', onClick: onClose, variant: 'outline' },
+        { label: 'Request access', onClick: () => { /* wire up */ }, variant: 'default' },
+        { label: 'Cancel', onClick: () => { /* close dialog */ }, variant: 'outline' },
       ]}
     />
   </DialogContent>
