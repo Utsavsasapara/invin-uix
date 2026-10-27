@@ -94,7 +94,7 @@ export default function StatusPageDemo() {
       {/* ─── All variants ───────────────────────────────────────── */}
       <PlaygroundSection
         title="All variants"
-        description="The seven variants in compact mode, with their default content. 'Try again' reloads the page; 'Contact support' and 'Sign in' are placeholders until you pass your own actions."
+        description="All seven variants in compact mode showing their default icon, title, description and actions."
         code={`<StatusPage variant="404" />
 <StatusPage variant="403" />
 <StatusPage variant="500" />
@@ -126,12 +126,13 @@ export default function StatusPageDemo() {
         </div>
       </PlaygroundSection>
 
-      {/* ─── Custom content ─────────────────────────────────────── */}
+      {/* ─── Custom content and actions ────────────────────────────────── */}
       <PlaygroundSection
-        title="Custom title, description, icon and actions"
-        description="Override any part. Actions replace the defaults; give one an href to render it as a link."
-        code={`import { ShieldWarning } from 'invin-uix/ui/icons';
+        title="Custom content and actions"
+        description="Override title, description, icon and actions independently. Pass actions={[]} to show none. Use disabled on an action while async work is in progress. estimatedTime appends an estimate to the maintenance description."
+        code={`import { ShieldWarning, Bug } from 'invin-uix/ui/icons';
 
+// Override everything
 <StatusPage
   variant="403"
   compact
@@ -139,12 +140,29 @@ export default function StatusPageDemo() {
   description="Only members of the SOC Admin group can open this report."
   icon={<ShieldWarning size={32} weight="duotone" />}
   actions={[
-    { label: 'Request access', onClick: requestAccess, variant: 'default' },
+    { label: 'Request access', onClick: () => { /* wire up */ }, variant: 'default' },
     { label: 'Browse reports', href: '/reports', variant: 'outline' },
   ]}
-/>`}
+/>
+
+// Custom actions + disabled while retrying
+<StatusPage
+  variant="500"
+  compact
+  icon={<Bug size={32} weight="duotone" />}
+  actions={[
+    { label: 'Retrying…', onClick: () => { /* retry */ }, disabled: true, variant: 'default' },
+    { label: 'Go home', href: '/', variant: 'outline' },
+  ]}
+/>
+
+// No actions at all
+<StatusPage variant="500" compact actions={[]} />
+
+// estimatedTime on the maintenance variant
+<StatusPage variant="maintenance" compact estimatedTime="approximately 2 hours" />`}
       >
-        <div className="w-full max-w-xl space-y-3">
+        <div className="grid w-full gap-4 md:grid-cols-2">
           <Card>
             <CardContent className="p-0">
               <StatusPage
@@ -160,30 +178,6 @@ export default function StatusPageDemo() {
               />
             </CardContent>
           </Card>
-          <p className="text-caption text-[var(--muted-foreground)]">
-            Last action: <span className="font-mono">{lastAction || '—'}</span>
-          </p>
-        </div>
-      </PlaygroundSection>
-
-      {/* ─── Error with report ──────────────────────────────────── */}
-      <PlaygroundSection
-        title="Replacing the default actions"
-        description="The 500 page offers 'Try again' and 'Go home'. Pass actions to wire in your own recovery, or [] to show none."
-        code={`<StatusPage
-  variant="500"
-  compact
-  icon={<Bug size={32} weight="duotone" />}
-  actions={[
-    { label: 'Retry request', onClick: retry },
-    { label: 'Report problem', href: '/support', variant: 'ghost' },
-  ]}
-/>
-
-// No actions at all
-<StatusPage variant="500" compact actions={[]} />`}
-      >
-        <div className="grid w-full gap-4 md:grid-cols-2">
           <Card>
             <CardContent className="p-0">
               <StatusPage
@@ -191,8 +185,8 @@ export default function StatusPageDemo() {
                 compact
                 icon={<Bug size={32} weight="duotone" />}
                 actions={[
-                  { label: 'Retry request', onClick: () => setLastAction('Retry request') },
-                  { label: 'Report problem', href: '#support', variant: 'ghost' },
+                  { label: 'Retrying…', onClick: () => {}, disabled: true, variant: 'default' },
+                  { label: 'Go home', href: '#home', variant: 'outline' },
                 ]}
               />
             </CardContent>
@@ -202,46 +196,6 @@ export default function StatusPageDemo() {
               <StatusPage variant="500" compact actions={[]} />
             </CardContent>
           </Card>
-        </div>
-      </PlaygroundSection>
-
-      {/* ─── Disabled actions ───────────────────────────────────── */}
-      <PlaygroundSection
-        title="Disabled actions"
-        description="Disable individual actions while async work is in progress. For link actions, disabled adds aria-disabled and removes it from tab order."
-        code={`<StatusPage
-  variant="500"
-  compact
-  actions={[
-    { label: 'Retrying…', onClick: retry, disabled: true, variant: 'default' },
-    { label: 'Go home', href: '/', variant: 'outline' },
-  ]}
-/>`}
-      >
-        <div className="w-full max-w-xl">
-          <Card>
-            <CardContent className="p-0">
-              <StatusPage
-                variant="500"
-                compact
-                actions={[
-                  { label: 'Retrying…', onClick: () => {}, disabled: true, variant: 'default' },
-                  { label: 'Go home', href: '#home', variant: 'outline' },
-                ]}
-              />
-            </CardContent>
-          </Card>
-        </div>
-      </PlaygroundSection>
-
-      {/* ─── Maintenance ────────────────────────────────────────── */}
-      <PlaygroundSection
-        title="Maintenance with an estimate"
-        description="estimatedTime adds the estimate to the maintenance description."
-        code={`<StatusPage variant="maintenance" estimatedTime="approximately 2 hours" />
-// We are performing scheduled maintenance. Estimated completion: approximately 2 hours.`}
-      >
-        <div className="w-full max-w-xl">
           <Card>
             <CardContent className="p-0">
               <StatusPage variant="maintenance" compact estimatedTime="approximately 2 hours" />
@@ -250,17 +204,27 @@ export default function StatusPageDemo() {
         </div>
       </PlaygroundSection>
 
-      {/* ─── Extra content (children) ───────────────────────────── */}
+      {/* ─── Extra content (children) ──────────────────────────────────── */}
       <PlaygroundSection
         title="Extra content (children)"
-        description="Pass children to inject content between the description and the actions. Useful for error reference codes on 500 pages, countdowns on maintenance pages, or help links on empty states."
-        code={`<StatusPage variant="500" compact>
+        description="Pass children to inject content between the description and the actions. Useful for error reference codes on 500 pages, countdowns on maintenance pages, or contextual help links."
+        code={`// Error reference code on a 500 page
+<StatusPage variant="500" compact>
   <code className="rounded bg-[var(--secondary)] px-2 py-1 text-sm font-mono text-[var(--muted-foreground)]">
     Error ref: ERR-8f3a21
   </code>
 </StatusPage>
 
-<StatusPage variant="empty" compact description="No reports match your current filters." actions={[{ label: 'Clear filters' }]} />`}
+// Contextual note on a maintenance page
+<StatusPage variant="maintenance" compact>
+  <p className="text-caption text-[var(--muted-foreground)]">
+    Follow{' '}
+    <a href="/status" className="text-[var(--accent-text)] underline">
+      status.example.com
+    </a>
+    {' '}for live updates.
+  </p>
+</StatusPage>`}
       >
         <div className="grid w-full gap-4 md:grid-cols-2">
           <Card>
@@ -274,12 +238,15 @@ export default function StatusPageDemo() {
           </Card>
           <Card>
             <CardContent className="p-0">
-              <StatusPage
-                variant="empty"
-                compact
-                description="No reports match your current filters."
-                actions={[{ label: 'Clear filters', onClick: () => setLastAction('Clear filters') }]}
-              />
+              <StatusPage variant="maintenance" compact>
+                <p className="text-caption text-[var(--muted-foreground)]">
+                  Follow{' '}
+                  <a href="#status" className="text-[var(--accent-text)] underline">
+                    status.example.com
+                  </a>
+                  {' '}for live updates.
+                </p>
+              </StatusPage>
             </CardContent>
           </Card>
         </div>
@@ -288,7 +255,7 @@ export default function StatusPageDemo() {
       {/* ─── In a dialog ────────────────────────────────────────── */}
       <PlaygroundSection
         title="Inside a dialog"
-        description="Compact mode drops the minimum height so it fits a dialog. The dialog needs its own accessible title; here it is visually hidden because the status title says the same thing."
+        description="Use compact inside a Dialog or Drawer. Give the dialog its own accessible title — hide it visually with sr-only if the status title already says the same thing."
         code={`<Dialog>
   <DialogTrigger asChild><Button variant="outline">Open report</Button></DialogTrigger>
   <DialogContent>
