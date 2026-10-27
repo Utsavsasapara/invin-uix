@@ -10,7 +10,7 @@
 // Default config values - update here when library version changes
 export const DEFAULT_LIB_CONFIG = {
   name: 'invin-uix',
-  version: '1.4.3',
+  version: '1.4.4',
   componentCount: 78,
   componentCountDisplay: '77+',
   iconCount: 1500,
