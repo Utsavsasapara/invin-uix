@@ -113,6 +113,8 @@ export default function StatusPageDemo() {
         </div>
       </PlaygroundSection>
 
+      <Separator />
+
       {/* ─── Custom content and actions ────────────────────────────────── */}
       <PropsTable
         title="StatusPageAction"
