@@ -76,19 +76,6 @@ export default function StatusPageDemo() {
         ]}
       />
 
-      <PropsTable
-        title="StatusPageAction"
-        props={[
-          { name: 'label', type: 'string', default: '—', description: 'Text of the button or link (required)' },
-          { name: 'onClick', type: '() => void', default: '—', description: 'Called when the action is clicked' },
-          { name: 'href', type: 'string', default: '—', description: 'Renders the action as a link. Can be combined with onClick for client-side routing.' },
-          { name: 'variant', type: "'default' | 'primary' | 'outline' | 'ghost' | 'secondary'", default: 'first default, rest outline', description: "Button style. 'default' and 'primary' are equivalent (filled primary style)." },
-          { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables the button, or adds aria-disabled to a link action' },
-          { name: 'className', type: 'string', default: '—', description: 'CSS class(es) applied to the action button or link' },
-          { name: 'icon', type: 'ReactNode', default: '—', description: 'Leading icon rendered before the label (decorative)' },
-        ]}
-      />
-
       <Separator variant="bold" />
 
       {/* ─── All variants ───────────────────────────────────────── */}
@@ -127,6 +114,19 @@ export default function StatusPageDemo() {
       </PlaygroundSection>
 
       {/* ─── Custom content and actions ────────────────────────────────── */}
+      <PropsTable
+        title="StatusPageAction"
+        props={[
+          { name: 'label', type: 'string', default: '—', description: 'Text of the button or link (required)' },
+          { name: 'onClick', type: '() => void', default: '—', description: 'Called when the action is clicked' },
+          { name: 'href', type: 'string', default: '—', description: 'Renders the action as a link. Can be combined with onClick for client-side routing.' },
+          { name: 'variant', type: "'default' | 'primary' | 'outline' | 'ghost' | 'secondary'", default: 'first default, rest outline', description: "Button style. 'default' and 'primary' are equivalent (filled primary style)." },
+          { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables the button, or adds aria-disabled to a link action' },
+          { name: 'className', type: 'string', default: '—', description: 'CSS class(es) applied to the action button or link' },
+          { name: 'icon', type: 'ReactNode', default: '—', description: 'Leading icon rendered before the label (decorative)' },
+        ]}
+      />
+
       <PlaygroundSection
         title="Custom content and actions"
         description="Override title, description, icon and actions independently. Pass actions={[]} to show none. Use disabled on an action while async work is in progress. estimatedTime appends an estimate to the maintenance description."
