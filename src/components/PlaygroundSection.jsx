@@ -517,7 +517,7 @@ export function InteractiveDemo({
             <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/[0.02] via-transparent to-[var(--accent)]/[0.02]" />
             
             {/* Component render */}
-            <div className="relative z-10 w-full flex items-center justify-center overflow-visible" key={JSON.stringify(props)}>
+            <div className="relative z-10 w-full flex items-center justify-center overflow-visible">
               {typeof children === 'function' ? children(props) : children}
             </div>
           </div>
@@ -770,6 +770,98 @@ export function DemoCard({ title, description, children }) {
           <p className="text-[11px] text-[var(--muted-foreground)]">{description}</p>
         )}
       </CardContent>
+    </Card>
+  );
+}
+
+/**
+ * PlaygroundControls — Reusable controls section with border and distinct background
+ * Used in interactive playgrounds for Table, DataTable, and other component demos
+ */
+export function PlaygroundControls({ children, count, title = "Controls" }) {
+  return (
+    <div className="mx-4 mb-4 p-4 rounded-lg border border-[var(--border)] bg-[var(--secondary)]/20">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-sm font-medium text-[var(--foreground)]">{title}</span>
+        {count !== undefined && <Badge variant="secondary" size="sm">{count}</Badge>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * PlaygroundPreview — Reusable preview section for playground cards
+ * Consistent styling for the preview area with Live indicator
+ */
+export function PlaygroundPreview({ children, label = "Preview", badge }) {
+  return (
+    <div className="p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <Eye style={{ width: 16, height: 16, color: 'var(--accent)' }} />
+        <span className="text-sm font-medium">{label}</span>
+        <div className="ml-auto flex items-center gap-1.5">
+          {badge ? (
+            <Badge variant="secondary" size="sm">{badge}</Badge>
+          ) : (
+            <>
+              <span className="w-2 h-2 rounded-full bg-[var(--ok)]" />
+              <span className="text-xs text-[var(--muted-foreground)]">Live</span>
+            </>
+          )}
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * PlaygroundCodeSection — Reusable code section wrapper for playground cards
+ * Properly padded without separator borders
+ */
+export function PlaygroundCodeSection({ children }) {
+  return (
+    <div className="px-4 pb-4">
+      {children}
+    </div>
+  );
+}
+
+/**
+ * PlaygroundCard — Complete playground card wrapper combining Preview, Controls, and Code sections
+ * Use this for consistent playground layouts across component demos
+ */
+export function PlaygroundCard({ 
+  preview, 
+  controls, 
+  code, 
+  controlsCount,
+  controlsTitle = "Controls",
+  previewLabel = "Preview",
+  previewBadge,
+  codeTitle = "JSX"
+}) {
+  return (
+    <Card>
+      {/* Preview Section */}
+      <PlaygroundPreview label={previewLabel} badge={previewBadge}>
+        {preview}
+      </PlaygroundPreview>
+
+      {/* Controls Section */}
+      {controls && (
+        <PlaygroundControls count={controlsCount} title={controlsTitle}>
+          {controls}
+        </PlaygroundControls>
+      )}
+
+      {/* Code Section */}
+      {code && (
+        <PlaygroundCodeSection>
+          {code}
+        </PlaygroundCodeSection>
+      )}
     </Card>
   );
 }

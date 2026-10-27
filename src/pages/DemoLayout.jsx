@@ -98,6 +98,16 @@ const ScrollAreaDemo = lazy(() => import('./demos/ScrollAreaDemo.jsx'));
 const SidebarDemo = lazy(() => import('./demos/SidebarDemo.jsx'));
 const KpiCardDemo = lazy(() => import('./demos/KpiCardDemo.jsx'));
 const DataTableDemo = lazy(() => import('./demos/DataTableDemo.jsx'));
+// DataTable sub-pages
+const DataTableSortingDemo    = lazy(() => import('./demos/DataTableSortingDemo.jsx'));
+const DataTableSearchDemo     = lazy(() => import('./demos/DataTableSearchDemo.jsx'));
+const DataTablePaginationDemo = lazy(() => import('./demos/DataTablePaginationDemo.jsx'));
+const DataTableSelectionDemo  = lazy(() => import('./demos/DataTableSelectionDemo.jsx'));
+const DataTableColumnsDemo    = lazy(() => import('./demos/DataTableColumnsDemo.jsx'));
+const DataTableRowsDemo       = lazy(() => import('./demos/DataTableRowsDemo.jsx'));
+const DataTableEditingDemo    = lazy(() => import('./demos/DataTableEditingDemo.jsx'));
+const DataTableExportDemo     = lazy(() => import('./demos/DataTableExportDemo.jsx'));
+const DataTableAdvancedDemo   = lazy(() => import('./demos/DataTableAdvancedDemo.jsx'));
 const FileUploadDemo = lazy(() => import('./demos/FileUploadDemo.jsx'));
 const ResizableDemo = lazy(() => import('./demos/ResizableDemo.jsx'));
 const ComboboxDemo = lazy(() => import('./demos/ComboboxDemo.jsx'));
@@ -244,7 +254,18 @@ const categories = [
     icon: icon(GridFour),
     children: [
       { key: 'table', label: 'Table', component: TableDemo, icon: icon(Table) },
-      { key: 'data-table', label: 'Data Table', component: DataTableDemo, icon: icon(Table) },
+      { key: 'data-table', label: 'Data Table', icon: icon(Table), children: [
+        { key: 'data-table-overview',    label: 'Overview',           component: DataTableDemo,           icon: icon(Table) },
+        { key: 'data-table-sorting',     label: 'Sorting',            component: DataTableSortingDemo,    icon: icon(Table) },
+        { key: 'data-table-search',      label: 'Search & Filtering', component: DataTableSearchDemo,     icon: icon(MagnifyingGlass) },
+        { key: 'data-table-pagination',  label: 'Pagination',         component: DataTablePaginationDemo, icon: icon(Table) },
+        { key: 'data-table-selection',   label: 'Selection',          component: DataTableSelectionDemo,  icon: icon(Table) },
+        { key: 'data-table-columns',     label: 'Columns',            component: DataTableColumnsDemo,    icon: icon(Table) },
+        { key: 'data-table-rows',        label: 'Rows',               component: DataTableRowsDemo,       icon: icon(Table) },
+        { key: 'data-table-editing',     label: 'Editing',            component: DataTableEditingDemo,    icon: icon(Table) },
+        { key: 'data-table-export',      label: 'Export',             component: DataTableExportDemo,     icon: icon(Table) },
+        { key: 'data-table-advanced',    label: 'Advanced',           component: DataTableAdvancedDemo,   icon: icon(Table) },
+      ]},
       { key: 'filter-bar', label: 'Filter Bar', component: FilterBarDemo, badge: 'New', icon: icon(FunnelSimple) },
       { key: 'filter-builder', label: 'Filter Builder', component: FilterBuilderDemo, badge: 'New', icon: icon(FunnelSimple) },
       { key: 'notification-panel', label: 'Notification Panel', component: NotificationPanelDemo, badge: 'New', icon: icon(Bell) },
@@ -386,7 +407,7 @@ export default function DemoLayout() {
             description: `${cat.label} › ${c.label}`,
             icon: sc.icon,
             keywords: [cat.label.toLowerCase(), c.label.toLowerCase(), sc.label.toLowerCase()],
-            tags: [cat.key, 'chart'], // Add category tag + chart tag for all chart items
+            tags: [cat.key, c.key], // category tag + parent key for sub-items
           }));
         }
         // Build tags array: category tag + 'new' if has badge

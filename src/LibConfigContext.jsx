@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+﻿import { createContext, useContext } from 'react';
 
 /**
  * Centralized library configuration context
@@ -10,9 +10,9 @@ import { createContext, useContext } from 'react';
 // Default config values - update here when library version changes
 export const DEFAULT_LIB_CONFIG = {
   name: 'invin-uix',
-  version: '1.4.2',
-  componentCount: 70,
-  componentCountDisplay: '70+',
+  version: '1.4.3',
+  componentCount: 78,
+  componentCountDisplay: '77+',
   iconCount: 1500,
   iconCountDisplay: '1500+',
   accentCount: 7,

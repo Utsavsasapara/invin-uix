@@ -181,6 +181,7 @@ function ToggleControl({ label, checked, onChange }) {
 
 function TablePlayground() {
   const [size, setSize] = useState('default');
+  // false | 'outline' | 'cells'  — matches the new TableBordered type
   const [bordered, setBordered] = useState(false);
   const [striped, setStriped] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
@@ -189,7 +190,9 @@ function TablePlayground() {
   
   const total = invoices.slice(0, 5).reduce((sum, inv) => sum + inv.amount, 0);
 
-  const code = `<Table${size !== 'default' ? ` size="${size}"` : ''}${bordered ? ' bordered' : ''}>
+  const borderedProp = bordered === 'outline' ? ' bordered="outline"' : bordered === 'cells' ? ' bordered="cells"' : '';
+
+  const code = `<Table${size !== 'default' ? ` size="${size}"` : ''}${borderedProp}>
   ${showCaption ? '<TableCaption>A list of recent invoices.</TableCaption>\n  ' : ''}<TableHeader>
     <TableRow>
       <TableHead>Invoice</TableHead>
@@ -299,9 +302,32 @@ function TablePlayground() {
               </div>
             </div>
 
+            {/* Border mode selector */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-medium text-[var(--muted-foreground)] w-16">Borders</span>
+              <div className="flex gap-2">
+                {[
+                  { value: false, label: 'None' },
+                  { value: 'outline', label: 'Outline' },
+                  { value: 'cells', label: 'Cells' },
+                ].map(opt => (
+                  <button
+                    key={String(opt.value)}
+                    onClick={() => setBordered(opt.value)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                      bordered === opt.value
+                        ? 'bg-[var(--accent)] text-white'
+                        : 'bg-[var(--secondary)] text-[var(--muted-foreground)] hover:bg-[var(--secondary)]/80'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Boolean toggles */}
             <div className="flex flex-wrap gap-2">
-              <ToggleControl label="Bordered" checked={bordered} onChange={setBordered} />
               <ToggleControl label="Striped" checked={striped} onChange={setStriped} />
               <ToggleControl label="Header" checked={showHeader} onChange={setShowHeader} />
               <ToggleControl label="Footer" checked={showFooter} onChange={setShowFooter} />
@@ -460,11 +486,11 @@ const handleSort = (column) => {
 function StickyHeaderExample() {
   const manyRows = [...invoices, ...invoices, ...invoices];
 
-  const code = `// 1. Add stickyHeader to TableHeader
-// 2. Place the table inside a fixed-height scrollable container
+  const code = `// 1. Add stickyHeader to both Table and TableHeader
+// 2. Wrap in a single fixed-height overflow-auto container (must be sole scroll container)
 
-<div style={{ height: '280px', overflowY: 'auto' }}>
-  <Table>
+<div style={{ height: '280px', overflow: 'auto' }}>
+  <Table stickyHeader>
     <TableHeader stickyHeader>
       <TableRow>
         <TableHead>Invoice</TableHead>
@@ -495,11 +521,12 @@ function StickyHeaderExample() {
       <p className="text-sm text-[var(--muted-foreground)]">
         Add{' '}
         <code className="px-1.5 py-0.5 bg-[var(--secondary)] rounded text-[var(--accent)] text-xs">stickyHeader</code>{' '}
-        to <code className="px-1.5 py-0.5 bg-[var(--secondary)] rounded text-[var(--accent)] text-xs">TableHeader</code> and
-        wrap the table in a fixed-height scrollable container.
+        to <code className="px-1.5 py-0.5 bg-[var(--secondary)] rounded text-[var(--accent)] text-xs">Table</code>{' '}
+        and <code className="px-1.5 py-0.5 bg-[var(--secondary)] rounded text-[var(--accent)] text-xs">TableHeader</code>,
+        then wrap in a single fixed-height <code className="px-1.5 py-0.5 bg-[var(--secondary)] rounded text-[var(--accent)] text-xs">overflow-auto</code> container.
       </p>
-      <div className="h-[280px] overflow-y-auto border border-[var(--border)] rounded-lg">
-        <Table>
+      <div className="h-[280px] overflow-auto border border-[var(--border)] rounded-lg">
+        <Table stickyHeader>
           <TableHeader stickyHeader>
             <TableRow>
               <TableHead>Invoice</TableHead>
@@ -1086,278 +1113,6 @@ const toggleRow = (id) => {
     </div>
   );
 }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// RECIPES SHOWCASE
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function RecipesShowcase() {
-  const invoiceTotal = invoices.slice(0, 5).reduce((sum, inv) => sum + inv.amount, 0);
-
-  return (
-    <div className="space-y-8">
-      {/* Recipe 1: User Management Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>User Management Table</CardTitle>
-          <CardDescription>
-            Team members with avatar, name, role badge, status indicator, and action menu.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Member</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-10" />
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map(user => (
-                <TableRow key={user.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar size="sm">
-                        <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback>{user.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium text-sm">{user.name}</p>
-                        <p className="text-xs text-[var(--muted-foreground)]">{user.email}</p>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={user.role === 'Admin' ? 'default' : 'secondary'} size="sm">
-                      {user.role}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`w-2 h-2 rounded-full shrink-0 ${
-                          user.status === 'Active' ? 'bg-[var(--ok)]' : 'bg-[var(--muted-foreground)]/40'
-                        }`}
-                      />
-                      <span className={`text-sm ${user.status === 'Active' ? 'text-[var(--foreground)]' : 'text-[var(--muted-foreground)]'}`}>
-                        {user.status}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="icon-sm">
-                      <DotsThree style={{ width: 16, height: 16 }} />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <CodePreview code={`<Table>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Member</TableHead>
-      <TableHead>Role</TableHead>
-      <TableHead>Status</TableHead>
-      <TableHead className="w-10" />
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    {users.map(user => (
-      <TableRow key={user.id}>
-        <TableCell>
-          <div className="flex items-center gap-3">
-            <Avatar size="sm">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback>{user.name[0]}</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-medium">{user.name}</p>
-              <p className="text-xs text-[var(--muted-foreground)]">{user.email}</p>
-            </div>
-          </div>
-        </TableCell>
-        <TableCell>
-          <Badge variant={user.role === 'Admin' ? 'default' : 'secondary'} size="sm">
-            {user.role}
-          </Badge>
-        </TableCell>
-        <TableCell>
-          {/* Status dot + text */}
-          <div className="flex items-center gap-2">
-            <span className={user.status === 'Active' ? 'status-dot-active' : 'status-dot'} />
-            <span>{user.status}</span>
-          </div>
-        </TableCell>
-        <TableCell>
-          <Button variant="ghost" size="icon-sm">
-            <DotsThree />
-          </Button>
-        </TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
-</Table>`} title="User Management Table" />
-        </CardContent>
-      </Card>
-
-      {/* Recipe 2: Invoice Table with Footer */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Invoice Table with Footer</CardTitle>
-          <CardDescription>
-            Financial table with status badges, payment methods, and a footer row showing totals.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableCaption>A list of recent invoices.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Invoice</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Method</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {invoices.slice(0, 5).map(inv => (
-                <TableRow key={inv.id}>
-                  <TableCell className="font-medium">{inv.id}</TableCell>
-                  <TableCell>{inv.customer}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={inv.status === 'Paid' ? 'success' : inv.status === 'Pending' ? 'warning' : 'destructive'}
-                      size="sm"
-                    >
-                      {inv.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-[var(--muted-foreground)]">{inv.method}</TableCell>
-                  <TableCell className="text-right font-medium">${inv.amount}.00</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={4} className="font-semibold">Total</TableCell>
-                <TableCell className="text-right font-semibold">${invoiceTotal}.00</TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
-          <CodePreview code={`<Table>
-  <TableCaption>A list of recent invoices.</TableCaption>
-  <TableHeader>
-    <TableRow>
-      <TableHead>Invoice</TableHead>
-      <TableHead>Customer</TableHead>
-      <TableHead>Status</TableHead>
-      <TableHead>Method</TableHead>
-      <TableHead className="text-right">Amount</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    {invoices.map(inv => (
-      <TableRow key={inv.id}>
-        <TableCell className="font-medium">{inv.id}</TableCell>
-        <TableCell>{inv.customer}</TableCell>
-        <TableCell>
-          <Badge variant={inv.status === 'Paid' ? 'success' : 'warning'}>
-            {inv.status}
-          </Badge>
-        </TableCell>
-        <TableCell>{inv.method}</TableCell>
-        <TableCell className="text-right">\${inv.amount}.00</TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
-  <TableFooter>
-    <TableRow>
-      <TableCell colSpan={4} className="font-semibold">Total</TableCell>
-      <TableCell className="text-right font-semibold">\${total}.00</TableCell>
-    </TableRow>
-  </TableFooter>
-</Table>`} title="Invoice Table with Footer" />
-        </CardContent>
-      </Card>
-
-      {/* Recipe 3: Data Overview Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Data Overview Table</CardTitle>
-          <CardDescription>
-            Analytics table using <code className="px-1 py-0.5 bg-[var(--secondary)] rounded text-xs">size="dense"</code> and{' '}
-            <code className="px-1 py-0.5 bg-[var(--secondary)] rounded text-xs">align</code> props for a compact metrics view with trend indicators.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table size="dense">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Metric</TableHead>
-                <TableHead align="right">Value</TableHead>
-                <TableHead align="right">Change</TableHead>
-                <TableHead>Category</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {metrics.map(m => (
-                <TableRow key={m.id}>
-                  <TableCell className="font-medium">{m.metric}</TableCell>
-                  <TableCell align="right" className="font-mono text-sm">{m.value}</TableCell>
-                  <TableCell align="right">
-                    <span className={`font-medium text-sm ${m.trend === 'up' ? 'text-[var(--ok)]' : 'text-[var(--destructive)]'}`}>
-                      {m.change}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" size="sm">{m.category}</Badge>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <CodePreview code={`const metrics = [
-  { id: 1, metric: 'Active Users',    value: '2,847',   change: '+12.5%', trend: 'up',   category: 'Users'  },
-  { id: 2, metric: 'Monthly Revenue', value: '$48,295', change: '+8.2%',  trend: 'up',   category: 'Finance' },
-  { id: 3, metric: 'Bounce Rate',     value: '42.1%',   change: '-2.1%',  trend: 'down', category: 'Engagement' },
-];
-
-<Table size="dense">
-  <TableHeader>
-    <TableRow>
-      <TableHead>Metric</TableHead>
-      <TableHead align="right">Value</TableHead>
-      <TableHead align="right">Change</TableHead>
-      <TableHead>Category</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    {metrics.map(m => (
-      <TableRow key={m.id}>
-        <TableCell className="font-medium">{m.metric}</TableCell>
-        <TableCell align="right" className="font-mono">{m.value}</TableCell>
-        <TableCell align="right">
-          <span className={m.trend === 'up' ? 'text-green' : 'text-red'}>
-            {m.change}
-          </span>
-        </TableCell>
-        <TableCell>
-          <Badge variant="secondary" size="sm">{m.category}</Badge>
-        </TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
-</Table>`} title="Data Overview Table" />
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
 // ═══════════════════════════════════════════════════════════════════════════════
 // MAIN DEMO PAGE
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1704,18 +1459,6 @@ export default function TableDemo() {
       </Tabs>
 
       <Separator className="my-10" />
-
-      {/* ─── Recipes ─────────────────────────────────────────────── */}
-      <div className="space-y-3 mb-8">
-        <h2 className="text-xl font-bold text-[var(--foreground)]">Recipes</h2>
-        <p className="text-[var(--muted-foreground)]">
-          Production-ready table patterns for common use cases.
-        </p>
-      </div>
-      <RecipesShowcase />
-
-      <Separator className="my-10" />
-
       {/* ─── Component API ─────────────────────────────────────────── */}
       <PropsTable
         title="Component API"

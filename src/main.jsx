@@ -13,7 +13,7 @@ import { LibConfigProvider, DEFAULT_LIB_CONFIG } from './LibConfigContext.jsx';
 // Update version here when upgrading invin-uix - this is the SINGLE source of truth
 const LIB_CONFIG = {
   ...DEFAULT_LIB_CONFIG,
-  version: '1.4.2', // <-- Update this when library version changes
+  version: '1.4.3', // <-- Update this when library version changes
 };
 
 createRoot(document.getElementById('root')).render(
