@@ -7,13 +7,17 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App.routes.jsx';
 import 'invin-uix/tokens.css';
+import { LIB_CONFIG as PACKAGE_CONFIG } from 'invin-uix/lib-config';
 import { LibConfigProvider, DEFAULT_LIB_CONFIG } from './LibConfigContext.jsx';
 
 // ─── Library Configuration ───────────────────────────────────────────────────
-// Update version here when upgrading invin-uix - this is the SINGLE source of truth
+// Version, componentCount and componentCountDisplay are read directly from the
+// installed invin-uix package — no manual update needed on future releases.
 const LIB_CONFIG = {
   ...DEFAULT_LIB_CONFIG,
-  version: '1.4.4', // <-- Update this when library version changes
+  version: PACKAGE_CONFIG.version,
+  componentCount: PACKAGE_CONFIG.componentCount,
+  componentCountDisplay: PACKAGE_CONFIG.componentCountDisplay,
 };
 
 createRoot(document.getElementById('root')).render(
