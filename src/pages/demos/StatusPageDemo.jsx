@@ -202,6 +202,11 @@ export default function StatusPageDemo() {
             </CardContent>
           </Card>
         </div>
+        {lastAction && (
+          <p className="mt-2 text-caption text-[var(--muted-foreground)]">
+            Last action: <span className="font-mono text-[var(--foreground)]">{lastAction}</span>
+          </p>
+        )}
       </PlaygroundSection>
 
       {/* ─── Extra content (children) ──────────────────────────────────── */}
@@ -268,9 +273,13 @@ export default function StatusPageDemo() {
       description="This report is restricted to Admin users."
       actions={[
         { label: 'Request access', onClick: () => { /* wire up */ }, variant: 'default' },
-        { label: 'Cancel', onClick: () => { /* close dialog */ }, variant: 'outline' },
       ]}
     />
+    <div className="flex justify-center pb-2">
+      <DialogClose asChild>
+        <Button variant="ghost" size="sm">Cancel</Button>
+      </DialogClose>
+    </div>
   </DialogContent>
 </Dialog>`}
       >
